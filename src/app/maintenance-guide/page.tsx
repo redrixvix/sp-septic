@@ -16,7 +16,7 @@ const SEASONS = [
   {
     season: "Spring",
     icon: "🌱",
-    color: "bg-emerald-50 border-emerald-200",
+    color: "bg-secondary/10 border-secondary/30",
     tips: [
       "Inspect your tank after winter — freeze damage can cause cracks",
       "Check for wet spots in your yard that shouldn't be there",
@@ -74,7 +74,7 @@ export default function MaintenanceGuidePage() {
       {/* Hero */}
       <section className="bg-slate-900 text-white py-16 md:py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <Badge className="mb-4 bg-emerald-600 text-white border-0">Free Guide</Badge>
+          <Badge className="mb-4 bg-primary text-white border-0">Free Guide</Badge>
           <h1 className="text-4xl md:text-5xl font-extrabold mb-4">
             Homeowner&apos;s Septic Maintenance Guide
           </h1>
@@ -85,12 +85,12 @@ export default function MaintenanceGuidePage() {
       </section>
 
       {/* Key Rule */}
-      <section className="bg-emerald-600 py-10">
+      <section className="bg-primary py-10">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
           <h2 className="text-2xl md:text-3xl font-bold mb-3">
             The #1 Rule of Septic Ownership
           </h2>
-          <p className="text-emerald-100 text-lg max-w-3xl mx-auto">
+          <p className="text-blue-100 text-lg max-w-3xl mx-auto">
             <strong>Pump your tank regularly.</strong> No additive, no magic product, no special trick replaces regular pumping. Every 3–5 years for most households. It&apos;s the single most important thing you can do for your system.
           </p>
         </div>
@@ -117,7 +117,7 @@ export default function MaintenanceGuidePage() {
                   <ul className="space-y-2.5">
                     {s.tips.map((tip) => (
                       <li key={tip} className="flex items-start gap-2.5 text-sm text-slate-700">
-                        <CheckCircle className="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5" />
+                        <CheckCircle className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
                         {tip}
                       </li>
                     ))}
@@ -136,16 +136,16 @@ export default function MaintenanceGuidePage() {
             <h2 className="text-3xl font-bold text-slate-900 mb-3">The Do&apos;s and Don&apos;ts</h2>
           </div>
           <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-            <Card className="bg-emerald-50 border-emerald-200 border-0">
+            <Card className="bg-secondary/10 border-secondary/30 border-0">
               <CardContent className="p-6">
-                <h3 className="font-bold text-lg text-emerald-800 mb-4 flex items-center gap-2">
-                  <CheckCircle className="w-5 h-5 text-emerald-600" />
+                <h3 className="font-bold text-lg text-secondary mb-4 flex items-center gap-2">
+                  <CheckCircle className="w-5 h-5 text-secondary" />
                   Do
                 </h3>
                 <ul className="space-y-2">
                   {DO_DONT[0].items.map((item) => (
-                    <li key={item} className="flex items-start gap-2 text-sm text-emerald-900">
-                      <CheckCircle className="w-4 h-4 text-emerald-600 flex-shrink-0 mt-0.5" />
+                    <li key={item} className="flex items-start gap-2 text-sm text-secondary">
+                      <CheckCircle className="w-4 h-4 text-secondary flex-shrink-0 mt-0.5" />
                       {item}
                     </li>
                   ))}
@@ -191,7 +191,7 @@ export default function MaintenanceGuidePage() {
               <Card key={item.freq} className="border-slate-200">
                 <CardContent className="p-4 flex items-start gap-4">
                   <div className="w-28 flex-shrink-0">
-                    <Badge className="bg-emerald-100 text-emerald-700 border-0 text-xs font-bold whitespace-nowrap">
+                    <Badge className="bg-secondary/10 text-primary border-0 text-xs font-bold whitespace-nowrap">
                       {item.freq}
                     </Badge>
                   </div>
@@ -236,7 +236,7 @@ export default function MaintenanceGuidePage() {
       {/* CTA */}
       <section className="py-14 bg-white border-t">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <Calendar className="w-10 h-10 text-emerald-600 mx-auto mb-4" />
+          <Calendar className="w-10 h-10 text-secondary mx-auto mb-4" />
           <h2 className="text-2xl font-bold text-slate-900 mb-3">
             Need to Schedule Maintenance?
           </h2>
@@ -245,7 +245,7 @@ export default function MaintenanceGuidePage() {
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <a href={`tel:${COMPANY.phone}`}>
-              <Button size="lg" className="gap-2 bg-emerald-600 hover:bg-emerald-700 font-semibold">
+              <Button size="lg" className="gap-2 bg-primary hover:bg-primary/90 font-semibold">
                 <Phone className="w-4 h-4" />
                 Call {COMPANY.phone}
               </Button>

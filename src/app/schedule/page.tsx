@@ -45,7 +45,7 @@ export default function SchedulePage() {
       {/* Hero */}
       <section className="bg-slate-900 text-white py-16 md:py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <Badge className="mb-4 bg-emerald-600 text-white border-0">Schedule Service</Badge>
+          <Badge className="mb-4 bg-primary text-white border-0">Schedule Service</Badge>
           <h1 className="text-4xl md:text-5xl font-extrabold mb-4">
             Book a Service Call
           </h1>
@@ -102,7 +102,7 @@ export default function SchedulePage() {
                         </label>
                         <select
                           required
-                          className="flex h-11 w-full rounded-md border border-input bg-white px-3 py-2 text-sm ring-offset-white placeholder:text-slate-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                          className="flex h-11 w-full rounded-md border border-input bg-white px-3 py-2 text-sm ring-offset-white placeholder:text-slate-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                         >
                           <option value="">Select a service...</option>
                           {SERVICE_TYPES.map((s) => (
@@ -114,7 +114,7 @@ export default function SchedulePage() {
                         <label className="block text-sm font-medium text-slate-700 mb-1.5">
                           Preferred Time
                         </label>
-                        <select className="flex h-11 w-full rounded-md border border-input bg-white px-3 py-2 text-sm ring-offset-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2">
+                        <select className="flex h-11 w-full rounded-md border border-input bg-white px-3 py-2 text-sm ring-offset-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2">
                           <option value="">Any time works...</option>
                           {TIME_SLOTS.map((t) => (
                             <option key={t} value={t}>{t}</option>
@@ -142,7 +142,7 @@ export default function SchedulePage() {
                         — do not use this form.
                       </div>
                     </div>
-                    <Button type="submit" size="lg" className="w-full gap-2 bg-emerald-600 hover:bg-emerald-700 font-semibold">
+                    <Button type="submit" size="lg" className="w-full gap-2 bg-primary hover:bg-primary/90 font-semibold">
                       <Calendar className="w-4 h-4" />
                       Submit Request
                     </Button>
@@ -156,19 +156,19 @@ export default function SchedulePage() {
 
             {/* Sidebar */}
             <div className="space-y-6">
-              <Card className="bg-emerald-600 border-0 text-white">
+              <Card className="bg-primary border-0 text-white">
                 <CardContent className="p-6 text-center">
                   <h3 className="font-bold text-lg mb-2">Prefer to Call?</h3>
-                  <p className="text-emerald-100 text-sm mb-4">
+                  <p className="text-blue-100 text-sm mb-4">
                     Schedule your service directly by phone. We answer calls Mon–Sat, 7AM–7PM.
                   </p>
                   <a href={`tel:${COMPANY.phone}`} className="block mb-4">
-                    <Button className="w-full gap-2 bg-white text-emerald-700 hover:bg-emerald-50 font-bold text-lg">
+                    <Button className="w-full gap-2 bg-white text-primary hover:bg-secondary/10 font-bold text-lg">
                       <Phone className="w-5 h-5" />
                       {COMPANY.phone}
                     </Button>
                   </a>
-                  <div className="flex items-center justify-center gap-2 text-sm text-emerald-200">
+                  <div className="flex items-center justify-center gap-2 text-sm text-blue-200">
                     <Clock className="w-4 h-4" />
                     <span>Mon–Sat, 7AM–7PM</span>
                   </div>
@@ -185,7 +185,7 @@ export default function SchedulePage() {
                     { step: "4", text: "On-site service — diagnosis and solution" },
                   ].map((item) => (
                     <div key={item.step} className="flex gap-3">
-                      <div className="w-6 h-6 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-xs font-bold flex-shrink-0">
+                      <div className="w-6 h-6 rounded-full bg-secondary/10 text-primary flex items-center justify-center text-xs font-bold flex-shrink-0">
                         {item.step}
                       </div>
                       <span className="text-sm text-slate-600">{item.text}</span>
@@ -197,7 +197,7 @@ export default function SchedulePage() {
               <Card className="bg-white border-0 shadow-sm">
                 <CardContent className="p-6">
                   <div className="flex items-start gap-3">
-                    <MapPin className="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5" />
+                    <MapPin className="w-5 h-5 text-secondary flex-shrink-0 mt-0.5" />
                     <div>
                       <h3 className="font-bold text-slate-900 text-sm mb-1">Service Area</h3>
                       <p className="text-xs text-slate-500">

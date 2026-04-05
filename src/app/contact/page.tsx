@@ -14,7 +14,7 @@ import { useFormStatus } from "react-dom";
 function SubmitButton() {
   const { pending } = useFormStatus();
   return (
-    <Button type="submit" size="lg" className="w-full gap-2 bg-emerald-600 hover:bg-emerald-700" disabled={pending}>
+    <Button type="submit" size="lg" className="w-full gap-2 bg-primary hover:bg-primary/90" disabled={pending}>
       {pending ? (
         <>Sending...</>
       ) : (
@@ -48,7 +48,7 @@ export default function ContactPage() {
       {/* Hero */}
       <section className="bg-slate-900 text-white py-16 md:py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <Badge className="mb-4 bg-emerald-600 text-white border-0">Contact Us</Badge>
+          <Badge className="mb-4 bg-primary text-white border-0">Contact Us</Badge>
           <h1 className="text-4xl md:text-5xl font-extrabold mb-4">Get a Free Estimate</h1>
           <p className="text-slate-300 text-lg max-w-2xl">
             Ready to solve your septic or excavation needs? Call us or fill out the form below — we respond within one business day.
@@ -66,13 +66,13 @@ export default function ContactPage() {
                 <CardContent className="p-6 md:p-8">
                   {submitted ? (
                     <div className="text-center py-12">
-                      <div className="w-16 h-16 rounded-full bg-emerald-100 flex items-center justify-center mx-auto mb-4">
-                        <CheckCircle className="w-8 h-8 text-emerald-600" />
+                      <div className="w-16 h-16 rounded-full bg-secondary/10 flex items-center justify-center mx-auto mb-4">
+                        <CheckCircle className="w-8 h-8 text-secondary" />
                       </div>
                       <h2 className="text-2xl font-bold text-slate-900 mb-2">Message Sent!</h2>
                       <p className="text-slate-600 mb-6">
                         Thank you! We&apos;ll be in touch within one business day. For urgent issues, call us directly at{" "}
-                        <a href={`tel:${COMPANY.phone}`} className="text-emerald-600 font-semibold">
+                        <a href={`tel:${COMPANY.phone}`} className="text-secondary font-semibold">
                           {COMPANY.phone}
                         </a>
                         .
@@ -141,7 +141,7 @@ export default function ContactPage() {
                               id="service"
                               name="service"
                               required
-                              className="flex h-11 w-full rounded-md border border-input bg-white px-3 py-2 text-sm ring-offset-white placeholder:text-slate-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                              className="flex h-11 w-full rounded-md border border-input bg-white px-3 py-2 text-sm ring-offset-white placeholder:text-slate-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                             >
                               <option value="">Select a service...</option>
                               <option>New Septic System Installation</option>
@@ -180,7 +180,7 @@ export default function ContactPage() {
                         <SubmitButton />
                         <p className="text-xs text-slate-500 text-center">
                           We respond to all inquiries within 1 business day. For immediate assistance, call{" "}
-                          <a href={`tel:${COMPANY.phone}`} className="text-emerald-600">
+                          <a href={`tel:${COMPANY.phone}`} className="text-secondary">
                             {COMPANY.phone}
                           </a>
                           .
@@ -198,22 +198,22 @@ export default function ContactPage() {
                 <CardContent className="p-6 space-y-4">
                   <h3 className="font-bold text-slate-900">Contact Information</h3>
                   <div className="space-y-3">
-                    <a href={`tel:${COMPANY.phone}`} className="flex items-start gap-3 text-slate-700 hover:text-emerald-600 transition-colors">
-                      <Phone className="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5" />
+                    <a href={`tel:${COMPANY.phone}`} className="flex items-start gap-3 text-slate-700 hover:text-secondary transition-colors">
+                      <Phone className="w-5 h-5 text-secondary flex-shrink-0 mt-0.5" />
                       <div>
                         <div className="font-semibold">{COMPANY.phone}</div>
                         <div className="text-xs text-slate-500">Tap to call</div>
                       </div>
                     </a>
                     <div className="flex items-start gap-3 text-slate-700">
-                      <Mail className="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5" />
+                      <Mail className="w-5 h-5 text-secondary flex-shrink-0 mt-0.5" />
                       <div>
                         <div>{COMPANY.email}</div>
                         <div className="text-xs text-slate-500">Email us anytime</div>
                       </div>
                     </div>
                     <div className="flex items-start gap-3 text-slate-700">
-                      <MapPin className="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5" />
+                      <MapPin className="w-5 h-5 text-secondary flex-shrink-0 mt-0.5" />
                       <div>
                         <div>{COMPANY.address}</div>
                         <div className="text-xs text-slate-500">
@@ -222,7 +222,7 @@ export default function ContactPage() {
                       </div>
                     </div>
                     <div className="flex items-start gap-3 text-slate-700">
-                      <Clock className="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5" />
+                      <Clock className="w-5 h-5 text-secondary flex-shrink-0 mt-0.5" />
                       <div>
                         <div className="font-semibold">Mon – Sat</div>
                         <div className="text-xs text-slate-500">7:00 AM – 7:00 PM</div>
@@ -232,14 +232,14 @@ export default function ContactPage() {
                 </CardContent>
               </Card>
 
-              <Card className="bg-emerald-600 border-0 text-white">
+              <Card className="bg-primary border-0 text-white">
                 <CardContent className="p-6 text-center">
                   <h3 className="font-bold text-lg mb-2">Emergency Service?</h3>
-                  <p className="text-emerald-100 text-sm mb-4">
+                  <p className="text-blue-100 text-sm mb-4">
                     A septic emergency doesn&apos;t wait. Call us now for urgent septic and excavation issues.
                   </p>
                   <a href={`tel:${COMPANY.phone}`} className="block">
-                    <Button className="w-full gap-2 bg-white text-emerald-700 hover:bg-emerald-50 font-bold">
+                    <Button className="w-full gap-2 bg-white text-primary hover:bg-secondary/10 font-bold">
                       <Phone className="w-4 h-4" />
                       {COMPANY.phone}
                     </Button>

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import Image from "next/image";
 import { Menu, X, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { COMPANY } from "@/lib/data";
@@ -25,10 +26,15 @@ export function SiteHeader() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2">
-            <div className="w-9 h-9 rounded-lg bg-primary flex items-center justify-center">
-              <span className="text-white font-bold text-sm">S&P</span>
-            </div>
+          <Link href="/" className="flex items-center gap-3">
+            <Image
+              src="/sp-septic-logo.jpg"
+              alt="S&P Septic and Excavating logo"
+              width={64}
+              height={64}
+              className="object-contain"
+              priority
+            />
             <div className="hidden sm:block">
               <span className="font-bold text-base text-slate-900 leading-tight block">
                 S&P Septic & Excavating

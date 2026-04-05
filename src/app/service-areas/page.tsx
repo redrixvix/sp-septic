@@ -47,7 +47,7 @@ export default function ServiceAreasPage() {
       {/* Hero */}
       <section className="bg-slate-900 text-white py-16 md:py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <Badge className="mb-4 bg-emerald-600 text-white border-0">Service Area</Badge>
+          <Badge className="mb-4 bg-primary text-white border-0">Service Area</Badge>
           <h1 className="text-4xl md:text-5xl font-extrabold mb-4">
             Serving Northeast Ohio
           </h1>
@@ -58,24 +58,24 @@ export default function ServiceAreasPage() {
       </section>
 
       {/* Stats Strip */}
-      <section className="bg-emerald-600 py-8">
+      <section className="bg-primary py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center text-white">
             <div>
               <div className="text-2xl font-extrabold">3</div>
-              <div className="text-xs text-emerald-200">Counties Served</div>
+              <div className="text-xs text-blue-200">Counties Served</div>
             </div>
             <div>
               <div className="text-2xl font-extrabold">9+</div>
-              <div className="text-xs text-emerald-200">Communities</div>
+              <div className="text-xs text-blue-200">Communities</div>
             </div>
             <div>
               <div className="text-2xl font-extrabold">2021</div>
-              <div className="text-xs text-emerald-200">Serving Ohio Since</div>
+              <div className="text-xs text-blue-200">Serving Ohio Since</div>
             </div>
             <div>
               <div className="text-2xl font-extrabold">24hr</div>
-              <div className="text-xs text-emerald-200">Emergency Response</div>
+              <div className="text-xs text-blue-200">Emergency Response</div>
             </div>
           </div>
         </div>
@@ -95,7 +95,7 @@ export default function ServiceAreasPage() {
               <Card key={area} className="bg-slate-50 border-0 hover:shadow-md transition-shadow">
                 <CardContent className="p-5">
                   <div className="flex items-start gap-3">
-                    <div className="w-9 h-9 rounded-lg bg-emerald-100 flex items-center justify-center text-emerald-600 flex-shrink-0">
+                    <div className="w-9 h-9 rounded-lg bg-secondary/10 flex items-center justify-center text-secondary flex-shrink-0">
                       <MapPin className="w-5 h-5" />
                     </div>
                     <div>
@@ -117,7 +117,7 @@ export default function ServiceAreasPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
-              <Badge className="mb-3 bg-emerald-100 text-emerald-700 border-0 text-xs">Why Local Matters</Badge>
+              <Badge className="mb-3 bg-secondary/10 text-primary border-0 text-xs">Why Local Matters</Badge>
               <h2 className="text-3xl font-bold text-slate-900 mb-4">
                 We Know Northeast Ohio
               </h2>
@@ -132,7 +132,7 @@ export default function ServiceAreasPage() {
                   "Established relationships with local inspectors",
                 ].map((item) => (
                   <div key={item} className="flex items-start gap-3">
-                    <CheckCircle className="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5" />
+                    <CheckCircle className="w-5 h-5 text-secondary flex-shrink-0 mt-0.5" />
                     <span className="text-sm text-slate-600">{item}</span>
                   </div>
                 ))}
@@ -157,7 +157,7 @@ export default function ServiceAreasPage() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a href="tel:3309793930">
-              <div className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-8 py-3 rounded-lg transition-colors">
+              <div className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-white font-bold px-8 py-3 rounded-lg transition-colors">
                 <Phone className="w-5 h-5" />
                 Call (330) 979-3930
               </div>

@@ -31,7 +31,7 @@ export default function TeamPage() {
       {/* Hero */}
       <section className="bg-slate-900 text-white py-16 md:py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <Badge className="mb-4 bg-emerald-600 text-white border-0">Meet the Team</Badge>
+          <Badge className="mb-4 bg-primary text-white border-0">Meet the Team</Badge>
           <h1 className="text-4xl md:text-5xl font-extrabold mb-4">
             Real People. Real Work.
           </h1>
@@ -42,7 +42,7 @@ export default function TeamPage() {
       </section>
 
       {/* Values Strip */}
-      <section className="bg-emerald-600 py-8">
+      <section className="bg-primary py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center text-white">
             {[
@@ -53,7 +53,7 @@ export default function TeamPage() {
             ].map((item) => (
               <div key={item.label}>
                 <div className="font-bold text-lg">{item.label}</div>
-                <div className="text-xs text-emerald-200">{item.sub}</div>
+                <div className="text-xs text-blue-200">{item.sub}</div>
               </div>
             ))}
           </div>
@@ -71,7 +71,7 @@ export default function TeamPage() {
                 </div>
                 <div>
                   <h2 className="font-bold text-2xl text-slate-900 mb-0.5">{member.name}</h2>
-                  <p className="text-emerald-600 font-semibold text-sm mb-3">{member.role}</p>
+                  <p className="text-secondary font-semibold text-sm mb-3">{member.role}</p>
                   <p className="text-slate-600 leading-relaxed">{member.bio}</p>
                 </div>
               </div>
@@ -116,12 +116,12 @@ export default function TeamPage() {
       </section>
 
       {/* CTA */}
-      <section className="bg-emerald-600 py-14">
+      <section className="bg-primary py-14">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
           <h2 className="text-3xl font-bold mb-4">Ready to Work With Us?</h2>
-          <p className="text-emerald-100 text-lg mb-8">Give us a call — we&apos;d love to help with your septic or excavation project.</p>
+          <p className="text-blue-100 text-lg mb-8">Give us a call — we&apos;d love to help with your septic or excavation project.</p>
           <a href={`tel:${COMPANY.phone}`}>
-            <div className="inline-flex items-center gap-2 bg-white text-emerald-700 hover:bg-emerald-50 font-bold text-lg px-10 py-3 rounded-lg transition-colors">
+            <div className="inline-flex items-center gap-2 bg-white text-primary hover:bg-secondary/10 font-bold text-lg px-10 py-3 rounded-lg transition-colors">
               <Phone className="w-5 h-5" />
               Call {COMPANY.phone}
             </div>

@@ -128,7 +128,7 @@ export default function PricingPage() {
       <section className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mb-10">
-            <Badge className="mb-3 bg-emerald-100 text-emerald-700 border-0 text-xs">Septic Services</Badge>
+            <Badge className="mb-3 bg-secondary/10 text-primary border-0 text-xs">Septic Services</Badge>
             <h2 className="text-3xl font-bold text-slate-900 mb-2">Septic System Pricing</h2>
             <p className="text-slate-600">Typical cost ranges for Warren, Ohio and surrounding Trumbull County, 2026.</p>
           </div>
@@ -145,7 +145,7 @@ export default function PricingPage() {
                       <p className="text-sm text-slate-600">{item.notes}</p>
                     </div>
                     <div className="sm:text-right flex-shrink-0">
-                      <div className="text-xl font-extrabold text-emerald-600">{item.range}</div>
+                      <div className="text-xl font-extrabold text-secondary">{item.range}</div>
                     </div>
                   </div>
                 </CardContent>
@@ -234,15 +234,15 @@ export default function PricingPage() {
       </section>
 
       {/* CTA */}
-      <section className="bg-emerald-600 py-14">
+      <section className="bg-primary py-14">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
           <h2 className="text-3xl font-bold mb-4">Get an Exact Price for Your Project</h2>
-          <p className="text-emerald-100 text-lg mb-8 max-w-2xl mx-auto">
+          <p className="text-blue-100 text-lg mb-8 max-w-2xl mx-auto">
             The ranges above are a starting point. For an accurate quote, call or fill out our form — we&apos;ll come to your property and give you a real number.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a href={`tel:${COMPANY.phone}`}>
-              <Button size="lg" className="gap-2 bg-white text-emerald-700 hover:bg-emerald-50 font-bold text-lg px-10">
+              <Button size="lg" className="gap-2 bg-white text-primary hover:bg-secondary/10 font-bold text-lg px-10">
                 <Phone className="w-5 h-5" />
                 Call {COMPANY.phone}
               </Button>
@@ -253,7 +253,7 @@ export default function PricingPage() {
               </Button>
             </Link>
           </div>
-          <p className="text-sm text-emerald-200 mt-4">Free on-site estimates. No obligation.</p>
+          <p className="text-sm text-blue-200 mt-4">Free on-site estimates. No obligation.</p>
         </div>
       </section>
     </>

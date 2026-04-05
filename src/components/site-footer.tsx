@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import Image from "next/image";
 import { Phone, MapPin, Mail } from "lucide-react";
 import { COMPANY, SERVICES, SERVICE_AREAS } from "@/lib/data";
 
@@ -9,11 +12,15 @@ export function SiteFooter() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Company Info */}
           <div className="lg:col-span-1">
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-9 h-9 rounded-lg bg-primary flex items-center justify-center">
-                <span className="text-white font-bold text-sm">S&P</span>
-              </div>
-              <span className="font-bold text-white text-base">
+            <div className="flex items-center gap-3 mb-4">
+              <Image
+                src="/sp-septic-logo.jpg"
+                alt="S&P Septic and Excavating logo"
+                width={48}
+                height={48}
+                className="object-contain"
+              />
+              <span className="font-bold text-white text-base leading-tight block pt-1">
                 {COMPANY.name}
               </span>
             </div>

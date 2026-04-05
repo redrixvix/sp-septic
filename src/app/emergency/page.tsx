@@ -185,7 +185,7 @@ export default function EmergencyPage() {
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Link href="/contact">
-              <Button size="lg" className="gap-2 bg-emerald-600 hover:bg-emerald-700 font-semibold">
+              <Button size="lg" className="gap-2 bg-primary hover:bg-primary/90 font-semibold">
                 Contact Form <ArrowRight className="w-4 h-4" />
               </Button>
             </Link>
@@ -209,7 +209,7 @@ export default function EmergencyPage() {
               { icon: AlertTriangle, label: "Emergency Service" },
             ].map((item) => (
               <div key={item.label} className="flex flex-col items-center gap-2">
-                <item.icon className="w-6 h-6 text-emerald-400" />
+                <item.icon className="w-6 h-6 text-primary" />
                 <span className="text-sm font-semibold">{item.label}</span>
               </div>
             ))}

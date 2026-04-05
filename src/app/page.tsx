@@ -50,7 +50,7 @@ export default function HomePage() {
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28">
           <div className="max-w-3xl">
             <div className="flex flex-wrap gap-2 mb-5">
-              <Badge className="bg-emerald-600/20 text-emerald-300 border-emerald-500/30 hover:bg-emerald-600/20 text-xs font-medium backdrop-blur-sm">
+              <Badge className="text-secondary/20 text-blue-200 border-secondary/30 hover:text-secondary/20 text-xs font-medium backdrop-blur-sm">
                 BBB Accredited — A+ Rating
               </Badge>
               <Badge className="bg-white/10 text-white border-white/20 hover:bg-white/10 text-xs backdrop-blur-sm">
@@ -63,7 +63,7 @@ export default function HomePage() {
 
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight tracking-tight mb-6">
               Septic &amp; Excavating{" "}
-              <span className="text-emerald-400">Done Right</span>
+              <span className="text-primary">Done Right</span>
               <br />
               Every Time
             </h1>
@@ -74,13 +74,13 @@ export default function HomePage() {
 
             <div className="flex flex-col sm:flex-row gap-4 mb-10">
               <a href={`tel:${COMPANY.phone}`} className="inline-block">
-                <Button size="lg" className="gap-2 text-base w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 font-bold shadow-lg shadow-emerald-900/30">
+                <Button size="lg" className="gap-2 text-base w-full sm:w-auto bg-primary hover:bg-primary/90 font-bold shadow-lg shadow-primary/20">
                   <Phone className="w-5 h-5" />
                   Call {COMPANY.phone}
                 </Button>
               </a>
               <Link href="/contact">
-                <Button size="lg" className="gap-2 text-base w-full sm:w-auto bg-white text-slate-900 hover:bg-slate-100 font-bold shadow-lg">
+                <Button size="lg" className="gap-2 text-base w-full sm:w-auto bg-secondary text-white hover:bg-slate-100 font-bold shadow-lg">
                   Get Free Estimate <ArrowRight className="w-4 h-4" />
                 </Button>
               </Link>
@@ -94,7 +94,7 @@ export default function HomePage() {
                 { icon: CheckCircle, text: "Work Guaranteed" },
               ].map(({ icon: Icon, text }) => (
                 <div key={text} className="flex items-center gap-2">
-                  <Icon className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+                  <Icon className="w-4 h-4 text-primary flex-shrink-0" />
                   <span className="text-slate-300">{text}</span>
                 </div>
               ))}
@@ -104,7 +104,7 @@ export default function HomePage() {
       </section>
 
       {/* ── HOW IT WORKS STRIP ── */}
-      <section className="bg-emerald-600 py-8">
+      <section className="bg-primary py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
             {PROCESS_STEPS.map((step, i) => (
@@ -114,7 +114,7 @@ export default function HomePage() {
                 </div>
                 <div>
                   <div className="text-white font-bold text-sm">{step.label}</div>
-                  <div className="text-emerald-100 text-xs mt-0.5 leading-snug">{step.desc}</div>
+                  <div className="text-blue-100 text-xs mt-0.5 leading-snug">{step.desc}</div>
                 </div>
               </div>
             ))}
@@ -146,7 +146,7 @@ export default function HomePage() {
       <section className="py-16 md:py-24 bg-slate-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <Badge className="mb-3 bg-emerald-100 text-emerald-700 border-0 text-xs">What We Do</Badge>
+            <Badge className="mb-3 bg-primary/10 text-primary border-0 text-xs">What We Do</Badge>
             <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
               Full-Service Septic &amp; Excavation
             </h2>
@@ -159,10 +159,10 @@ export default function HomePage() {
             {SERVICES.map((service) => (
               <Card
                 key={service.title}
-                className="group hover:shadow-xl transition-all duration-250 border-slate-200 hover:border-emerald-300 bg-white"
+                className="group hover:shadow-xl transition-all duration-250 border-slate-200 hover:border-primary bg-white"
               >
                 <CardContent className="p-6">
-                  <div className="w-12 h-12 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600 mb-4 group-hover:bg-emerald-600 group-hover:text-white transition-colors duration-200">
+                  <div className="w-12 h-12 rounded-xl bg-secondary/10 flex items-center justify-center text-secondary mb-4 group-hover:bg-primary group-hover:text-white transition-colors duration-200">
                     <ServiceIcon name={service.icon} />
                   </div>
                   <h3 className="font-bold text-lg text-slate-900 mb-2">{service.title}</h3>
@@ -170,7 +170,7 @@ export default function HomePage() {
                   <ul className="space-y-1.5">
                     {service.features.map((f) => (
                       <li key={f} className="flex items-center gap-2 text-xs text-slate-500">
-                        <svg className="w-3 h-3 text-emerald-500 flex-shrink-0" fill="currentColor" viewBox="0 0 16 16">
+                        <svg className="w-3 h-3 text-primary flex-shrink-0" fill="currentColor" viewBox="0 0 16 16">
                           <path d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.75.75 0 0 1 1.06-1.06L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0z" />
                         </svg>
                         {f}
@@ -184,7 +184,7 @@ export default function HomePage() {
 
           <div className="text-center mt-10">
             <Link href="/services">
-              <Button size="lg" className="gap-2 bg-emerald-600 hover:bg-emerald-700 font-bold">
+              <Button size="lg" className="gap-2 bg-primary hover:bg-primary/90 font-bold">
                 View All Services <ChevronRight className="w-4 h-4" />
               </Button>
             </Link>
@@ -197,7 +197,7 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-12 items-start">
             <div>
-              <Badge className="mb-3 bg-emerald-100 text-emerald-700 border-0 text-xs">Why Choose Us</Badge>
+              <Badge className="mb-3 bg-primary/10 text-primary border-0 text-xs">Why Choose Us</Badge>
               <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
                 Warren, Ohio Trusts S&amp;P
               </h2>
@@ -207,7 +207,7 @@ export default function HomePage() {
               <div className="space-y-5">
                 {WHY_CHOOSE_US.map((item) => (
                   <div key={item.title} className="flex gap-4">
-                    <div className="w-10 h-10 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-600 flex-shrink-0">
+                    <div className="w-10 h-10 rounded-lg bg-secondary/10 flex items-center justify-center text-secondary flex-shrink-0">
                       <WhyIcon name={item.icon} />
                     </div>
                     <div>
@@ -235,24 +235,24 @@ export default function HomePage() {
                 <hr className="border-slate-700 mb-6" />
                 <div className="space-y-3 mb-8">
                   <div className="flex items-center gap-3 text-sm text-slate-300">
-                    <CheckCircle className="w-4 h-4 text-emerald-400" />
+                    <CheckCircle className="w-4 h-4 text-primary" />
                     Free on-site estimates
                   </div>
                   <div className="flex items-center gap-3 text-sm text-slate-300">
-                    <CheckCircle className="w-4 h-4 text-emerald-400" />
+                    <CheckCircle className="w-4 h-4 text-primary" />
                     Upfront, honest pricing
                   </div>
                   <div className="flex items-center gap-3 text-sm text-slate-300">
-                    <CheckCircle className="w-4 h-4 text-emerald-400" />
+                    <CheckCircle className="w-4 h-4 text-primary" />
                     All work warranted
                   </div>
                   <div className="flex items-center gap-3 text-sm text-slate-300">
-                    <CheckCircle className="w-4 h-4 text-emerald-400" />
+                    <CheckCircle className="w-4 h-4 text-primary" />
                     Licensed in Ohio
                   </div>
                 </div>
                 <a href={`tel:${COMPANY.phone}`} className="block mb-3">
-                  <Button size="lg" className="w-full gap-2 bg-emerald-600 hover:bg-emerald-700 font-bold text-lg">
+                  <Button size="lg" className="w-full gap-2 bg-primary hover:bg-primary/90 font-bold text-lg">
                     <Phone className="w-5 h-5" />
                     {COMPANY.phone}
                   </Button>
@@ -262,7 +262,7 @@ export default function HomePage() {
                   <span>Mon–Sat, 7AM–7PM</span>
                 </div>
                 <div className="mt-5 pt-5 border-t border-slate-700 flex items-start gap-3">
-                  <MapPin className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
+                  <MapPin className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
                   <span className="text-xs text-slate-400">
                     {COMPANY.address}, {COMPANY.city}, {COMPANY.state} {COMPANY.zip}
                   </span>
@@ -293,7 +293,7 @@ export default function HomePage() {
           </div>
           <div className="text-center mt-8">
             <Link href="/gallery">
-              <Button size="lg" variant="outline" className="border-emerald-500 text-emerald-400 hover:bg-emerald-950 hover:text-emerald-300 font-bold">
+              <Button size="lg" variant="outline" className="border-primary text-primary hover:bg-primary/5 hover:text-blue-200 font-bold">
                 View Full Gallery <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
             </Link>
@@ -305,13 +305,13 @@ export default function HomePage() {
       <section className="py-16 md:py-24 bg-slate-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <Badge className="mb-3 bg-amber-100 text-amber-700 border-0 text-xs">Customer Reviews</Badge>
+            <Badge className="mb-3 bg-amber-100 text-primary border-0 text-xs">Customer Reviews</Badge>
             <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-3">
               What Neighbors Are Saying
             </h2>
             <div className="flex items-center justify-center gap-1">
               {Array.from({ length: 5 }).map((_, i) => (
-                <Star key={i} className="w-5 h-5 fill-amber-400 text-amber-400" />
+                <Star key={i} className="w-5 h-5 fill-primary text-primary" />
               ))}
               <span className="text-sm text-slate-500 ml-2">5.0 average · Ohio customers</span>
             </div>
@@ -323,12 +323,12 @@ export default function HomePage() {
                 <CardContent className="p-6">
                   <div className="flex gap-1 mb-3">
                     {Array.from({ length: t.rating }).map((_, i) => (
-                      <Star key={i} className="w-4 h-4 fill-amber-400 text-amber-400" />
+                      <Star key={i} className="w-4 h-4 fill-primary text-primary" />
                     ))}
                   </div>
                   <p className="text-slate-700 italic mb-4 leading-relaxed">&ldquo;{t.text}&rdquo;</p>
                   <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 font-bold text-sm">
+                    <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-sm">
                       {t.name.charAt(0)}
                     </div>
                     <div>
@@ -350,7 +350,7 @@ export default function HomePage() {
       <section className="py-16 md:py-20 bg-white border-t">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8">
-            <Badge className="mb-3 bg-emerald-100 text-emerald-700 border-0 text-xs">Service Area</Badge>
+            <Badge className="mb-3 bg-primary/10 text-primary border-0 text-xs">Service Area</Badge>
             <h2 className="text-3xl font-bold text-slate-900 mb-3">Proudly Serving Northeast Ohio</h2>
             <p className="text-slate-600">
               From Warren to Niles, Cortland to Girard — we&apos;re your neighbors, ready to help.
@@ -363,7 +363,7 @@ export default function HomePage() {
                 variant="secondary"
                 className="text-sm px-4 py-1.5 bg-slate-100 text-slate-700 hover:bg-slate-100 cursor-default"
               >
-                <MapPin className="w-3 h-3 mr-1.5 text-emerald-500" />
+                <MapPin className="w-3 h-3 mr-1.5 text-primary" />
                 {area}
               </Badge>
             ))}
@@ -372,16 +372,16 @@ export default function HomePage() {
       </section>
 
       {/* ── FINAL CTA ── */}
-      <section className="bg-emerald-600 py-16">
+      <section className="bg-primary py-16">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
           <Calendar className="w-12 h-12 mx-auto mb-4 opacity-80" />
           <h2 className="text-3xl md:text-4xl font-bold mb-4"> septic Problem? Don&apos;t Wait.</h2>
-          <p className="text-emerald-100 text-lg mb-8 max-w-2xl mx-auto">
+          <p className="text-blue-100 text-lg mb-8 max-w-2xl mx-auto">
             A small septic issue becomes a big, expensive emergency fast. Call S&P today — we&apos;re ready to help, starting now.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a href={`tel:${COMPANY.phone}`}>
-              <Button size="lg" className="gap-2 bg-white text-emerald-700 hover:bg-emerald-50 font-bold text-lg px-10 shadow-xl">
+              <Button size="lg" className="gap-2 bg-white text-primary hover:bg-secondary/10 font-bold text-lg px-10 shadow-xl">
                 <Phone className="w-5 h-5" />
                 Call {COMPANY.phone}
               </Button>

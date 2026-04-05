@@ -17,7 +17,7 @@ const OPTIONS = [
     icon: DollarSign,
     title: "Cash & Check",
     desc: "Cash and check payments receive straightforward pricing with no processing fees.",
-    color: "bg-emerald-100 text-emerald-600",
+    color: "bg-secondary/10 text-secondary",
   },
   {
     icon: CheckCircle,
@@ -66,7 +66,7 @@ export default function FinancingPage() {
       {/* Hero */}
       <section className="bg-slate-900 text-white py-16 md:py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <Badge className="mb-4 bg-emerald-600 text-white border-0">Financing & Payments</Badge>
+          <Badge className="mb-4 bg-primary text-white border-0">Financing & Payments</Badge>
           <h1 className="text-4xl md:text-5xl font-extrabold mb-4">
             Making Your Project Affordable
           </h1>
@@ -106,7 +106,7 @@ export default function FinancingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
-              <Badge className="mb-3 bg-amber-100 text-amber-700 border-0 text-xs">The Reality</Badge>
+              <Badge className="mb-3 bg-amber-100 text-primary border-0 text-xs">The Reality</Badge>
               <h2 className="text-3xl font-bold text-slate-900 mb-4">
                 Why Septic Work Costs What It Costs
               </h2>
@@ -115,28 +115,28 @@ export default function FinancingPage() {
               </p>
               <div className="space-y-4">
                 <div className="flex gap-3">
-                  <CheckCircle className="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5" />
+                  <CheckCircle className="w-5 h-5 text-secondary flex-shrink-0 mt-0.5" />
                   <div>
                     <h4 className="font-semibold text-slate-900">Permits & Inspections</h4>
                     <p className="text-sm text-slate-600">Ohio health department permits, site evaluations, and required inspections add to the cost — but they also protect you.</p>
                   </div>
                 </div>
                 <div className="flex gap-3">
-                  <CheckCircle className="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5" />
+                  <CheckCircle className="w-5 h-5 text-secondary flex-shrink-0 mt-0.5" />
                   <div>
                     <h4 className="font-semibold text-slate-900">Equipment & Labor</h4>
                     <p className="text-sm text-slate-600">Heavy equipment, trained operators, and licensed installers don&apos;t come cheap — but they also don&apos;t come with callbacks.</p>
                   </div>
                 </div>
                 <div className="flex gap-3">
-                  <CheckCircle className="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5" />
+                  <CheckCircle className="w-5 h-5 text-secondary flex-shrink-0 mt-0.5" />
                   <div>
                     <h4 className="font-semibold text-slate-900">Quality Materials</h4>
                     <p className="text-sm text-slate-600">Proper gravel, quality piping, and durable tanks cost more upfront — and last significantly longer.</p>
                   </div>
                 </div>
                 <div className="flex gap-3">
-                  <CheckCircle className="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5" />
+                  <CheckCircle className="w-5 h-5 text-secondary flex-shrink-0 mt-0.5" />
                   <div>
                     <h4 className="font-semibold text-slate-900">The Cost of Doing It Wrong</h4>
                     <p className="text-sm text-slate-600">A failed DIY or cut-rate job can cost $20,000–$40,000 to fix. Doing it right the first time is always cheaper.</p>
@@ -144,38 +144,38 @@ export default function FinancingPage() {
                 </div>
               </div>
             </div>
-            <Card className="bg-emerald-600 border-0 text-white">
+            <Card className="bg-primary border-0 text-white">
               <CardContent className="p-8">
                 <h3 className="font-bold text-xl mb-4">Get an Exact Price for Your Project</h3>
-                <p className="text-emerald-100 mb-6 leading-relaxed">
+                <p className="text-blue-100 mb-6 leading-relaxed">
                   Every project is different. The only way to know your real cost is to get a free on-site estimate. We&apos;ll assess your property and give you an honest number — before any work begins.
                 </p>
                 <div className="space-y-3 mb-8">
-                  <div className="flex items-center gap-2 text-sm text-emerald-100">
-                    <CheckCircle className="w-4 h-4 text-emerald-300" />
+                  <div className="flex items-center gap-2 text-sm text-blue-100">
+                    <CheckCircle className="w-4 h-4 text-blue-300" />
                     Free on-site assessment
                   </div>
-                  <div className="flex items-center gap-2 text-sm text-emerald-100">
-                    <CheckCircle className="w-4 h-4 text-emerald-300" />
+                  <div className="flex items-center gap-2 text-sm text-blue-100">
+                    <CheckCircle className="w-4 h-4 text-blue-300" />
                     Written estimate — no obligation
                   </div>
-                  <div className="flex items-center gap-2 text-sm text-emerald-100">
-                    <CheckCircle className="w-4 h-4 text-emerald-300" />
+                  <div className="flex items-center gap-2 text-sm text-blue-100">
+                    <CheckCircle className="w-4 h-4 text-blue-300" />
                     Price guaranteed before work starts
                   </div>
-                  <div className="flex items-center gap-2 text-sm text-emerald-100">
-                    <CheckCircle className="w-4 h-4 text-emerald-300" />
+                  <div className="flex items-center gap-2 text-sm text-blue-100">
+                    <CheckCircle className="w-4 h-4 text-blue-300" />
                     No financing pressure
                   </div>
                 </div>
                 <a href={`tel:${COMPANY.phone}`} className="block">
-                  <Button size="lg" className="w-full gap-2 bg-white text-emerald-700 hover:bg-emerald-50 font-bold">
+                  <Button size="lg" className="w-full gap-2 bg-white text-primary hover:bg-secondary/10 font-bold">
                     <Phone className="w-5 h-5" />
                     Call {COMPANY.phone}
                   </Button>
                 </a>
                 <div className="mt-4 text-center">
-                  <Link href="/contact" className="text-sm text-emerald-200 hover:text-white flex items-center justify-center gap-1">
+                  <Link href="/contact" className="text-sm text-blue-200 hover:text-white flex items-center justify-center gap-1">
                     Or use our online form <ArrowRight className="w-3 h-3" />
                   </Link>
                 </div>
@@ -213,7 +213,7 @@ export default function FinancingPage() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a href={`tel:${COMPANY.phone}`}>
-              <Button size="lg" className="gap-2 bg-emerald-600 hover:bg-emerald-700 font-bold text-lg px-8">
+              <Button size="lg" className="gap-2 bg-primary hover:bg-primary/90 font-bold text-lg px-8">
                 <Phone className="w-5 h-5" />
                 Call {COMPANY.phone}
               </Button>

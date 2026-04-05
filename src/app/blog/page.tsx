@@ -82,7 +82,7 @@ export default function BlogPage() {
       {/* Hero */}
       <section className="bg-slate-900 text-white py-16 md:py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <Badge className="mb-4 bg-emerald-600 text-white border-0">Septic Education</Badge>
+          <Badge className="mb-4 bg-primary text-white border-0">Septic Education</Badge>
           <h1 className="text-4xl md:text-5xl font-extrabold mb-4">
             Septic &amp; Excavation Blog
           </h1>
@@ -101,13 +101,13 @@ export default function BlogPage() {
               <Card key={article.slug} className="bg-slate-50 border-0 overflow-hidden hover:shadow-md transition-shadow">
                 <CardContent className="p-6">
                   <div className="flex items-center gap-3 mb-3">
-                    <Badge className="bg-emerald-100 text-emerald-700 border-0 text-xs">{article.category}</Badge>
+                    <Badge className="bg-secondary/10 text-primary border-0 text-xs">{article.category}</Badge>
                     <span className="text-xs text-slate-400 flex items-center gap-1">
                       <Clock className="w-3 h-3" />
                       {article.readTime}
                     </span>
                   </div>
-                  <h3 className="font-bold text-lg text-slate-900 mb-2 hover:text-emerald-600 transition-colors cursor-pointer">
+                  <h3 className="font-bold text-lg text-slate-900 mb-2 hover:text-secondary transition-colors cursor-pointer">
                     {article.title}
                   </h3>
                   <p className="text-sm text-slate-600 mb-4 leading-relaxed">{article.excerpt}</p>
@@ -118,7 +118,7 @@ export default function BlogPage() {
                     </span>
                     <Link
                       href={`/blog/${article.slug}`}
-                      className="text-sm font-semibold text-emerald-600 hover:text-emerald-700 flex items-center gap-1"
+                      className="text-sm font-semibold text-secondary hover:text-primary flex items-center gap-1"
                     >
                       Read More <ArrowRight className="w-3 h-3" />
                     </Link>
@@ -145,7 +145,7 @@ export default function BlogPage() {
                       {article.readTime}
                     </span>
                   </div>
-                  <h3 className="font-bold text-slate-900 mb-2 leading-snug hover:text-emerald-600 transition-colors cursor-pointer">
+                  <h3 className="font-bold text-slate-900 mb-2 leading-snug hover:text-secondary transition-colors cursor-pointer">
                     {article.title}
                   </h3>
                   <p className="text-sm text-slate-600 mb-4 leading-relaxed line-clamp-3">
@@ -158,7 +158,7 @@ export default function BlogPage() {
                     </span>
                     <Link
                       href={`/blog/${article.slug}`}
-                      className="text-sm font-semibold text-emerald-600 hover:text-emerald-700 flex items-center gap-1"
+                      className="text-sm font-semibold text-secondary hover:text-primary flex items-center gap-1"
                     >
                       Read More <ArrowRight className="w-3 h-3" />
                     </Link>
@@ -171,23 +171,23 @@ export default function BlogPage() {
       </section>
 
       {/* Newsletter CTA */}
-      <section className="py-14 bg-emerald-600 text-white">
+      <section className="py-14 bg-primary text-white">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-2xl font-bold mb-3">Get Tips Straight to Your Inbox</h2>
-          <p className="text-emerald-100 mb-6">
+          <p className="text-blue-100 mb-6">
             Subscribe for seasonal septic maintenance reminders and honest advice — no spam, ever.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
             <input
               type="email"
               placeholder="your@email.com"
-              className="flex-1 h-11 rounded-lg px-4 text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-300"
+              className="flex-1 h-11 rounded-lg px-4 text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
             />
             <button className="h-11 px-6 bg-slate-900 hover:bg-slate-800 text-white font-semibold rounded-lg transition-colors">
               Subscribe
             </button>
           </div>
-          <p className="text-xs text-emerald-200 mt-3">No spam. Unsubscribe anytime.</p>
+          <p className="text-xs text-blue-200 mt-3">No spam. Unsubscribe anytime.</p>
         </div>
       </section>
     </>

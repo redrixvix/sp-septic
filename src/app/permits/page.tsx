@@ -76,7 +76,7 @@ export default function PermitsPage() {
       {/* Hero */}
       <section className="bg-slate-900 text-white py-16 md:py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <Badge className="mb-4 bg-emerald-600 text-white border-0">Ohio Regulations</Badge>
+          <Badge className="mb-4 bg-primary text-white border-0">Ohio Regulations</Badge>
           <h1 className="text-4xl md:text-5xl font-extrabold mb-4">
             Ohio Septic Permitting Guide
           </h1>
@@ -90,7 +90,7 @@ export default function PermitsPage() {
       <section className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <Badge className="mb-3 bg-emerald-100 text-emerald-700 border-0 text-xs">We Handle the Paperwork</Badge>
+            <Badge className="mb-3 bg-secondary/10 text-primary border-0 text-xs">We Handle the Paperwork</Badge>
             <h2 className="text-3xl font-bold text-slate-900 mb-3">
               Permit Handling Is Part of Our Service
             </h2>
@@ -118,7 +118,7 @@ export default function PermitsPage() {
             ].map((item) => (
               <Card key={item.step} className="bg-slate-50 border-0">
                 <CardContent className="p-6 text-center">
-                  <div className="w-12 h-12 rounded-full bg-emerald-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">
+                  <div className="w-12 h-12 rounded-full bg-primary text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">
                     {item.step}
                   </div>
                   <h3 className="font-bold text-slate-900 mb-2">{item.title}</h3>
@@ -148,7 +148,7 @@ export default function PermitsPage() {
                       <h3 className="font-bold text-xl text-slate-900 mb-2">{permit.title}</h3>
                       <p className="text-slate-600 mb-4">{permit.desc}</p>
                       <a href="/contact">
-                        <Button size="sm" className="gap-2 bg-emerald-600 hover:bg-emerald-700">
+                        <Button size="sm" className="gap-2 bg-primary hover:bg-primary/90">
                           Get Started <ArrowRight className="w-3 h-3" />
                         </Button>
                       </a>
@@ -158,7 +158,7 @@ export default function PermitsPage() {
                       <ul className="space-y-1.5">
                         {permit.steps.map((step) => (
                           <li key={step} className="flex items-start gap-2 text-sm text-slate-600">
-                            <CheckCircle className="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5" />
+                            <CheckCircle className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
                             {step}
                           </li>
                         ))}
@@ -188,13 +188,13 @@ export default function PermitsPage() {
                   <h3 className="font-bold text-slate-900 mb-3">{county.name}</h3>
                   <div className="space-y-2 text-sm text-slate-600">
                     <div className="flex items-start gap-2">
-                      <Phone className="w-4 h-4 text-emerald-600 flex-shrink-0 mt-0.5" />
-                      <a href={`tel:${county.phone.replace(/[^0-9]/g, "")}`} className="hover:text-emerald-600">
+                      <Phone className="w-4 h-4 text-secondary flex-shrink-0 mt-0.5" />
+                      <a href={`tel:${county.phone.replace(/[^0-9]/g, "")}`} className="hover:text-secondary">
                         {county.phone}
                       </a>
                     </div>
                     <div className="flex items-start gap-2">
-                      <MapPin className="w-4 h-4 text-emerald-600 flex-shrink-0 mt-0.5" />
+                      <MapPin className="w-4 h-4 text-secondary flex-shrink-0 mt-0.5" />
                       <span>{county.address}</span>
                     </div>
                   </div>
@@ -206,13 +206,13 @@ export default function PermitsPage() {
       </section>
 
       {/* Key Regulation */}
-      <section className="py-14 bg-emerald-700 text-white">
+      <section className="py-14 bg-primary/90 text-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-start gap-4">
-            <FileText className="w-10 h-10 text-emerald-300 flex-shrink-0" />
+            <FileText className="w-10 h-10 text-blue-300 flex-shrink-0" />
             <div>
               <h2 className="text-2xl font-bold mb-2">Important Ohio Regulation</h2>
-              <p className="text-emerald-100 leading-relaxed">
+              <p className="text-blue-100 leading-relaxed">
                 Ohio Administrative Code (OAC) Chapter 3701-36 governs septic systems throughout the state. Key requirements include minimum lot sizes for new systems, required separation distances from wells and water lines, soil evaluation standards, and mandatory inspection schedules. We are fully familiar with these regulations and design all systems to exceed them.
               </p>
             </div>
@@ -269,7 +269,7 @@ export default function PermitsPage() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a href={`tel:${COMPANY.phone}`}>
-              <div className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-lg px-10 py-3 rounded-lg transition-colors">
+              <div className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-white font-bold text-lg px-10 py-3 rounded-lg transition-colors">
                 <Phone className="w-5 h-5" />
                 Call {COMPANY.phone}
               </div>

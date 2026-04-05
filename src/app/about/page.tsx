@@ -71,7 +71,7 @@ export default function AboutPage() {
       {/* Hero */}
       <section className="bg-slate-900 text-white py-16 md:py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <Badge className="mb-4 bg-emerald-600 text-white border-0">About Us</Badge>
+          <Badge className="mb-4 bg-primary text-white border-0">About Us</Badge>
           <h1 className="text-4xl md:text-5xl font-extrabold mb-4">
             Your Local, Trusted Septic Experts
           </h1>
@@ -110,13 +110,13 @@ export default function AboutPage() {
                 <Card key={cred.title} className="bg-slate-50 border-0">
                   <CardContent className="p-5">
                     <div className="flex items-start gap-4">
-                      <div className="w-12 h-12 rounded-xl bg-emerald-100 flex items-center justify-center text-emerald-600 flex-shrink-0">
+                      <div className="w-12 h-12 rounded-xl bg-secondary/10 flex items-center justify-center text-secondary flex-shrink-0">
                         <cred.icon className="w-6 h-6" />
                       </div>
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-0.5">
                           <h4 className="font-bold text-slate-900">{cred.title}</h4>
-                          <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">
+                          <span className="text-xs font-bold text-secondary bg-secondary/10 px-2 py-0.5 rounded-full">
                             {cred.badge}
                           </span>
                         </div>
@@ -135,7 +135,7 @@ export default function AboutPage() {
       <section className="py-16 bg-slate-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <Badge className="mb-3 bg-emerald-100 text-emerald-700 border-0 text-xs">What We Stand For</Badge>
+            <Badge className="mb-3 bg-secondary/10 text-primary border-0 text-xs">What We Stand For</Badge>
             <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-3">
               How We Do Business
             </h2>
@@ -147,8 +147,8 @@ export default function AboutPage() {
             {VALUES.map((v) => (
               <Card key={v.title} className="bg-white border-0 shadow-sm text-center">
                 <CardContent className="p-6">
-                  <div className="w-12 h-12 rounded-full bg-emerald-100 flex items-center justify-center mx-auto mb-4">
-                    <CheckCircle className="w-6 h-6 text-emerald-600" />
+                  <div className="w-12 h-12 rounded-full bg-secondary/10 flex items-center justify-center mx-auto mb-4">
+                    <CheckCircle className="w-6 h-6 text-secondary" />
                   </div>
                   <h3 className="font-bold text-slate-900 mb-2">{v.title}</h3>
                   <p className="text-sm text-slate-600 leading-relaxed">{v.description}</p>
@@ -169,7 +169,7 @@ export default function AboutPage() {
             {MILESTONES.map((m, i) => (
               <div key={m.year} className="flex gap-6 relative">
                 <div className="flex flex-col items-center">
-                  <div className="w-16 h-16 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold text-sm flex-shrink-0 z-10">
+                  <div className="w-16 h-16 rounded-full bg-primary text-white flex items-center justify-center font-bold text-sm flex-shrink-0 z-10">
                     {m.year}
                   </div>
                   {i < MILESTONES.length - 1 && (
@@ -194,7 +194,7 @@ export default function AboutPage() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a href={`tel:${COMPANY.phone}`}>
-              <Button size="lg" className="gap-2 bg-emerald-600 hover:bg-emerald-700 font-bold text-lg px-8">
+              <Button size="lg" className="gap-2 bg-primary hover:bg-primary/90 font-bold text-lg px-8">
                 <Phone className="w-5 h-5" />
                 Call {COMPANY.phone}
               </Button>

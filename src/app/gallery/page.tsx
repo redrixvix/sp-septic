@@ -80,7 +80,7 @@ export default function GalleryPage() {
       {/* Hero */}
       <section className="bg-slate-900 text-white py-16 md:py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <Badge className="mb-4 bg-emerald-600 text-white border-0">Our Work</Badge>
+          <Badge className="mb-4 bg-primary text-white border-0">Our Work</Badge>
           <h1 className="text-4xl md:text-5xl font-extrabold mb-4">Project Gallery</h1>
           <p className="text-slate-300 text-lg max-w-2xl">
             Real work, real results. Browse septic installations, excavations, and repairs completed throughout Trumbull County and beyond.
@@ -93,19 +93,19 @@ export default function GalleryPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-wrap gap-8 justify-center text-center">
             <div>
-              <div className="text-3xl font-extrabold text-emerald-600">50+</div>
+              <div className="text-3xl font-extrabold text-secondary">50+</div>
               <div className="text-sm text-slate-500">Projects Completed</div>
             </div>
             <div>
-              <div className="text-3xl font-extrabold text-emerald-600">100%</div>
+              <div className="text-3xl font-extrabold text-secondary">100%</div>
               <div className="text-sm text-slate-500">Inspection Pass Rate</div>
             </div>
             <div>
-              <div className="text-3xl font-extrabold text-emerald-600">5+</div>
+              <div className="text-3xl font-extrabold text-secondary">5+</div>
               <div className="text-sm text-slate-500">Years Serving Ohio</div>
             </div>
             <div>
-              <div className="text-3xl font-extrabold text-emerald-600">0</div>
+              <div className="text-3xl font-extrabold text-secondary">0</div>
               <div className="text-sm text-slate-500">Comeback Calls</div>
             </div>
           </div>
@@ -134,7 +134,7 @@ export default function GalleryPage() {
                   </div>
                 </div>
                 <div className="p-5">
-                  <h3 className="font-bold text-slate-900 mb-1 group-hover:text-emerald-600 transition-colors">
+                  <h3 className="font-bold text-slate-900 mb-1 group-hover:text-secondary transition-colors">
                     {item.title}
                   </h3>
                   <p className="text-sm text-slate-600 mb-3 leading-relaxed">{item.description}</p>
@@ -159,7 +159,7 @@ export default function GalleryPage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a
               href="tel:3309793930"
-              className="inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-8 py-3 rounded-lg transition-colors"
+              className="inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-white font-semibold px-8 py-3 rounded-lg transition-colors"
             >
               Call (330) 979-3930
             </a>

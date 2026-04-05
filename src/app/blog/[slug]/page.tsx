@@ -53,7 +53,7 @@ export default async function BlogArticlePage({ params }: Props) {
             Back to Blog
           </Link>
           <div className="flex items-center gap-3 mb-4">
-            <Badge className="bg-emerald-600 text-white border-0 text-xs">
+            <Badge className="bg-primary text-white border-0 text-xs">
               {article.category}
             </Badge>
             <span className="text-slate-400 text-sm flex items-center gap-1">
@@ -74,7 +74,7 @@ export default async function BlogArticlePage({ params }: Props) {
       {/* Article Content */}
       <section className="py-12 bg-white">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-          <p className="text-lg text-slate-600 font-medium mb-8 leading-relaxed border-l-4 border-emerald-500 pl-4 italic">
+          <p className="text-lg text-slate-600 font-medium mb-8 leading-relaxed border-l-4 border-primary pl-4 italic">
             {article.excerpt}
           </p>
           <div
@@ -87,7 +87,7 @@ export default async function BlogArticlePage({ params }: Props) {
       </section>
 
       {/* CTA */}
-      <section className="py-12 bg-emerald-50 border-t">
+      <section className="py-12 bg-secondary/10 border-t">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h3 className="text-xl font-bold text-slate-900 mb-2">Have a Septic Problem?</h3>
           <p className="text-slate-600 mb-6">
@@ -95,7 +95,7 @@ export default async function BlogArticlePage({ params }: Props) {
           </p>
           <a
             href="tel:3309793930"
-            className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-8 py-3 rounded-lg transition-colors"
+            className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-white font-bold px-8 py-3 rounded-lg transition-colors"
           >
             Call (330) 979-3930
           </a>
@@ -115,12 +115,12 @@ export default async function BlogArticlePage({ params }: Props) {
                   className="block bg-white rounded-lg p-5 shadow-sm hover:shadow-md transition-shadow border border-slate-100"
                 >
                   <div className="flex items-center gap-2 mb-2">
-                    <Badge className="bg-emerald-100 text-emerald-700 border-0 text-xs">
+                    <Badge className="bg-secondary/10 text-primary border-0 text-xs">
                       {r.category}
                     </Badge>
                     <span className="text-xs text-slate-400">{r.readTime}</span>
                   </div>
-                  <h3 className="font-semibold text-slate-900 hover:text-emerald-600 transition-colors">
+                  <h3 className="font-semibold text-slate-900 hover:text-secondary transition-colors">
                     {r.title}
                   </h3>
                   <p className="text-sm text-slate-500 mt-1 line-clamp-2">{r.excerpt}</p>
