@@ -1,36 +1,67 @@
 import type { Metadata } from "next";
-import { Phone, Mail, MapPin, Shield, Award, Users } from "lucide-react";
+import Link from "next/link";
+import { Phone, MapPin, Shield, Award, Users, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { COMPANY } from "@/lib/data";
 
 export const metadata: Metadata = {
-  title: "About Us",
-  description: "Learn about S&P Septic and Excavating Inc. - a family-owned, BBB Accredited contractor serving Warren, Ohio.",
+  title: "About Us — S&P Septic and Excavating Inc.",
+  description:
+    "Learn about S&P Septic and Excavating Inc. — a family-owned, BBB Accredited contractor serving Warren, Ohio since 2021.",
 };
 
 const MILESTONES = [
-  { year: "2021", event: "Company founded in Warren, Ohio" },
-  { year: "2025", event: "BBB Accredited with A+ Rating achieved" },
-  { year: "Today", event: "Proudly serving Trumbull County and beyond" },
+  { year: "2021", event: "S&P Septic and Excavating Inc. founded in Warren, Ohio" },
+  { year: "2021–2024", event: "Grew to serve Trumbull, Mahoning, and Portage Counties" },
+  { year: "2025", event: "Earned BBB Accredited Business status with A+ Rating" },
+  { year: "2026", event: "50+ successful projects completed — growing every day" },
+];
+
+const CREDENTIALS = [
+  {
+    icon: Shield,
+    title: "BBB Accredited",
+    desc: "Accredited since August 2025 with an A+ Rating. Committed to BBB Standards for Trust.",
+    badge: "A+",
+  },
+  {
+    icon: Award,
+    title: "Ohio Licensed Contractor",
+    desc: "Fully licensed to perform septic and excavation work throughout the state of Ohio.",
+    badge: "Licensed",
+  },
+  {
+    icon: CheckCircle,
+    title: "Fully Insured",
+    desc: "Comprehensive general liability insurance protects your property during every job.",
+    badge: "Insured",
+  },
+  {
+    icon: Users,
+    title: "Family Owned & Operated",
+    desc: "We live and work in this community. Your project gets the personal attention it deserves.",
+    badge: "Local",
+  },
 ];
 
 const VALUES = [
   {
-    icon: Users,
-    title: "Family First",
-    description: "We treat every customer like family. Your home is our home, and your septic problem gets the same attention we'd give our own.",
+    title: "Honest Assessments",
+    description: "We tell you exactly what you need — not what costs the most. No upselling, no scare tactics.",
   },
   {
-    icon: Shield,
-    title: "Integrity Always",
-    description: "Upfront pricing, honest assessments, and no surprise charges. We tell you exactly what you need and why — not what costs the most.",
+    title: "Transparent Pricing",
+    description: "The quote we give is the price you pay. No surprise charges after the work begins.",
   },
   {
-    icon: Award,
-    title: "Quality Never Compromised",
-    description: "We use premium materials and proven installation methods. Your system is built to last decades, not just years.",
+    title: "Quality Materials",
+    description: "We use proven products and methods. Your system is built to last decades, not just seasons.",
+  },
+  {
+    title: "Respect for Your Property",
+    description: "We leave job sites clean and take care of your landscaping. Your home is our home.",
   },
 ];
 
@@ -45,102 +76,81 @@ export default function AboutPage() {
             Your Local, Trusted Septic Experts
           </h1>
           <p className="text-slate-300 text-lg max-w-2xl">
-            S&P Septic and Excavating Inc. is a family-owned contractor built on honest work and fair prices. We serve Warren, Ohio and the greater Trumbull County area.
+            Family-owned, licensed, and BBB Accredited. We&apos;ve served Warren, Ohio and the greater Trumbull County area since 2021.
           </p>
         </div>
       </section>
 
-      {/* Story */}
+      {/* Story Section */}
       <section className="py-16 md:py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
+          <div className="grid lg:grid-cols-2 gap-12 items-start">
             <div>
-              <h2 className="text-3xl font-bold text-slate-900 mb-4">Our Story</h2>
+              <h2 className="text-3xl font-bold text-slate-900 mb-6">Our Story</h2>
               <div className="space-y-4 text-slate-600 leading-relaxed">
                 <p>
-                  S&P Septic and Excavating Inc. was founded in 2021 with a simple mission: provide Warren, Ohio and surrounding communities with honest, reliable septic and excavation services at fair prices.
+                  S&P Septic and Excavating Inc. was founded in 2021 with a straightforward mission: provide Warren, Ohio and the surrounding communities with honest, reliable septic and excavation services at fair prices.
                 </p>
                 <p>
-                  As a family-owned and operated business, we understand that septic problems don&apos;t wait for convenient times. When your system fails, you need someone who will show up quickly, diagnose the problem accurately, and fix it right — the first time.
+                  As a family-owned and operated business, we understand that septic problems don&apos;t respect convenient timing. When your system fails, you need someone who shows up quickly, diagnoses the problem accurately, and fixes it right — the first time.
                 </p>
                 <p>
-                  In 2025, we earned our BBB Accredited Business status with an A+ rating — a reflection of our commitment to doing things the right way, on every job, every time.
+                  In August 2025, we earned our <strong>BBB Accredited Business</strong> status with an <strong>A+ Rating</strong> — a reflection of our commitment to doing things the right way, on every job, every time.
                 </p>
                 <p>
                   Whether you need a routine septic pumping, a complete new system installation, or emergency excavation work, you can count on S&P to deliver quality craftsmanship and genuine customer care.
                 </p>
               </div>
             </div>
-            <div className="space-y-6">
-              <Card className="bg-slate-50 border-0">
-                <CardContent className="p-6">
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-emerald-100 flex items-center justify-center text-emerald-600 flex-shrink-0">
-                      <MapPin className="w-6 h-6" />
+
+            {/* Credentials Grid */}
+            <div className="space-y-4">
+              <h3 className="font-bold text-slate-900 text-lg">Our Credentials</h3>
+              {CREDENTIALS.map((cred) => (
+                <Card key={cred.title} className="bg-slate-50 border-0">
+                  <CardContent className="p-5">
+                    <div className="flex items-start gap-4">
+                      <div className="w-12 h-12 rounded-xl bg-emerald-100 flex items-center justify-center text-emerald-600 flex-shrink-0">
+                        <cred.icon className="w-6 h-6" />
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-0.5">
+                          <h4 className="font-bold text-slate-900">{cred.title}</h4>
+                          <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">
+                            {cred.badge}
+                          </span>
+                        </div>
+                        <p className="text-sm text-slate-600">{cred.desc}</p>
+                      </div>
                     </div>
-                    <div>
-                      <h3 className="font-bold text-slate-900 mb-1">Location</h3>
-                      <p className="text-slate-600 text-sm">
-                        {COMPANY.address}<br />
-                        {COMPANY.city}, {COMPANY.state} {COMPANY.zip}<br />
-                        Trumbull County, Ohio
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-              <Card className="bg-slate-50 border-0">
-                <CardContent className="p-6">
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-emerald-100 flex items-center justify-center text-emerald-600 flex-shrink-0">
-                      <Phone className="w-6 h-6" />
-                    </div>
-                    <div>
-                      <h3 className="font-bold text-slate-900 mb-1">Phone</h3>
-                      <a href={`tel:${COMPANY.phone}`} className="text-emerald-600 font-semibold hover:underline">
-                        {COMPANY.phone}
-                      </a>
-                      <p className="text-slate-500 text-xs mt-1">Mon–Sat, 7AM–7PM</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-              <Card className="bg-slate-50 border-0">
-                <CardContent className="p-6">
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-emerald-100 flex items-center justify-center text-emerald-600 flex-shrink-0">
-                      <Shield className="w-6 h-6" />
-                    </div>
-                    <div>
-                      <h3 className="font-bold text-slate-900 mb-1">BBB Accredited A+</h3>
-                      <p className="text-slate-600 text-sm">
-                        Accredited since August 2025. Committed to BBB Standards for Trust.
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+              ))}
             </div>
           </div>
         </div>
       </section>
 
-      {/* Values */}
-      <section className="py-16 md:py-24 bg-slate-50">
+      {/* Values Section */}
+      <section className="py-16 bg-slate-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
-              What We Stand For
+            <Badge className="mb-3 bg-emerald-100 text-emerald-700 border-0 text-xs">What We Stand For</Badge>
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-3">
+              How We Do Business
             </h2>
+            <p className="text-slate-600 max-w-2xl mx-auto">
+              These aren&apos;t just values on a wall — they&apos;re how we actually operate on every single job.
+            </p>
           </div>
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {VALUES.map((v) => (
-              <Card key={v.title} className="bg-white border-0 shadow-sm">
-                <CardContent className="p-6 text-center">
-                  <div className="w-14 h-14 rounded-2xl bg-emerald-50 flex items-center justify-center text-emerald-600 mx-auto mb-4">
-                    <v.icon className="w-7 h-7" />
+              <Card key={v.title} className="bg-white border-0 shadow-sm text-center">
+                <CardContent className="p-6">
+                  <div className="w-12 h-12 rounded-full bg-emerald-100 flex items-center justify-center mx-auto mb-4">
+                    <CheckCircle className="w-6 h-6 text-emerald-600" />
                   </div>
-                  <h3 className="font-bold text-lg text-slate-900 mb-2">{v.title}</h3>
+                  <h3 className="font-bold text-slate-900 mb-2">{v.title}</h3>
                   <p className="text-sm text-slate-600 leading-relaxed">{v.description}</p>
                 </CardContent>
               </Card>
@@ -153,21 +163,21 @@ export default function AboutPage() {
       <section className="py-16 md:py-20 bg-white">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-slate-900 mb-4">Our Milestones</h2>
+            <h2 className="text-3xl font-bold text-slate-900 mb-3">Our Milestones</h2>
           </div>
-          <div className="space-y-6">
+          <div className="space-y-0">
             {MILESTONES.map((m, i) => (
-              <div key={m.year} className="flex gap-4">
+              <div key={m.year} className="flex gap-6 relative">
                 <div className="flex flex-col items-center">
-                  <div className="w-16 h-16 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold text-lg flex-shrink-0">
+                  <div className="w-16 h-16 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold text-sm flex-shrink-0 z-10">
                     {m.year}
                   </div>
                   {i < MILESTONES.length - 1 && (
-                    <div className="w-0.5 flex-1 bg-slate-200 my-2" />
+                    <div className="w-0.5 flex-1 bg-slate-200 my-1" />
                   )}
                 </div>
-                <div className="pt-4 pb-6">
-                  <p className="text-slate-700 font-medium">{m.event}</p>
+                <div className="pt-4 pb-8">
+                  <p className="text-slate-700 font-medium leading-relaxed">{m.event}</p>
                 </div>
               </div>
             ))}
@@ -176,16 +186,29 @@ export default function AboutPage() {
       </section>
 
       {/* CTA */}
-      <section className="bg-emerald-600 py-14">
+      <section className="bg-slate-900 py-14">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
-          <h2 className="text-3xl font-bold mb-4">Meet the Team — Call Us Today</h2>
-          <p className="text-emerald-100 text-lg mb-8">Experience the S&P difference for yourself.</p>
-          <a href={`tel:${COMPANY.phone}`}>
-            <Button size="lg" className="gap-2 bg-white text-emerald-700 hover:bg-emerald-50 text-lg px-8">
-              <Phone className="w-5 h-5" />
-              Call {COMPANY.phone}
-            </Button>
-          </a>
+          <h2 className="text-3xl font-bold mb-4">Ready to Work With Us?</h2>
+          <p className="text-slate-300 text-lg mb-8 max-w-2xl mx-auto">
+            Whether it&apos;s a new septic system, an emergency repair, or excavation work — we&apos;d love to show you the S&P difference.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <a href={`tel:${COMPANY.phone}`}>
+              <Button size="lg" className="gap-2 bg-emerald-600 hover:bg-emerald-700 font-bold text-lg px-8">
+                <Phone className="w-5 h-5" />
+                Call {COMPANY.phone}
+              </Button>
+            </a>
+            <Link href="/contact">
+              <Button size="lg" variant="outline" className="text-lg px-8 border-slate-600 text-white hover:bg-slate-800 font-bold">
+                Get Free Estimate
+              </Button>
+            </Link>
+          </div>
+          <div className="mt-6 flex items-center justify-center gap-2 text-sm text-slate-400">
+            <MapPin className="w-4 h-4" />
+            <span>{COMPANY.address}, {COMPANY.city}, {COMPANY.state} {COMPANY.zip}</span>
+          </div>
         </div>
       </section>
     </>

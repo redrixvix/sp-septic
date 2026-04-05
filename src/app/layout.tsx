@@ -4,6 +4,7 @@ import "./globals.css";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { FloatingCTA } from "@/components/floating-cta";
+import { EmergencyBanner } from "@/components/emergency-banner";
 import { JsonLd } from "@/components/json-ld";
 import { FaqJsonLd } from "@/components/faq-jsonld";
 import { COMPANY } from "@/lib/data";
@@ -58,6 +59,7 @@ export default function RootLayout({
       <body className={`${inter.className} antialiased`}>
         <JsonLd />
         <FaqJsonLd />
+        <EmergencyBanner />
         <SiteHeader />
         <main>{children}</main>
         <SiteFooter />
