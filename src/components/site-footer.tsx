@@ -3,15 +3,27 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Phone, MapPin, Mail } from "lucide-react";
+import { useInView } from "framer-motion";
+import { useRef } from "react";
 import { COMPANY, SERVICES, SERVICE_AREAS } from "@/lib/data";
 
 export function SiteFooter() {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-50px" });
+
   return (
-    <footer className="bg-slate-900 text-slate-300">
+    <footer ref={ref} className="footer-gradient-border bg-slate-900 text-slate-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Company Info */}
-          <div className="lg:col-span-1">
+          <div
+            className="lg:col-span-1"
+            style={{
+              opacity: isInView ? 1 : 0,
+              transform: isInView ? 'translateY(0)' : 'translateY(20px)',
+              transition: 'opacity 0.5s ease 0.1s, transform 0.5s ease 0.1s',
+            }}
+          >
             <div className="flex items-center gap-3 mb-4">
               <Image
                 src="/sp-septic-logo.jpg"
@@ -51,7 +63,13 @@ export function SiteFooter() {
           </div>
 
           {/* Services */}
-          <div>
+          <div
+            style={{
+              opacity: isInView ? 1 : 0,
+              transform: isInView ? 'translateY(0)' : 'translateY(20px)',
+              transition: 'opacity 0.5s ease 0.2s, transform 0.5s ease 0.2s',
+            }}
+          >
             <h3 className="font-semibold text-white text-sm uppercase tracking-wider mb-4">
               Services
             </h3>
@@ -70,7 +88,13 @@ export function SiteFooter() {
           </div>
 
           {/* Quick Links */}
-          <div>
+          <div
+            style={{
+              opacity: isInView ? 1 : 0,
+              transform: isInView ? 'translateY(0)' : 'translateY(20px)',
+              transition: 'opacity 0.5s ease 0.3s, transform 0.5s ease 0.3s',
+            }}
+          >
             <h3 className="font-semibold text-white text-sm uppercase tracking-wider mb-4">
               Quick Links
             </h3>
@@ -102,7 +126,13 @@ export function SiteFooter() {
           </div>
 
           {/* Service Area */}
-          <div>
+          <div
+            style={{
+              opacity: isInView ? 1 : 0,
+              transform: isInView ? 'translateY(0)' : 'translateY(20px)',
+              transition: 'opacity 0.5s ease 0.4s, transform 0.5s ease 0.4s',
+            }}
+          >
             <h3 className="font-semibold text-white text-sm uppercase tracking-wider mb-4">
               Service Areas
             </h3>

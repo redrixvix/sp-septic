@@ -51,7 +51,7 @@ export function SiteHeader() {
               <Link
                 key={link.href}
                 href={link.href}
-                className="px-4 py-2 text-sm font-medium text-slate-600 hover:text-primary transition-colors rounded-md hover:bg-slate-100"
+                className="nav-link px-4 py-2 text-sm font-medium text-slate-600 hover:text-primary transition-colors rounded-md hover:bg-slate-100"
               >
                 {link.label}
               </Link>
