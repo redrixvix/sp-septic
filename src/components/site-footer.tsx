@@ -79,6 +79,7 @@ export function SiteFooter() {
                 { href: "/contact", label: "Contact" },
                 { href: "/schedule", label: "Schedule Service" },
                 { href: "/financing", label: "Financing" },
+                { href: "/maintenance-guide", label: "Maintenance Guide" },
                 { href: COMPANY.bbbUrl, label: "BBB Profile" },
               ].map((link) => (
                 <li key={link.href}>
