@@ -1,24 +1,24 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-primary: #1B4332; /* Deep forest green - trustworthy, earthy */
+  --color-primary: #1E3A5F;   /* Deep navy blue - trust, professional */
   --color-primary-foreground: #ffffff;
-  --color-secondary: #40916C; /* Mid green */
+  --color-secondary: #DC2626;  /* Strong red - urgency, energy */
   --color-secondary-foreground: #ffffff;
-  --color-accent: #D4A843; /* Warm gold/amber - premium feel */
-  --color-accent-foreground: #1a1a1a;
-  --color-background: #FAFAF7; /* Warm off-white */
-  --color-foreground: #1a1a1a;
-  --color-muted: #F0EDE8; /* Warm gray */
-  --color-muted-foreground: #6B7280;
-  --color-border: #E2DDD5; /* Warm border */
-  --color-ring: #1B4332;
-  --color-destructive: #DC2626;
+  --color-accent: #2563EB;    /* Bright blue - links, accents */
+  --color-accent-foreground: #ffffff;
+  --color-background: #ffffff;
+  --color-foreground: #0f172a;
+  --color-muted: #f1f5f9;
+  --color-muted-foreground: #64748b;
+  --color-border: #e2e8f0;
+  --color-ring: #1E3A5F;
+  --color-destructive: #dc2626;
   --color-destructive-foreground: #ffffff;
-  --color-success: #16A34A;
+  --color-success: #16a34a;
   --color-success-foreground: #ffffff;
-  --color-card: #FFFFFF;
-  --color-card-foreground: #1a1a1a;
+  --color-card: #ffffff;
+  --color-card-foreground: #0f172a;
   --radius: 0.75rem;
 }
 
@@ -38,7 +38,7 @@ body {
 }
 
 ::selection {
-  background: rgba(27, 67, 50, 0.15);
+  background: rgba(30, 58, 95, 0.15);
   color: #1a1a1a;
 }
 
@@ -56,11 +56,11 @@ body {
 
 /* Subtle gradient overlays */
 .hero-gradient {
-  background: linear-gradient(135deg, #0f2318 0%, #1B4332 50%, #2D5A45 100%);
+  background: linear-gradient(135deg, #0f172a 0%, #1E3A5F 50%, #2563EB 100%);
 }
 
-.gold-accent {
-  color: #D4A843;
+.blue-accent {
+  color: #2563EB;
 }
 
 /* ── KEYFRAME ANIMATIONS ── */
@@ -146,7 +146,7 @@ body {
   left: 50%;
   width: 0;
   height: 2px;
-  background-color: #1B4332;
+  background-color: #1E3A5F;
   transition: width 0.25s ease, left 0.25s ease;
 }
 
@@ -158,7 +158,7 @@ body {
 /* Footer top border gradient */
 .footer-gradient-border {
   border-top: 3px solid transparent;
-  border-image: linear-gradient(to right, #1B4332, #D4A843) 1;
+  border-image: linear-gradient(to right, #1E3A5F, #2563EB) 1;
 }
 
 /* Quote mark decoration */
@@ -166,8 +166,8 @@ body {
   content: '\201C';
   font-size: 4rem;
   line-height: 1;
-  color: #D4A843;
-  opacity: 0.4;
+  color: #DC2626;
+  opacity: 0.3;
   font-family: Georgia, serif;
   position: absolute;
   top: -0.5rem;
