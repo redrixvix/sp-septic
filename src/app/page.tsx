@@ -51,7 +51,7 @@ function HeroSection() {
       <div
         className="absolute inset-0 animate-gradient-shift"
         style={{
-          background: "linear-gradient(135deg, #0f2318 0%, #1B4332 35%, #2D5A45 60%, #1B4332 100%)",
+          background: "linear-gradient(135deg, #0f172a 0%, #1E3A5F 35%, #2563EB 60%, #1E3A5F 100%)",
           backgroundSize: "200% 200%",
         }}
       />
@@ -66,13 +66,13 @@ function HeroSection() {
       <motion.div
         className="absolute right-8 top-1/2 -translate-y-1/2 w-64 h-64 rounded-full opacity-10 hidden lg:block"
         style={{
-          background: "radial-gradient(circle, #D4A843, transparent 70%)",
+          background: "radial-gradient(circle, #2563EB, transparent 70%)",
         }}
         animate={{ scale: [1, 1.15, 1], opacity: [0.08, 0.14, 0.08] }}
         transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
       />
       {/* Gold accent line */}
-      <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-amber-500/30 to-transparent" />
+      <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-blue-400/30 to-transparent" />
 
       <motion.div style={{ y, opacity }} className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28">
         <div className="max-w-3xl">
@@ -371,7 +371,7 @@ function WhyChooseUs() {
             >
               <div className="flex items-center gap-3 mb-2">
                 <motion.div
-                  className="w-14 h-14 rounded-xl bg-amber-500 flex items-center justify-center text-2xl font-black text-white"
+                  className="w-14 h-14 rounded-xl bg-blue-600 flex items-center justify-center text-2xl font-black text-white"
                   animate={{ scale: [1, 1.03, 1] }}
                   transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
                 >
@@ -484,7 +484,7 @@ function TestimonialsSection() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <FadeIn>
           <div className="text-center mb-12">
-            <Badge className="mb-3 bg-amber-100 text-primary border-0 text-xs">Customer Reviews</Badge>
+            <Badge className="mb-3 bg-blue-50 text-primary border-0 text-xs">Customer Reviews</Badge>
             <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-3">
               What Neighbors Are Saying
             </h2>
