@@ -71,6 +71,10 @@ export function SiteFooter() {
               {[
                 { href: "/", label: "Home" },
                 { href: "/services", label: "Services" },
+                { href: "/pricing", label: "Pricing Guide" },
+                { href: "/gallery", label: "Gallery" },
+                { href: "/blog", label: "Blog" },
+                { href: "/service-areas", label: "Service Areas" },
                 { href: "/about", label: "About Us" },
                 { href: "/contact", label: "Contact" },
                 { href: COMPANY.bbbUrl, label: "BBB Profile" },

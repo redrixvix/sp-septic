@@ -5,6 +5,7 @@ import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { FloatingCTA } from "@/components/floating-cta";
 import { JsonLd } from "@/components/json-ld";
+import { FaqJsonLd } from "@/components/faq-jsonld";
 import { COMPANY } from "@/lib/data";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -56,6 +57,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${inter.className} antialiased`}>
         <JsonLd />
+        <FaqJsonLd />
         <SiteHeader />
         <main>{children}</main>
         <SiteFooter />
