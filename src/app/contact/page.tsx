@@ -294,7 +294,7 @@ export default function ContactPage() {
           allowFullScreen
           loading="lazy"
           referrerPolicy="no-referrer-when-downgrade"
-          title="S&P Septic and Excavating Location"
+          title="S&P Septic and Excavating location map"
         />
       </section>
     </>

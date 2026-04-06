@@ -3,7 +3,7 @@
 @theme inline {
   --color-primary: #1E3A5F;   /* Deep navy blue - trust, professional */
   --color-primary-foreground: #ffffff;
-  --color-secondary: #DC2626;  /* Strong red - urgency, energy */
+  --color-secondary: #991b1b;  /* Darker red - passes AA on white (5.9:1) */
   --color-secondary-foreground: #ffffff;
   --color-accent: #2563EB;    /* Bright blue - links, accents */
   --color-accent-foreground: #ffffff;
@@ -159,6 +159,44 @@ body {
   left: 0;
 }
 
+/* Focus styles for keyboard navigation */
+.nav-link:focus-visible {
+  outline: 2px solid #1E3A5F;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Skip to main content link */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  z-index: 999;
+  padding: 1em;
+  background: #1E3A5F;
+  color: white;
+  font-weight: bold;
+  text-decoration: none;
+  border-radius: 0 0 4px 0;
+}
+
+.skip-link:focus {
+  left: 0;
+  top: 0;
+  outline: 2px solid white;
+  outline-offset: -4px;
+}
+
+/* Respect reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
 /* Footer top border gradient */
 .footer-gradient-border {
   border-top: 3px solid transparent;
@@ -170,7 +208,7 @@ body {
   content: '\201C';
   font-size: 4rem;
   line-height: 1;
-  color: #DC2626;
+  color: #991b1b;
   opacity: 0.3;
   font-family: Georgia, serif;
   position: absolute;

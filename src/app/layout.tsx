@@ -94,12 +94,13 @@ export default function RootLayout({
         */}
       </head>
       <body className={`${inter.className} antialiased`}>
+        <a href="#main-content" className="skip-link">Skip to main content</a>
         <JsonLd />
         <LocalBusinessJsonLd />
         <FaqJsonLd />
         <EmergencyBanner />
         <SiteHeader />
-        <main>{children}</main>
+        <main id="main-content">{children}</main>
         <SiteFooter />
         <FloatingCTA />
       </body>

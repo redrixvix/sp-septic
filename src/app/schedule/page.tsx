@@ -69,38 +69,40 @@ export default function SchedulePage() {
                   <form className="space-y-5">
                     <div className="grid sm:grid-cols-2 gap-5">
                       <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                        <label htmlFor="schedule-name" className="block text-sm font-medium text-slate-700 mb-1.5">
                           Your Name <span className="text-red-500">*</span>
                         </label>
-                        <Input placeholder="John Smith" required className="h-11" />
+                        <Input id="schedule-name" name="name" placeholder="John Smith" required className="h-11" />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                        <label htmlFor="schedule-phone" className="block text-sm font-medium text-slate-700 mb-1.5">
                           Phone <span className="text-red-500">*</span>
                         </label>
-                        <Input type="tel" placeholder="(330) 000-0000" required className="h-11" />
+                        <Input id="schedule-phone" name="phone" type="tel" placeholder="(330) 000-0000" required className="h-11" />
                       </div>
                     </div>
                     <div className="grid sm:grid-cols-2 gap-5">
                       <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                        <label htmlFor="schedule-email" className="block text-sm font-medium text-slate-700 mb-1.5">
                           Email Address
                         </label>
-                        <Input type="email" placeholder="john@example.com" className="h-11" />
+                        <Input id="schedule-email" name="email" type="email" placeholder="john@example.com" className="h-11" />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                        <label htmlFor="schedule-address" className="block text-sm font-medium text-slate-700 mb-1.5">
                           Property Address <span className="text-red-500">*</span>
                         </label>
-                        <Input placeholder="123 Main St, Warren, OH 44483" required className="h-11" />
+                        <Input id="schedule-address" name="address" placeholder="123 Main St, Warren, OH 44483" required className="h-11" />
                       </div>
                     </div>
                     <div className="grid sm:grid-cols-2 gap-5">
                       <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                        <label htmlFor="schedule-service" className="block text-sm font-medium text-slate-700 mb-1.5">
                           Service Needed <span className="text-red-500">*</span>
                         </label>
                         <select
+                          id="schedule-service"
+                          name="service"
                           required
                           className="flex h-11 w-full rounded-md border border-input bg-white px-3 py-2 text-sm ring-offset-white placeholder:text-slate-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                         >
@@ -111,10 +113,10 @@ export default function SchedulePage() {
                         </select>
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                        <label htmlFor="schedule-time" className="block text-sm font-medium text-slate-700 mb-1.5">
                           Preferred Time
                         </label>
-                        <select className="flex h-11 w-full rounded-md border border-input bg-white px-3 py-2 text-sm ring-offset-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2">
+                        <select id="schedule-time" name="time" className="flex h-11 w-full rounded-md border border-input bg-white px-3 py-2 text-sm ring-offset-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2">
                           <option value="">Any time works...</option>
                           {TIME_SLOTS.map((t) => (
                             <option key={t} value={t}>{t}</option>
@@ -123,10 +125,12 @@ export default function SchedulePage() {
                       </div>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                      <label htmlFor="schedule-message" className="block text-sm font-medium text-slate-700 mb-1.5">
                         Describe the Issue or Your Needs
                       </label>
                       <Textarea
+                        id="schedule-message"
+                        name="message"
                         rows={4}
                         placeholder="Tell us about your septic or excavation needs, when the problem started, any symptoms you've noticed..."
                         className="resize-none"
