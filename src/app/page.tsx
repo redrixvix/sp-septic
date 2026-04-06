@@ -379,7 +379,7 @@ function WhyChooseUs() {
                 </motion.div>
                 <div>
                   <div className="font-bold text-lg">BBB Accredited</div>
-                  <div className="text-slate-400 text-sm">Since August 2025</div>
+                  <div className="text-slate-400 text-sm">Since 2021</div>
                 </div>
               </div>
               <p className="text-slate-300 text-sm mb-6 mt-4 leading-relaxed">
@@ -596,7 +596,7 @@ function FinalCTA() {
         transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
       >
         <Calendar className="w-12 h-12 mx-auto mb-4 opacity-80" />
-        <h2 className="text-3xl md:text-4xl font-bold mb-4"> septic Problem? Don&apos;t Wait.</h2>
+        <h2 className="text-3xl md:text-4xl font-bold mb-4">Septic Problem? Don&apos;t Wait.</h2>
         <p className="text-blue-100 text-lg mb-8 max-w-2xl mx-auto">
           A small septic issue becomes a big, expensive emergency fast. Call S&P today — we&apos;re ready to help, starting now.
         </p>
