@@ -208,7 +208,7 @@ function HeroSection() {
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.55, ease: [0.25, 0.46, 0.45, 0.94] }}
-              className="text-primary"
+              className="text-white font-bold"
             >
               Done Right
             </motion.span>
