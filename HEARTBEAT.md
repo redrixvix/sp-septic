@@ -1,40 +1,51 @@
 # HEARTBEAT.md
 
-## Silent Work Prevention
+## Status Update System
 
-This file drives the heartbeat agent. Follow it strictly.
+This heartbeat fires every 5 minutes. Every time it fires, you MUST send a brief status message to Alexander via Telegram. NEVER just say HEARTBEAT_OK.
 
-### Active Work Tracking
+### What to Send Every Time
 
-When working on a task that takes more than 20 minutes:
-- Write a short status to `.active-work.txt` in the workspace
-- Format: `[TIMESTAMP] Working on: [what you're doing]. Next update in ~20min.`
-- Update it every time you make significant progress or a decision
-- When the task is done, delete the file or write `[DONE]`
+Check these three things, then send a brief message:
 
-### Heartbeat Check Rules
+1. **Git status** — any unpushed commits? Any build errors?
+2. **Current work** — are you mid-task on something? What's the last thing you completed?
+3. **Any issues** — is the dev server down? Did a build fail? Anything blocking?
 
-Every 30 minutes, the cron job runs. When it fires:
+### Format for Status Message
 
-1. **Read `.active-work.txt`** if it exists
-2. **If file is older than 45 minutes** and no commit/push has happened since:
-   → The agent went silent. This is a bug.
-   → The agent should wake up, assess what was being worked on,
-     and message the user: "Hey — I was working on [X] and went quiet. Here's where things stand: [quick status]. I'm back on it now."
-3. **If file is fresh (< 45 min old)** → agent is active, do nothing (HEARTBEAT_OK)
-4. **If file doesn't exist** and no commits in last hour → agent is idle, do nothing (HEARTBEAT_OK)
+Keep it short and useful. Example messages:
 
-### Status Reporter
+> "⚡ Status 1:59 PM — Dev server 🟢 running. Last push: 30 min ago. Currently idle — awaiting your direction."
+>
+> "⚡ Status 2:04 PM — Dev server 🟢. Pushing accessibility audit fixes now. Will update when live."
+>
+> "⚡ Status 2:09 PM — Dev server 🟢. Build passed (28/28 pages). Nothing blocking. Ready for next task."
 
-The `scripts/status-reporter.js` cron job runs every 30 minutes. It writes to `.current-status`.
-If the agent goes silent, the status file will show what was last being worked on,
-so the agent can recover context quickly.
+### If Mid-Task
 
-### Quick Status Format
+If you're actively working on something, send a brief update:
+> "⚡ Status 2:14 PM — Working on SEO improvements. Just finished title tag fixes, building now."
 
-When updating `.active-work.txt`, keep it to one line:
-```
-[YYYY-MM-DD HH:MM] TASK: <what> | STATUS: <in-progress/done/blocked> | NEXT: <what comes next>
-```
+### If Nothing Happened for a While
 
-This is the safety net. The goal: **the user should never have to ask "what happened, did you go AFK again?"**
+If the last meaningful action was more than an hour ago:
+> "⚡ Status 2:19 PM — Site quiet for ~90 min. Last work: ADA audit fixes pushed. Ready for your next direction."
+
+### Anti-AFK Rule
+
+If `.active-work.txt` exists and is older than 20 minutes with no commits since:
+→ You MUST message: "Hey — I was working on [X] and may have gone quiet. Here's where things stand: [1 sentence]. Back on it now."
+
+### What NEVER to Do
+
+- Never reply HEARTBEAT_OK to the heartbeat — always send something
+- Never stay silent — the user should never have to ask "are you there?"
+- Never send a massive wall of text — 2-4 sentences max per update
+
+### Quick Status Checklist (run in ~30 seconds)
+
+1. `git -C /home/rixvix/.openclaw/workspace/sp-septic log -1 --oneline` — last commit time
+2. `curl -s -o /dev/null -w "%{http_code}" https://sp-septic.vercel.app/` — site up?
+3. Read `.active-work.txt` if it exists
+4. Send Telegram message with findings
