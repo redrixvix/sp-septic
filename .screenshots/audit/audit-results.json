@@ -1,0 +1,131 @@
+{
+  "timestamp": "2026-04-06T13:21:26.164Z",
+  "pages": {
+    "homepage": {
+      "url": "https://sp-septic.vercel.app/",
+      "httpStatus": 200,
+      "loadSuccess": true,
+      "consoleErrors": [],
+      "consoleWarnings": [],
+      "seo": {
+        "title": "S&P Septic & Excavating | Septic & Excavating Services | Warren, Ohio",
+        "titlePresent": true,
+        "metaDescription": "Family-owned and operated since 2021. Licensed, insured, and BBB Accredited with an A+ rating. Septic system installation, repair, and excavation services for residential and commercial properties throughout Trumbull County and beyond.",
+        "metaDescriptionPresent": true,
+        "h1": "Septic & Excavating Done Right Every Time",
+        "h1Present": true
+      },
+      "accessibility": {
+        "imagesWithoutAlt": [],
+        "formsWithoutLabels": [],
+        "accessibilityScore": 100
+      },
+      "screenshots": {
+        "desktop": "/home/rixvix/.openclaw/workspace/sp-septic/.screenshots/audit/homepage_desktop.png",
+        "mobile": "/home/rixvix/.openclaw/workspace/sp-septic/.screenshots/audit/homepage_mobile.png"
+      }
+    },
+    "services": {
+      "url": "https://sp-septic.vercel.app/services",
+      "httpStatus": 200,
+      "loadSuccess": true,
+      "consoleErrors": [],
+      "consoleWarnings": [],
+      "seo": {
+        "title": "Services | S&P Septic & Excavating",
+        "titlePresent": true,
+        "metaDescription": "Septic system installation, repair, pumping, excavation, perk testing, and camera inspections. Full-service contractor in Warren, Ohio.",
+        "metaDescriptionPresent": true,
+        "h1": "Septic & Excavation Services",
+        "h1Present": true
+      },
+      "accessibility": {
+        "imagesWithoutAlt": [],
+        "formsWithoutLabels": [],
+        "accessibilityScore": 100
+      },
+      "screenshots": {
+        "desktop": "/home/rixvix/.openclaw/workspace/sp-septic/.screenshots/audit/services_desktop.png",
+        "mobile": "/home/rixvix/.openclaw/workspace/sp-septic/.screenshots/audit/services_mobile.png"
+      }
+    },
+    "pricing": {
+      "url": "https://sp-septic.vercel.app/pricing",
+      "httpStatus": 200,
+      "loadSuccess": true,
+      "consoleErrors": [],
+      "consoleWarnings": [],
+      "seo": {
+        "title": "Septic & Excavation Pricing Guide — S&P Septic | Warren, Ohio | S&P Septic & Excavating",
+        "titlePresent": true,
+        "metaDescription": "Honest, upfront septic and excavation pricing for Warren, Ohio homeowners. Learn what septic pumping, new installations, and excavation services cost in 2026.",
+        "metaDescriptionPresent": true,
+        "h1": "Honest Pricing for Septic & Excavation",
+        "h1Present": true
+      },
+      "accessibility": {
+        "imagesWithoutAlt": [],
+        "formsWithoutLabels": [],
+        "accessibilityScore": 100
+      },
+      "screenshots": {
+        "desktop": "/home/rixvix/.openclaw/workspace/sp-septic/.screenshots/audit/pricing_desktop.png",
+        "mobile": "/home/rixvix/.openclaw/workspace/sp-septic/.screenshots/audit/pricing_mobile.png"
+      }
+    },
+    "contact": {
+      "url": "https://sp-septic.vercel.app/contact",
+      "httpStatus": 200,
+      "loadSuccess": true,
+      "consoleErrors": [],
+      "consoleWarnings": [],
+      "seo": {
+        "title": "S&P Septic & Excavating | Septic & Excavating Services | Warren, Ohio",
+        "titlePresent": true,
+        "metaDescription": "Family-owned and operated since 2021. Licensed, insured, and BBB Accredited with an A+ rating. Septic system installation, repair, and excavation services for residential and commercial properties throughout Trumbull County and beyond.",
+        "metaDescriptionPresent": true,
+        "h1": "Get a Free Estimate",
+        "h1Present": true
+      },
+      "accessibility": {
+        "imagesWithoutAlt": [],
+        "formsWithoutLabels": [],
+        "accessibilityScore": 100
+      },
+      "screenshots": {
+        "desktop": "/home/rixvix/.openclaw/workspace/sp-septic/.screenshots/audit/contact_desktop.png",
+        "mobile": "/home/rixvix/.openclaw/workspace/sp-septic/.screenshots/audit/contact_mobile.png"
+      }
+    },
+    "about": {
+      "url": "https://sp-septic.vercel.app/about",
+      "httpStatus": 200,
+      "loadSuccess": true,
+      "consoleErrors": [],
+      "consoleWarnings": [],
+      "seo": {
+        "title": "About Us — S&P Septic and Excavating Inc. | S&P Septic & Excavating",
+        "titlePresent": true,
+        "metaDescription": "Learn about S&P Septic and Excavating Inc. — a family-owned, BBB Accredited contractor serving Warren, Ohio since 2021. Meet our crew and learn why neighbors trust us.",
+        "metaDescriptionPresent": true,
+        "h1": "Your Local, Trusted Septic Experts",
+        "h1Present": true
+      },
+      "accessibility": {
+        "imagesWithoutAlt": [],
+        "formsWithoutLabels": [],
+        "accessibilityScore": 100
+      },
+      "screenshots": {
+        "desktop": "/home/rixvix/.openclaw/workspace/sp-septic/.screenshots/audit/about_desktop.png",
+        "mobile": "/home/rixvix/.openclaw/workspace/sp-septic/.screenshots/audit/about_mobile.png"
+      }
+    }
+  },
+  "summary": {
+    "totalPages": 5,
+    "successfulPages": 10,
+    "failedPages": 0,
+    "consoleErrors": []
+  }
+}

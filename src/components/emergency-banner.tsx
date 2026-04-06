@@ -3,7 +3,7 @@ import { COMPANY } from "@/lib/data";
 
 export function EmergencyBanner() {
   return (
-    <div className="bg-red-700 text-white py-2 text-sm text-center">
+    <div className="bg-red-700 text-white py-3 text-sm text-center flex flex-wrap items-center justify-center gap-x-2 gap-y-1">
       <span className="font-semibold">24/7 Emergency Service Available — </span>
       <a
         href={`tel:${COMPANY.phone}`}
