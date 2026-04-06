@@ -195,6 +195,11 @@ body {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+  /* Fully disable continuous gradient animation on hero */
+  .animate-gradient-shift {
+    animation: none !important;
+    background-size: 100% !important;
+  }
 }
 
 /* Footer top border gradient */

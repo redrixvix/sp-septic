@@ -111,6 +111,7 @@ export function SiteFooter() {
                 { href: "/schedule", label: "Schedule Service" },
                 { href: "/financing", label: "Financing" },
                 { href: "/maintenance-guide", label: "Maintenance Guide" },
+                { href: "/ada-statement.html", label: "Accessibility Statement" },
                 { href: COMPANY.bbbUrl, label: "BBB Profile" },
               ].map((link) => (
                 <li key={link.href}>
@@ -156,7 +157,7 @@ export function SiteFooter() {
             <span className="text-xs text-slate-600">•</span>
             <span className="text-xs text-slate-400">Licensed & Insured</span>
             <span className="text-xs text-slate-600">•</span>
-            <span className="text-xs text-slate-400">OH Lic #{"TODO"}</span>
+            <span className="text-xs text-slate-400">Licensed &amp; Insured — Ohio</span>
           </div>
         </div>
       </div>

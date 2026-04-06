@@ -77,8 +77,9 @@ export function SiteHeader() {
                 setMobileOpen(!mobileOpen);
               }
             }}
-            aria-label="Toggle menu"
+            aria-label="Toggle main menu"
             aria-expanded={mobileOpen}
+            aria-controls="mobile-nav"
           >
             {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
@@ -86,7 +87,7 @@ export function SiteHeader() {
 
         {/* Mobile Nav */}
         {mobileOpen && (
-          <div className="md:hidden border-t py-4 flex flex-col gap-2">
+          <nav id="mobile-nav" role="navigation" aria-label="Main navigation" className="md:hidden border-t py-4 flex flex-col gap-2">
             {NAV_LINKS.map((link) => (
               <Link
                 key={link.href}
@@ -115,7 +116,7 @@ export function SiteHeader() {
                 </Link>
               </div>
             </div>
-          </div>
+          </nav>
         )}
       </div>
     </header>

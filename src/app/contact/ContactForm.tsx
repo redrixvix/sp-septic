@@ -44,7 +44,7 @@ export function ContactForm() {
     <Card className="bg-white border-0 shadow-sm">
       <CardContent className="p-6 md:p-8">
         {submitted ? (
-          <div className="text-center py-12">
+          <div className="text-center py-12" role="status" aria-live="polite">
             <div className="w-16 h-16 rounded-full bg-secondary/10 flex items-center justify-center mx-auto mb-4">
               <CheckCircle className="w-8 h-8 text-secondary" />
             </div>
@@ -64,7 +64,7 @@ export function ContactForm() {
           <>
             <h2 className="text-2xl font-bold text-slate-900 mb-6">Request a Free Estimate</h2>
             {error && (
-              <div className="mb-4 p-3 rounded-lg bg-red-50 border border-red-200 flex items-start gap-2 text-sm text-red-700">
+              <div className="mb-4 p-3 rounded-lg bg-red-50 border border-red-200 flex items-start gap-2 text-sm text-red-700" role="alert" aria-live="assertive">
                 <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
                 <span>{error}</span>
               </div>

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Accessibility Statement — S&P Septic & Excavating</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+      line-height: 1.7;
+      color: #1e293b;
+      background: #f8fafc;
+    }
+    h1 { font-size: 1.875rem; font-weight: 800; color: #0f172a; margin-bottom: 0.5rem; }
+    h2 { font-size: 1.25rem; font-weight: 700; color: #1e3a5f; margin-top: 2rem; margin-bottom: 0.75rem; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.4rem; }
+    h3 { font-size: 1rem; font-weight: 600; color: #334155; margin-top: 1.25rem; margin-bottom: 0.5rem; }
+    p, li { font-size: 0.9375rem; color: #475569; }
+    ul { padding-left: 1.5rem; }
+    li { margin-bottom: 0.35rem; }
+    a { color: #2563eb; text-decoration: underline; }
+    a:hover { color: #1d4ed8; }
+    .meta { font-size: 0.8125rem; color: #64748b; margin-bottom: 2rem; }
+    .contact-box {
+      background: #f0f9ff;
+      border: 1px solid #bae6fd;
+      border-radius: 0.5rem;
+      padding: 1.25rem;
+      margin-top: 1rem;
+    }
+    .contact-box p { margin: 0; }
+    .contact-box strong { color: #0c4a6e; }
+    hr { border: none; border-top: 1px solid #e2e8f0; margin: 2rem 0; }
+    .back { display: inline-block; margin-bottom: 1.5rem; font-size: 0.875rem; font-weight: 500; }
+  </style>
+</head>
+<body>
+  <a href="/" class="back">← Back to S&P Septic & Excavating</a>
+
+  <h1>Accessibility Statement</h1>
+  <p class="meta">Last reviewed: April 6, 2026 &nbsp;·&nbsp; Next scheduled review: April 2027</p>
+
+  <p>
+    S&P Septic & Excavating Inc. is committed to ensuring that our website is accessible to all users,
+    including people with disabilities. We actively work to maintain and improve the accessibility of
+    <strong>spseptic.com</strong> in accordance with the Web Content Accessibility Guidelines (WCAG) 2.1,
+    Level AA, and applicable provisions of the Americans with Disabilities Act (ADA).
+  </p>
+
+  <!-- ── Accessibility Features ── -->
+  <h2>Accessibility Features We Provide</h2>
+
+  <h3>Perceivable</h3>
+  <ul>
+    <li>All meaningful images include descriptive <code>alt</code> text; decorative images use empty <code>alt=""</code>.</li>
+    <li>Color contrast meets WCAG 2.1 AA standards (4.5:1 for normal text, 3:1 for large/bold text) throughout the site.</li>
+    <li>Content is not conveyed by color alone — text labels, icons, and patterns supplement color information.</li>
+    <li>The site respects the operating system <code>prefers-reduced-motion</code> setting — continuous animations pause or disable for users who request it.</li>
+  </ul>
+
+  <h3>Operable</h3>
+  <ul>
+    <li>A <strong>skip navigation link</strong> ("Skip to main content") appears on first keyboard tab and allows users to bypass repetitive navigation.</li>
+    <li>Full keyboard navigation support — all interactive elements (menus, forms, buttons, links) are reachable and operable via keyboard.</li>
+    <li>Focus indicators are visible, styled with a high-contrast outline, and never hidden.</li>
+    <li>The <code>&lt;html lang="en"&gt;</code> attribute is set on every page.</li>
+    <li>No content flashes or strobing animations are used on this site.</li>
+    <li>The Google Maps iframe on our Contact page includes a descriptive <code>title</code> attribute.</li>
+    <li>The mobile navigation menu is labelled with <code>role="navigation"</code> and <code>aria-label</code> landmarks.</li>
+  </ul>
+
+  <h3>Understandable</h3>
+  <ul>
+    <li>All form inputs have visible, programmatically associated <code>&lt;label&gt;</code> elements.</li>
+    <li>Required fields are marked with a visual asterisk and the <code>required</code> attribute.</li>
+    <li>Form error messages are announced to screen readers via <code>role="alert"</code> and <code>aria-live="assertive"</code>.</li>
+    <li>Form success confirmations are announced via <code>role="status"</code> and <code>aria-live="polite"</code>.</li>
+    <li>Form fields include appropriate <code>autocomplete</code> attributes to support browser autofill and assistive technology.</li>
+    <li>Language is set to English (<code>lang="en"</code>) on every page.</li>
+  </ul>
+
+  <h3>Robust</h3>
+  <ul>
+    <li>The site is built with semantic HTML5 elements (<code>&lt;header&gt;</code>, <code>&lt;nav&gt;</code>, <code>&lt;main&gt;</code>, <code>&lt;footer&gt;</code>, <code>&lt;section&gt;</code>, <code>&lt;article&gt;</code>) used correctly.</li>
+    <li>ARIA landmarks (<code>role="navigation"</code>, <code>role="status"</code>, <code>role="alert"</code>) are used appropriately and sparingly — not as a substitute for semantic HTML.</li>
+    <li>HTML is validated through build-time linting to catch unclosed tags and nesting errors.</li>
+  </ul>
+
+  <!-- ── Known Limitations ── -->
+  <h2>Known Limitations</h2>
+
+  <p>
+    As of the date of this statement, the following areas are known to have limited accessibility:
+  </p>
+
+  <ul>
+    <li>
+      <strong>Gallery page images</strong> — The Project Gallery currently uses placeholder photography (camera icon + "Photo coming soon"). When real project photos are added, they will include descriptive <code>alt</code> text specific to each project. Until then, these placeholders are marked with <code>alt=""</code> and are decorative.
+    </li>
+    <li>
+      <strong>Embedded videos</strong> — If video content is added to the site in the future, captions or a full text transcript will be provided in compliance with WCAG 2.1 Success Criterion 1.2.2.
+    </li>
+    <li>
+      <strong>Third-party content</strong> — The Google Maps embed is provided by Google and loads within an iframe. We cannot control the accessibility of Google's map interface, but the surrounding page content meets WCAG 2.1 AA standards.
+    </li>
+  </ul>
+
+  <!-- ── Contact ── -->
+  <h2>Report an Accessibility Barrier</h2>
+
+  <p>
+    If you encounter any content, feature, or page on this website that you cannot access due to a disability,
+    or if you believe any part of this site is not accessible, please contact us and we will make reasonable
+    efforts to address the issue.
+  </p>
+
+  <div class="contact-box">
+    <p><strong>Accessibility Contact — S&P Septic & Excavating</strong></p>
+    <p>
+      Phone: <a href="tel:+13309793930">(330) 979-3930</a> &nbsp;(Mon–Sat, 7AM–7PM)<br />
+      Email: <a href="mailto:info@spseptic.com">info@spseptic.com</a><br />
+      Address: 2900 Elm Rd NE, Warren, OH 44483
+    </p>
+    <p style="margin-top: 0.75rem; font-size: 0.875rem;">
+      Please describe the issue and the page or feature you were trying to access. We aim to respond within
+      <strong>2 business days</strong>.
+    </p>
+  </div>
+
+  <!-- ── Enforcement ── -->
+  <h2>Enforcement &amp; Legal Framework</h2>
+
+  <p>
+    This statement is prepared in accordance with the Americans with Disabilities Act (ADA), Title III,
+    and the Web Content Accessibility Guidelines (WCAG) 2.1 Level AA. The U.S. Department of Justice
+    has affirmed that websites are covered under ADA Title III as "places of public accommodation."
+  </p>
+
+  <p>
+    In addition to ADA Title III, this site aims to conform to Ohio's civil rights protections for
+    persons with disabilities.
+  </p>
+
+  <hr />
+
+  <p style="font-size: 0.8125rem; color: #94a3b8;">
+    S&P Septic & Excavating Inc. · 2900 Elm Rd NE, Warren, OH 44483 ·
+    <a href="tel:+13309793930">(330) 979-3930</a> ·
+    <a href="mailto:info@spseptic.com">info@spseptic.com</a>
+  </p>
+</body>
+</html>

@@ -72,13 +72,13 @@ export default function SchedulePage() {
                         <label htmlFor="schedule-name" className="block text-sm font-medium text-slate-700 mb-1.5">
                           Your Name <span className="text-red-500">*</span>
                         </label>
-                        <Input id="schedule-name" name="name" placeholder="John Smith" required className="h-11" />
+                        <Input id="schedule-name" name="name" placeholder="John Smith" required className="h-11" autoComplete="name" />
                       </div>
                       <div>
                         <label htmlFor="schedule-phone" className="block text-sm font-medium text-slate-700 mb-1.5">
                           Phone <span className="text-red-500">*</span>
                         </label>
-                        <Input id="schedule-phone" name="phone" type="tel" placeholder="(330) 000-0000" required className="h-11" />
+                        <Input id="schedule-phone" name="phone" type="tel" placeholder="(330) 000-0000" required className="h-11" autoComplete="tel" />
                       </div>
                     </div>
                     <div className="grid sm:grid-cols-2 gap-5">
@@ -86,13 +86,13 @@ export default function SchedulePage() {
                         <label htmlFor="schedule-email" className="block text-sm font-medium text-slate-700 mb-1.5">
                           Email Address
                         </label>
-                        <Input id="schedule-email" name="email" type="email" placeholder="john@example.com" className="h-11" />
+                        <Input id="schedule-email" name="email" type="email" placeholder="john@example.com" className="h-11" autoComplete="email" />
                       </div>
                       <div>
                         <label htmlFor="schedule-address" className="block text-sm font-medium text-slate-700 mb-1.5">
                           Property Address <span className="text-red-500">*</span>
                         </label>
-                        <Input id="schedule-address" name="address" placeholder="123 Main St, Warren, OH 44483" required className="h-11" />
+                        <Input id="schedule-address" name="address" placeholder="123 Main St, Warren, OH 44483" required className="h-11" autoComplete="street-address" />
                       </div>
                     </div>
                     <div className="grid sm:grid-cols-2 gap-5">
