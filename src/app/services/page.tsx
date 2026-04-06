@@ -132,7 +132,7 @@ export default function ServicesPage() {
                       </li>
                     ))}
                   </ul>
-                  <Link href="/contact">
+                  <Link href="/contact" className="w-full sm:w-auto">
                     <Button className="gap-2 bg-primary hover:bg-primary/90 font-semibold">
                       Get a Free Estimate <ArrowRight className="w-4 h-4" />
                     </Button>
@@ -256,14 +256,14 @@ export default function ServicesPage() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
           <h2 className="text-3xl font-bold mb-4">Ready to Get Started?</h2>
           <p className="text-blue-100 text-lg mb-8">Call now for a free estimate. No obligation, no pressure — just honest advice.</p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <a href={`tel:${COMPANY.phone}`}>
               <Button size="lg" className="gap-2 bg-white text-primary hover:bg-secondary/10 font-bold text-lg px-8">
                 <Phone className="w-5 h-5" />
                 Call {COMPANY.phone}
               </Button>
             </a>
-            <Link href="/contact">
+            <Link href="/contact" className="w-full sm:w-auto">
               <Button size="lg" variant="outline" className="text-lg px-8 border-white text-white hover:bg-white/10 font-bold">
                 Request Free Estimate
               </Button>

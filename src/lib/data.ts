@@ -39,7 +39,7 @@ export const SERVICES = [
     features: ["Tank pumping", "System cleaning", "Filter service", "Maintenance plans", "24/7 emergency"],
   },
   {
-    title: " perk & Leach Field Services",
+    title: "Perk & Leach Field Services",
     description: "Professional perk testing and leach field services. We evaluate soil conditions and design drainage systems that meet local codes and stand the test of time.",
     icon: "TestTube",
     features: ["Perk testing", "Soil evaluation", "Leach field design", "Drainage solutions", "Code compliance"],
