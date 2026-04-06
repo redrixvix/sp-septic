@@ -4,33 +4,50 @@ export default function robots(): MetadataRoute.Robots {
   return {
     rules: [
       {
+        // Allow all standard crawlers
         userAgent: "*",
         allow: "/",
         disallow: ["/api/", "/_next/"],
       },
-      // Block AI training crawlers
+      // AI Training Crawlers — ALLOWED
+      // Allowing these helps the site get into AI training data and enables
+      // citations in ChatGPT, Claude, Perplexity, and other AI responses.
+      // For a local small business, being findable via AI search is valuable.
       {
         userAgent: "GPTBot",
-        disallow: "/",
+        allow: "/",
       },
       {
         userAgent: "ChatGPT-User",
-        disallow: "/",
-      },
-      {
-        userAgent: "CCBot",
-        disallow: "/",
+        allow: "/",
       },
       {
         userAgent: "ClaudeBot",
-        disallow: "/",
+        allow: "/",
       },
       {
         userAgent: "PerplexityBot",
-        disallow: "/",
+        allow: "/",
       },
       {
-        userAgent: "AdsBot-Google",
+        userAgent: "CCBot",
+        allow: "/",
+      },
+      {
+        userAgent: "Bytespider",
+        allow: "/",
+      },
+      {
+        userAgent: "Google-Extended",
+        allow: "/",
+      },
+      {
+        userAgent: "anthropic-ai",
+        allow: "/",
+      },
+      // Only block clearly malicious or non-beneficial bots
+      {
+        userAgent: "AhrefsBot",
         disallow: "/",
       },
     ],

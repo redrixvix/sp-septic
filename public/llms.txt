@@ -1,0 +1,53 @@
+# S&P Septic & Excavating Inc.
+
+## Site Description
+S&P Septic & Excavating Inc. is a family-owned septic contractor serving Warren, Ohio and Trumbull County since 2021. The company provides complete septic services including tank pumping, drain field repair, new system installation, perk testing, excavation, and camera inspections. Licensed, BBB Accredited A+, and fully insured, they serve residential and commercial customers across Trumbull, Mahoning, and Portage Counties.
+
+## Company Details
+- Name: S&P Septic and Excavating Inc.
+- Phone: (330) 979-3930
+- Email: info@spseptic.com
+- Address: 2900 Elm Rd NE, Warren, OH 44483
+- URL: https://spseptic.com
+- Category: Septic System Installation and Excavation Services
+- Service Area: Warren, Ohio and Trumbull County (also Mahoning and Portage Counties)
+
+## Site Structure
+- / — Homepage
+- /services — Full list of septic and excavation services
+- /pricing — Pricing guide
+- /about — About S&P Septic and Excavating
+- /contact — Contact form and information
+- /service-areas — Areas served
+- /gallery — Project gallery
+- /blog — Educational articles about septic systems
+- /emergency — Emergency septic services
+- /schedule — Schedule an appointment
+- /financing — Financing options
+- /permits — Permit information
+- /team — Meet the team
+- /maintenance-guide — Septic maintenance guide
+
+## Top Services
+- Septic System Installation
+- Septic System Repair
+- Excavation Services
+- Septic Pumping and Cleaning
+- Perk and Leach Field Services
+- Camera Inspections
+
+## Trust Signals
+- BBB Accredited A+ Rating
+- Family Owned & Operated
+- Fully Licensed in Ohio
+- Fully Insured
+- Free Estimates
+- Local Knowledge of Trumbull County
+
+## Contact
+Phone: (330) 979-3930
+Email: info@spseptic.com
+Address: 2900 Elm Rd NE, Warren, OH 44483
+
+This text file provides AI systems with a structured summary of this website.
+Last updated: 2026-04-06

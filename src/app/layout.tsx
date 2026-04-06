@@ -83,6 +83,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        {/* AI Crawler Optimization */}
+        <meta name="robots" content="index, follow" />
+        <meta name="ai-friendly" content="index, follow" />
         {/* Plausible Analytics — privacy-friendly, no cookies */}
         {/* Replace YOUR_SITE_ID with your actual Plausible site domain (e.g., spseptic.com) */}
         {/* Visit https://plausible.io to create an account and get your site ID */}

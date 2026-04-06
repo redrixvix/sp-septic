@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/">
+  <ShortName>S&P Septic Search</ShortName>
+  <Description>Search S&P Septic &amp; Excavating Inc. — septic services, excavation, and contractor services in Warren, Ohio</Description>
+  <Url type="text/html" template="https://spseptic.com/?q={searchTerms}"/>
+  <Url type="application/x-suggestions+json" template="https://spseptic.com/api/suggest?q={searchTerms}"/>
+  <Contact>info@spseptic.com</Contact>
+  <Developer>S&P Septic &amp; Excavating Inc.</Developer>
+  <Attribution>Copyright 2026 S&amp;P Septic and Excavating Inc.</Attribution>
+  <SyndicationRight>open</SyndicationRight>
+  <AdultContent>false</AdultContent>
+  <Language>en-us</Language>
+  <InputEncoding>UTF-8</InputEncoding>
+  <OutputEncoding>UTF-8</OutputEncoding>
+</OpenSearchDescription>

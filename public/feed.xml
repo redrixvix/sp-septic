@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>S&amp;P Septic &amp; Excavating Inc. — Blog</title>
+    <description>Educational articles about septic systems, maintenance tips, and excavation services for homeowners in Warren, Ohio and Trumbull County.</description>
+    <link>https://spseptic.com</link>
+    <language>en-US</language>
+    <copyright>Copyright 2026 S&amp;P Septic and Excavating Inc.</copyright>
+    <managingEditor>info@spseptic.com (S&amp;P Septic &amp; Excavating)</managingEditor>
+    <webMaster>info@spseptic.com</webMaster>
+    <lastBuildDate>Mon, 06 Apr 2026 12:00:00 +0000</lastBuildDate>
+    <atom:link href="https://spseptic.com/feed.xml" rel="self" type="application/rss+xml"/>
+    <ttl>1440</ttl>
+    <item>
+      <title>How Often Should You Pump Your Septic Tank?</title>
+      <link>https://spseptic.com/blog/how-often-should-you-pump-your-septic-tank</link>
+      <guid isPermaLink="true">https://spseptic.com/blog/how-often-should-you-pump-your-septic-tank</guid>
+      <pubDate>Thu, 02 Apr 2026 12:00:00 +0000</pubDate>
+      <description>One of the most common questions homeowners ask: how often does my septic tank need to be pumped? The short answer is every 3 to 5 years, but it depends on household size, water usage, and tank capacity. Learn what affects pumping frequency and why regular pumping can prevent a $10,000+ drain field replacement.</description>
+    </item>
+    <item>
+      <title>7 Warning Signs Your Septic System Is Failing</title>
+      <link>https://spseptic.com/blog/signs-your-septic-system-is-failing</link>
+      <guid isPermaLink="true">https://spseptic.com/blog/signs-your-septic-system-is-failing</guid>
+      <pubDate>Thu, 26 Mar 2026 12:00:00 +0000</pubDate>
+      <description>A failing septic system is more than inconvenient — it can cause serious health hazards and expensive damage. Learn the seven red flags every Trumbull County homeowner should know, from slow drains throughout the house to sewage backup.</description>
+    </item>
+    <item>
+      <title>Septic vs. City Sewer: Which Is Better for Ohio Homeowners?</title>
+      <link>https://spseptic.com/blog/septic-vs-sewer-pros-cons-ohio</link>
+      <guid isPermaLink="true">https://spseptic.com/blog/septic-vs-sewer-pros-cons-ohio</guid>
+      <pubDate>Thu, 19 Mar 2026 12:00:00 +0000</pubDate>
+      <description>If you're deciding between a property on septic or city sewer in Ohio, understand the key differences in costs, maintenance responsibilities, and long-term considerations for each option.</description>
+    </item>
+    <item>
+      <title>What NOT to Flush: A Homeowner's Guide to Septic Safety</title>
+      <link>https://spseptic.com/blog/what-not-to-flush-septic-system</link>
+      <guid isPermaLink="true">https://spseptic.com/blog/what-not-to-flush-septic-system</guid>
+      <pubDate>Thu, 12 Mar 2026 12:00:00 +0000</pubDate>
+      <description>Your septic system is not a trash can. Learn which items should never go down your drains — including the so-called "flushable" wipes that cause thousands of dollars in damage every year.</description>
+    </item>
+    <item>
+      <title>Excavation for Driveways: What Ohio Homeowners Need to Know</title>
+      <link>https://spseptic.com/blog/excavation-for-driveways-what-ohio-homeowners-need-to-know</link>
+      <guid isPermaLink="true">https://spseptic.com/blog/excavation-for-driveways-what-ohio-homeowners-need-to-know</guid>
+      <pubDate>Thu, 05 Mar 2026 12:00:00 +0000</pubDate>
+      <description>From grading to gravel base to final surface, proper driveway excavation requires the right equipment and expertise. Learn what Trumbull County homeowners should know before starting an excavation project.</description>
+    </item>
+    <item>
+      <title>Perk Testing &amp; Soil Evaluation: Why It Matters for Your Septic System</title>
+      <link>https://spseptic.com/blog/perk-testing-soil-evaluation-ohio</link>
+      <guid isPermaLink="true">https://spseptic.com/blog/perk-testing-soil-evaluation-ohio</guid>
+      <pubDate>Thu, 26 Feb 2026 12:00:00 +0000</pubDate>
+      <description>Percolation testing is required before any new septic system installation in Ohio. Learn how perk testing works, why soil composition matters, and how S&amp;P Septic handles the entire permitting process for new installations.</description>
+    </item>
+  </channel>
+</rss>
