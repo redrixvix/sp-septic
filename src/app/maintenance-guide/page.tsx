@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { COMPANY } from "@/lib/data";
 
 export const metadata: Metadata = {
-  title: "Septic Maintenance Guide — S&P Septic & Excavating | Warren, Ohio",
+  title: "Septic Maintenance Guide",
   description:
     "The complete homeowner's guide to septic system maintenance. Seasonal tips, do's and don'ts, and maintenance schedules for Ohio homeowners with septic systems.",
 };

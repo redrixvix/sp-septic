@@ -16,7 +16,7 @@ import {
 import { COMPANY } from "@/lib/data";
 
 export const metadata: Metadata = {
-  title: "Schedule Service — S&P Septic & Excavating | Warren, Ohio",
+  title: "Schedule Service",
   description:
     "Schedule septic service, excavation work, or a free estimate with S&P Septic and Excavating in Warren, Ohio. Fast response, honest pricing.",
 };

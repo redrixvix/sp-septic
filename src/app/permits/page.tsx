@@ -7,7 +7,7 @@ import { Phone, CheckCircle, FileText, ArrowRight, MapPin } from "lucide-react";
 import { COMPANY } from "@/lib/data";
 
 export const metadata: Metadata = {
-  title: "Ohio Septic Permits — Trumbull County Requirements | S&P Septic",
+  title: "Ohio Septic Permits",
   description:
     "Learn about Ohio septic system permits, Trumbull County Health Department requirements, and what you need before installing or repairing a septic system.",
 };

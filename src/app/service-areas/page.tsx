@@ -7,7 +7,7 @@ import { COMPANY, SERVICE_AREAS } from "@/lib/data";
 import { BreadcrumbJsonLd } from "@/components/breadcrumb-jsonld";
 
 export const metadata: Metadata = {
-  title: "Service Areas — S&P Septic & Excavating | Warren, Ohio",
+  title: "Service Areas",
   description:
     "S&P Septic and Excavating serves Warren, Niles, Cortland, Girard, Trumbull County, Mahoning County, and Portage County, Ohio. Septic and excavation services near you.",
 };

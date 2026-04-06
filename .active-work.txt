@@ -1,1 +1,0 @@
-[2026-04-06 11:54] TASK: PageSpeed audit + ADA compliance audit | STATUS: in-progress | NEXT: audit both, fix issues, push

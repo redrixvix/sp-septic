@@ -5,7 +5,7 @@ import { Phone, Users, Star } from "lucide-react";
 import { COMPANY } from "@/lib/data";
 
 export const metadata: Metadata = {
-  title: "Meet the Team — S&P Septic & Excavating",
+  title: "Meet the Team",
   description:
     "The S&P Septic team. Family-owned, locally operated, and committed to doing the job right on every call in Warren, Ohio and Trumbull County.",
 };

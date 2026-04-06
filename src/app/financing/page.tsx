@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { COMPANY } from "@/lib/data";
 
 export const metadata: Metadata = {
-  title: "Financing & Payment Options — S&P Septic | Warren, Ohio",
+  title: "Financing & Payment Options",
   description:
     "Flexible payment options for septic and excavation projects. Learn about financing, payment methods, and how S&P helps make your project affordable.",
 };

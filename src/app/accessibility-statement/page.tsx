@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Accessibility Statement | S&P Septic & Excavating",
+  title: "Accessibility Statement",
   description:
     "Accessibility statement for S&P Septic & Excavating website. We are committed to ensuring digital accessibility for all users.",
 };

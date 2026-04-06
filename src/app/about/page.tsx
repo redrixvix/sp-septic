@@ -10,7 +10,7 @@ import { StaggerContainer, StaggerItem } from "@/components/animations/StaggerCo
 import { BreadcrumbJsonLd } from "@/components/breadcrumb-jsonld";
 
 export const metadata: Metadata = {
-  title: "About Us — S&P Septic and Excavating Inc.",
+  title: "About Us",
   description:
     "Learn about S&P Septic and Excavating Inc. — a family-owned, BBB Accredited contractor serving Warren, Ohio since 2021. Meet our crew and learn why neighbors trust us.",
 };

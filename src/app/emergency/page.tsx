@@ -7,7 +7,7 @@ import { Phone, AlertTriangle, Clock, Shield, ArrowRight, Droplets } from "lucid
 import { COMPANY } from "@/lib/data";
 
 export const metadata: Metadata = {
-  title: "Emergency Septic Service — 24/7 | S&P Septic & Excavating",
+  title: "24/7 Emergency Service",
   description:
     "Septic emergency in Warren, Ohio? S&P Septic offers 24/7 emergency septic service. Sewage backup, strong odors, and more — fast response. Call (330) 979-3930.",
 };

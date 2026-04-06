@@ -8,7 +8,7 @@ import { COMPANY } from "@/lib/data";
 import { BreadcrumbJsonLd } from "@/components/breadcrumb-jsonld";
 
 export const metadata: Metadata = {
-  title: "Septic & Excavation Pricing Guide — S&P Septic | Warren, Ohio",
+  title: "Pricing Guide",
   description:
     "Honest, upfront septic and excavation pricing for Warren, Ohio homeowners. Learn what septic pumping, new installations, and excavation services cost in 2026.",
 };
