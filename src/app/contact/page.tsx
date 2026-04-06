@@ -57,7 +57,7 @@ export default function ContactPage() {
       </section>
 
       {/* Main */}
-      <section className="py-16 md:py-24 bg-slate-50">
+      <section className="py-10 md:py-16 bg-slate-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-3 gap-8">
             {/* Form */}
@@ -268,8 +268,24 @@ export default function ContactPage() {
         </div>
       </section>
 
+      {/* CTA Bridge */}
+      <section className="bg-primary py-8">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
+          <h2 className="text-xl font-bold mb-1">Located in Warren, Ohio</h2>
+          <p className="text-blue-100 text-sm mb-4">
+            {COMPANY.address}, {COMPANY.city}, {COMPANY.state} {COMPANY.zip} — Serving all of Trumbull County
+          </p>
+          <a href={`tel:${COMPANY.phone}`} className="inline-block">
+            <Button size="lg" className="gap-2 bg-white text-primary hover:bg-secondary/10 font-bold text-base px-8">
+              <Phone className="w-5 h-5" />
+              Call {COMPANY.phone}
+            </Button>
+          </a>
+        </div>
+      </section>
+
       {/* Google Maps Embed */}
-      <section className="w-full h-80 md:h-96">
+      <section className="w-full h-64 md:h-80">
         <iframe
           src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2988.0!2d-80.8184!3d41.2376!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDHCsDE0JzE2LjIiTiA4MMKwNDknMDYuNSJX!5e0!3m2!1sen!2sus!4v1700000000000!5m2!1sen!2sus"
           width="100%"

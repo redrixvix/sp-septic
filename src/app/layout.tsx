@@ -7,6 +7,7 @@ import { FloatingCTA } from "@/components/floating-cta";
 import { EmergencyBanner } from "@/components/emergency-banner";
 import { JsonLd } from "@/components/json-ld";
 import { FaqJsonLd } from "@/components/faq-jsonld";
+import { LocalBusinessJsonLd } from "@/components/local-business-jsonld";
 import { COMPANY } from "@/lib/data";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -26,6 +27,13 @@ export const metadata: Metadata = {
     "septic inspection Ohio",
     "excavation contractor Warren Ohio",
     "perk testing Ohio",
+    "septic tank installation",
+    "septic system maintenance",
+    "excavation contractor Trumbull County",
+    "septic emergency service Ohio",
+    "leach field installation",
+    "septic camera inspection",
+    "septic system cleaning",
   ],
   openGraph: {
     title: COMPANY.name,
@@ -34,11 +42,20 @@ export const metadata: Metadata = {
     locale: "en_US",
     type: "website",
     url: "https://spseptic.com",
+    images: [
+      {
+        url: "/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: `${COMPANY.name} — Septic & Excavating in Warren, Ohio`,
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: COMPANY.name,
     description: COMPANY.description,
+    images: ["/opengraph-image"],
   },
   icons: {
     icon: "/favicon.svg",
@@ -46,7 +63,15 @@ export const metadata: Metadata = {
   robots: {
     index: true,
     follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
   },
+  metadataBase: new URL("https://spseptic.com"),
 };
 
 export default function RootLayout({
@@ -56,8 +81,21 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        {/* Plausible Analytics — privacy-friendly, no cookies */}
+        {/* Replace YOUR_SITE_ID with your actual Plausible site domain (e.g., spseptic.com) */}
+        {/* Visit https://plausible.io to create an account and get your site ID */}
+        {/*
+        <script
+          defer
+          data-domain="YOUR_SITE_ID"
+          src="https://plausible.io/js/script.tagged-events.js"
+        />
+        */}
+      </head>
       <body className={`${inter.className} antialiased`}>
         <JsonLd />
+        <LocalBusinessJsonLd />
         <FaqJsonLd />
         <EmergencyBanner />
         <SiteHeader />
