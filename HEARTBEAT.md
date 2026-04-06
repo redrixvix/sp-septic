@@ -2,35 +2,30 @@
 
 ## Status Update System
 
-This heartbeat fires every 5 minutes. Every time it fires, you MUST send a brief status message to Alexander via Telegram. NEVER just say HEARTBEAT_OK.
+This heartbeat fires every 5 minutes. EVERY TIME it fires, you MUST send a brief status message to Alexander via Telegram. NEVER stay silent. Never reply HEARTBEAT_OK.
 
-### What to Send Every Time
+### Rule: Always Send Something
 
-Check these three things, then send a brief message:
+**Even if you are mid-task working on something**, send a quick update:
+- "Still working on SEO research..."
+- "Building the blog post now, almost done"
+- "Pushing the homepage refresh shortly"
 
-1. **Git status** — any unpushed commits? Any build errors?
-2. **Current work** — are you mid-task on something? What's the last thing you completed?
-3. **Any issues** — is the dev server down? Did a build fail? Anything blocking?
+**Even if you just finished something and pushed**, send:
+- "Just pushed the new blog article live. Next: YouTube strategy."
 
-### Format for Status Message
+**If you are completely idle**, send:
+- "Idle — no active tasks. Ready for your direction."
 
-Keep it short and useful. Example messages:
+### Format
 
-> "⚡ Status 1:59 PM — Dev server 🟢 running. Last push: 30 min ago. Currently idle — awaiting your direction."
->
-> "⚡ Status 2:04 PM — Dev server 🟢. Pushing accessibility audit fixes now. Will update when live."
->
-> "⚡ Status 2:09 PM — Dev server 🟢. Build passed (28/28 pages). Nothing blocking. Ready for next task."
+2-4 sentences max. Example:
 
-### If Mid-Task
+> "Still working on the SEO deep-dive (15 min in). Found great Warren OH keyword opportunities. Will push a new blog article shortly."
 
-If you're actively working on something, send a brief update:
-> "⚡ Status 2:14 PM — Working on SEO improvements. Just finished title tag fixes, building now."
+> "Pushed the new pumping cost article live. Taking a quick break then moving to YouTube video strategy."
 
-### If Nothing Happened for a While
-
-If the last meaningful action was more than an hour ago:
-> "⚡ Status 2:19 PM — Site quiet for ~90 min. Last work: ADA audit fixes pushed. Ready for your next direction."
+> "Idle — site is running clean. Ready for your next direction."
 
 ### Anti-AFK Rule
 
@@ -39,13 +34,6 @@ If `.active-work.txt` exists and is older than 20 minutes with no commits since:
 
 ### What NEVER to Do
 
-- Never reply HEARTBEAT_OK to the heartbeat — always send something
-- Never stay silent — the user should never have to ask "are you there?"
-- Never send a massive wall of text — 2-4 sentences max per update
-
-### Quick Status Checklist (run in ~30 seconds)
-
-1. `git -C /home/rixvix/.openclaw/workspace/sp-septic log -1 --oneline` — last commit time
-2. `curl -s -o /dev/null -w "%{http_code}" https://sp-septic.vercel.app/` — site up?
-3. Read `.active-work.txt` if it exists
-4. Send Telegram message with findings
+- Never reply HEARTBEAT_OK
+- Never stay silent when the heartbeat fires
+- Never send a massive wall of text
