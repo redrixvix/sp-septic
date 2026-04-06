@@ -148,15 +148,15 @@ export function SiteFooter() {
         </div>
 
         <div className="border-t border-slate-800 mt-8 pt-8 flex flex-col sm:flex-row justify-between items-center gap-4">
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-slate-400">
             © {new Date().getFullYear()} {COMPANY.fullName}. All rights reserved.
           </p>
           <div className="flex items-center gap-1.5">
-            <span className="text-xs text-slate-500">BBB Accredited</span>
+            <span className="text-xs text-slate-400">BBB Accredited</span>
             <span className="text-xs text-slate-600">•</span>
-            <span className="text-xs text-slate-500">Licensed & Insured</span>
+            <span className="text-xs text-slate-400">Licensed & Insured</span>
             <span className="text-xs text-slate-600">•</span>
-            <span className="text-xs text-slate-500">OH Lic #{"TODO"}</span>
+            <span className="text-xs text-slate-400">OH Lic #{"TODO"}</span>
           </div>
         </div>
       </div>
