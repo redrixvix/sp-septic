@@ -111,7 +111,7 @@ export function SiteFooter() {
                 { href: "/schedule", label: "Schedule Service" },
                 { href: "/financing", label: "Financing" },
                 { href: "/maintenance-guide", label: "Maintenance Guide" },
-                { href: "/ada-statement.html", label: "Accessibility Statement" },
+                { href: "/accessibility-statement", label: "Accessibility Statement" },
                 { href: COMPANY.bbbUrl, label: "BBB Profile" },
               ].map((link) => (
                 <li key={link.href}>
