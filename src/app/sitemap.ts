@@ -1,4 +1,5 @@
 import { MetadataRoute } from "next";
+import { BLOG_ARTICLES } from "@/lib/blog-data";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = "https://spseptic.com";
@@ -90,5 +91,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
   ];
 
-  return staticPages;
+  // Add blog post pages
+  const blogPages: MetadataRoute.Sitemap = BLOG_ARTICLES.map((article) => ({
+    url: `${baseUrl}/blog/${article.slug}`,
+    lastModified: new Date(),
+    changeFrequency: "monthly" as const,
+    priority: 0.6,
+  }));
+
+  return [...staticPages, ...blogPages];
 }

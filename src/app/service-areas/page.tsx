@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { MapPin, Phone, CheckCircle, ArrowRight } from "lucide-react";
 import { COMPANY, SERVICE_AREAS } from "@/lib/data";
+import { BreadcrumbJsonLd } from "@/components/breadcrumb-jsonld";
 
 export const metadata: Metadata = {
   title: "Service Areas — S&P Septic & Excavating | Warren, Ohio",
@@ -44,6 +45,7 @@ const AREA_DETAILS: Record<string, { zip?: string; desc: string }> = {
 export default function ServiceAreasPage() {
   return (
     <>
+      <BreadcrumbJsonLd items={[{ name: "Home", url: "https://spseptic.com" }, { name: "Service Areas", url: "https://spseptic.com/service-areas" }]} />
       {/* Hero */}
       <section className="bg-slate-900 text-white py-16 md:py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

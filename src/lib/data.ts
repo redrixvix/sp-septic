@@ -10,7 +10,7 @@ export const COMPANY = {
   facebook: "https://www.facebook.com/profile.php?id=61577002508149",
   bbbUrl: "https://www.bbb.org/us/oh/warren/profile/septic-installation/sp-septic-and-excavating-0432-20020808",
   tagline: "Trusted Septic & Excavating Services in Warren, Ohio",
-  description: "Family-owned and operated since 2021. Licensed, insured, and BBB Accredited with an A+ rating. Septic system installation, repair, and excavation services for residential and commercial properties throughout Trumbull County and beyond.",
+  description: "S&P Septic & Excavating Inc. — Family-owned septic contractor serving Warren, Ohio and Trumbull County since 2021. Licensed, BBB Accredited A+, fully insured. Septic tank pumping, drain field repair, new system installation, and excavation services. Call (330) 979-3930 for a free estimate.",
 };
 
 export const SERVICES = [

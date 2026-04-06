@@ -16,6 +16,7 @@ import {
   MapPin,
 } from "lucide-react";
 import { COMPANY, SERVICES } from "@/lib/data";
+import { BreadcrumbJsonLd } from "@/components/breadcrumb-jsonld";
 
 export const metadata: Metadata = {
   title: "Services",
@@ -88,6 +89,7 @@ const FAQS = [
 export default function ServicesPage() {
   return (
     <>
+      <BreadcrumbJsonLd items={[{ name: "Home", url: "https://spseptic.com" }, { name: "Services", url: "https://spseptic.com/services" }]} />
       {/* Page Hero */}
       <section className="bg-slate-900 text-white py-16 md:py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

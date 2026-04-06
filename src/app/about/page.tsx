@@ -7,6 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { COMPANY } from "@/lib/data";
 import { FadeIn } from "@/components/animations/FadeIn";
 import { StaggerContainer, StaggerItem } from "@/components/animations/StaggerContainer";
+import { BreadcrumbJsonLd } from "@/components/breadcrumb-jsonld";
 
 export const metadata: Metadata = {
   title: "About Us — S&P Septic and Excavating Inc.",
@@ -105,6 +106,7 @@ const WHY_STATS = [
 export default function AboutPage() {
   return (
     <>
+      <BreadcrumbJsonLd items={[{ name: "Home", url: "https://spseptic.com" }, { name: "About", url: "https://spseptic.com/about" }]} />
       {/* Hero */}
       <section className="bg-slate-900 text-white py-16 md:py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

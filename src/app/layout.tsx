@@ -8,6 +8,7 @@ import { EmergencyBanner } from "@/components/emergency-banner";
 import { JsonLd } from "@/components/json-ld";
 import { FaqJsonLd } from "@/components/faq-jsonld";
 import { LocalBusinessJsonLd } from "@/components/local-business-jsonld";
+import { OrganizationJsonLd } from "@/components/organization-jsonld";
 import { COMPANY } from "@/lib/data";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -97,6 +98,7 @@ export default function RootLayout({
         <a href="#main-content" className="skip-link">Skip to main content</a>
         <JsonLd />
         <LocalBusinessJsonLd />
+        <OrganizationJsonLd />
         <FaqJsonLd />
         <EmergencyBanner />
         <SiteHeader />

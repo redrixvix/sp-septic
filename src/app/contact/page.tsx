@@ -1,4 +1,5 @@
 import { ContactPageClient } from "./ContactForm";
+import { BreadcrumbJsonLd } from "@/components/breadcrumb-jsonld";
 
 export const metadata = {
   title: "Contact Us — Get a Free Estimate",
@@ -7,5 +8,10 @@ export const metadata = {
 };
 
 export default function ContactPage() {
-  return <ContactPageClient />;
+  return (
+    <>
+      <BreadcrumbJsonLd items={[{ name: "Home", url: "https://spseptic.com" }, { name: "Contact", url: "https://spseptic.com/contact" }]} />
+      <ContactPageClient />
+    </>
+  );
 }

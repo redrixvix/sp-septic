@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Phone, CheckCircle, ArrowRight, Info } from "lucide-react";
 import { COMPANY } from "@/lib/data";
+import { BreadcrumbJsonLd } from "@/components/breadcrumb-jsonld";
 
 export const metadata: Metadata = {
   title: "Septic & Excavation Pricing Guide — S&P Septic | Warren, Ohio",
@@ -99,6 +100,7 @@ const EXCAVATION_PRICING = [
 export default function PricingPage() {
   return (
     <>
+      <BreadcrumbJsonLd items={[{ name: "Home", url: "https://spseptic.com" }, { name: "Pricing", url: "https://spseptic.com/pricing" }]} />
       {/* Hero */}
       <section className="bg-slate-900 text-white py-16 md:py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
