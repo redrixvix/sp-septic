@@ -3,8 +3,9 @@ const fs = require("fs");
 const path = require("path");
 const { execSync } = require("child_process");
 
-const STATUS_FILE = "/home/rixvix/.openclaw/workspace/sp-septic/.current-status";
-const LOG_FILE    = "/home/rixvix/.openclaw/workspace/sp-septic/.status-log";
+const STATUS_FILE   = "/home/rixvix/.openclaw/workspace/sp-septic/.current-status";
+const ACTIVE_FILE   = "/home/rixvix/.openclaw/workspace/sp-septic/.active-work.txt";
+const LOG_FILE      = "/home/rixvix/.openclaw/workspace/sp-septic/.status-log";
 
 const now = new Date();
 const timeStr = now.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true });
@@ -26,38 +27,41 @@ try {
   version = pkg.version;
 } catch (e) {}
 
-// Git branch
+// Git branch + recent commit check
 let gitBranch = "";
+let recentCommit = false;
 try {
   gitBranch = execSync("git -C /home/rixvix/.openclaw/workspace/sp-septic branch --show-current 2>/dev/null || echo ''", { encoding: "utf8" }).trim();
+  // Check for commit in last 45 minutes
+  const since = Date.now() - 45 * 60 * 1000;
+  const commitTime = execSync("git -C /home/rixvix/.openclaw/workspace/sp-septic log -1 --format=%ct 2>/dev/null || echo '0'", { encoding: "utf8" }).trim();
+  recentCommit = parseInt(commitTime) * 1000 > since;
 } catch (e) {}
+
+// Active work check
+let activeWork = null;
+if (fs.existsSync(ACTIVE_FILE)) {
+  try {
+    const content = fs.readFileSync(ACTIVE_FILE, "utf8").trim();
+    const fileAge = (now.getTime() - fs.statSync(ACTIVE_FILE).mtimeMs) / 1000 / 60; // minutes
+    if (content && fileAge > 45 && !recentCommit) {
+      activeWork = content;
+    }
+  } catch (e) {}
+}
 
 const status = "Status Check: " + timeStr + " on " + dateStr + "\n" +
 "Project: S&P Septic & Excavating Website\n" +
 "Location: sp-septic/\n" +
 "Dev Server: " + devServerStatus + "\n" +
 "Git Branch: " + (gitBranch || "none") + "\n" +
-"Last Build: v" + version + "\n\n" +
-"Current work:\n" +
-"- Homepage fully animated with scroll reveals, parallax, count-ups\n" +
-"- 23 pages built and running\n\n" +
-"Recent changes:\n" +
-"- Homepage reworked with premium animations (parallax, staggered, hover effects)\n" +
-"- Color palette: deep forest green + warm gold\n" +
-"- framer-motion installed, animation components created\n" +
-"- CSS keyframes: hero-float, fade-in-up, pulse-gold, gradient-shift\n" +
-"- Build verified: 23/23 pages clean\n\n" +
-"Next priorities:\n" +
-"- Real project photos\n" +
-"- Email backend (Resend)\n" +
-"- Open Graph images\n" +
-"- Google Search Console + analytics\n" +
-"- Ohio contractor license # in footer\n\n" +
-"Working: iterate further on design/content/functionality on command.";
+"Last Build: v" + version + "\n" +
+(recentCommit ? "Recent commit: YES (active development)\n" : "Recent commit: no\n") +
+(activeWork ? "\n!!! SILENT WORK DETECTED !!!\n" + activeWork + "\n" : "\n");
 
 fs.writeFileSync(STATUS_FILE, status);
 
-const logEntry = now.toISOString() + " | " + (devServerStatus.includes("running") ? "UP" : "DOWN") + " | " + (gitBranch || "no branch") + "\n";
+const logEntry = now.toISOString() + " | " + (devServerStatus.includes("running") ? "UP" : "DOWN") + " | " + (gitBranch || "no branch") + (activeWork ? " | ⚠️ SILENT" : " | OK") + "\n";
 try {
   let log = "";
   if (fs.existsSync(LOG_FILE)) {
@@ -68,4 +72,4 @@ try {
   fs.writeFileSync(LOG_FILE, log + logEntry);
 } catch (e) {}
 
-console.log("Status written: " + timeStr);
+console.log("Status written: " + timeStr + (activeWork ? " [⚠️ SILENT WORK DETECTED]" : " [OK]"));
