@@ -104,6 +104,24 @@ export const TESTIMONIALS = [
     text: "Had them install a new septic system for our new home construction. Handled all the permits and inspections. Zero headaches.",
     rating: 5,
   },
+  {
+    name: "Dave M.",
+    location: "Girard, OH",
+    text: "Called S&P for an emergency pump-out on a Sunday morning. They were here within two hours and got the job done fast. Fair price too.",
+    rating: 5,
+  },
+  {
+    name: "Sandra K.",
+    location: "Howland Township, OH",
+    text: "They camera-inspected our drain field and found the issue other companies missed. Fixed it right the first time. Knowledgeable crew.",
+    rating: 5,
+  },
+  {
+    name: "Frank D.",
+    location: "Liberty Township, OH",
+    text: "Needed perk testing for a property sale. S&P scheduled fast, provided clear documentation, and the report was ready same day.",
+    rating: 5,
+  },
 ];
 
 export const SERVICE_AREAS = [
