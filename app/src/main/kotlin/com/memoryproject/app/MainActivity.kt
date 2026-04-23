@@ -7,6 +7,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -26,15 +27,24 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            MemoryProjectTheme {
-                MemoryNavHost(modifier = Modifier.fillMaxSize())
+            var darkThemeEnabled by remember { mutableStateOf(false) }
+            MemoryProjectTheme(darkTheme = darkThemeEnabled) {
+                MemoryNavHost(
+                    modifier = Modifier.fillMaxSize(),
+                    darkThemeEnabled = darkThemeEnabled,
+                    onDarkThemeToggle = { darkThemeEnabled = !darkThemeEnabled }
+                )
             }
         }
     }
 }
 
 @Composable
-fun MemoryNavHost(modifier: Modifier = Modifier) {
+fun MemoryNavHost(
+    modifier: Modifier = Modifier,
+    darkThemeEnabled: Boolean = false,
+    onDarkThemeToggle: () -> Unit = {}
+) {
     val navController = rememberNavController()
 
     NavHost(
@@ -100,8 +110,21 @@ fun MemoryNavHost(modifier: Modifier = Modifier) {
                     navController.navigate("auth") {
                         popUpTo("books") { inclusive = true }
                     }
-                }
+                },
+                onToggleDarkMode = onDarkThemeToggle
             )
+        }
+
+        composable(
+            "toggleDarkMode",
+            enterTransition = { fadeIn() },
+            exitTransition = { fadeOut() }
+        ) {
+            LaunchedEffect(Unit) {
+                onDarkThemeToggle()
+                navController.popBackStack()
+            }
+            Box(modifier = Modifier.fillMaxSize())
         }
     }
 }

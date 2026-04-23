@@ -14,7 +14,6 @@ data class BooksUiState(
     val isLoading: Boolean = false,
     val books: List<Book> = emptyList(),
     val error: String? = null,
-    val showCreateDialog: Boolean = false,
     val isCreating: Boolean = false
 )
 
@@ -45,21 +44,13 @@ class BooksViewModel(private val repository: MemoryRepository) : ViewModel() {
         }
     }
 
-    fun showCreateDialog() {
-        _uiState.value = _uiState.value.copy(showCreateDialog = true)
-    }
-
-    fun hideCreateDialog() {
-        _uiState.value = _uiState.value.copy(showCreateDialog = false)
-    }
-
     fun createBook(title: String, description: String?) {
         if (title.isBlank()) return
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isCreating = true)
             repository.createBook(title, description?.takeIf { it.isNotBlank() })
                 .onSuccess {
-                    _uiState.value = _uiState.value.copy(showCreateDialog = false, isCreating = false)
+                    _uiState.value = _uiState.value.copy(isCreating = false)
                     loadBooks()
                 }
                 .onFailure { e ->

@@ -180,7 +180,10 @@ fun AuthScreen(
             // Email field
             OutlinedTextField(
                 value = email,
-                onValueChange = { email = it },
+                onValueChange = {
+                    email = it
+                    if (uiState.error != null) viewModel.clearError()
+                },
                 label = { Text("Email address") },
                 leadingIcon = {
                     Icon(
@@ -219,7 +222,10 @@ fun AuthScreen(
                     Spacer(modifier = Modifier.height(14.dp))
                     OutlinedTextField(
                         value = name,
-                        onValueChange = { name = it },
+                        onValueChange = {
+                            name = it
+                            if (uiState.error != null) viewModel.clearError()
+                        },
                         label = { Text("Your name") },
                         leadingIcon = {
                             Icon(
@@ -252,7 +258,10 @@ fun AuthScreen(
             // Password field
             OutlinedTextField(
                 value = password,
-                onValueChange = { password = it },
+                onValueChange = {
+                    password = it
+                    if (uiState.error != null) viewModel.clearError()
+                },
                 label = { Text("Password") },
                 leadingIcon = {
                     Icon(

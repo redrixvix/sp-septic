@@ -1,5 +1,7 @@
 package com.memoryproject.app.ui.books
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.animation.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -11,6 +13,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.Share
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
@@ -21,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -74,7 +78,7 @@ fun BookDetailScreen(
     // Show snackbar on errors
     LaunchedEffect(uiState.error) {
         uiState.error?.let {
-            snackbarHostState.showSnackbar(it)
+            snackbarHostState.showSnackbar(it, duration = SnackbarDuration.Long)
         }
     }
 
@@ -249,6 +253,15 @@ fun BookDetailScreen(
                 }
 
                 else -> {
+                    val context = LocalContext.current
+                    val onShareMemory: (Memory) -> Unit = { memory ->
+                        val intent = Intent(Intent.ACTION_SEND).apply {
+                            type = "text/plain"
+                            putExtra(Intent.EXTRA_SUBJECT, memory.prompt_question)
+                            putExtra(Intent.EXTRA_TEXT, "${memory.prompt_question}\n\n${memory.answer_text}")
+                        }
+                        context.startActivity(Intent.createChooser(intent, "Share memory"))
+                    }
                     val pullRefreshState = rememberPullRefreshState(
                         refreshing = uiState.isLoading,
                         onRefresh = { viewModel.loadBook() }
@@ -278,7 +291,8 @@ fun BookDetailScreen(
                                 MemoryCard(
                                     memory = memory,
                                     onEdit = { viewModel.showEditMemory(memory) },
-                                    onDelete = { viewModel.showDeleteConfirm(memory) }
+                                    onDelete = { viewModel.showDeleteConfirm(memory) },
+                                    onShareClick = { onShareMemory(memory) }
                                 )
                             }
                         }
@@ -555,7 +569,8 @@ private fun MemorySkeletonCard() {
 private fun MemoryCard(
     memory: Memory,
     onEdit: () -> Unit,
-    onDelete: () -> Unit
+    onDelete: () -> Unit,
+    onShareClick: () -> Unit = {}
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
@@ -620,6 +635,17 @@ private fun MemoryCard(
                         )
                     }
                     Row {
+                        IconButton(
+                            onClick = onShareClick,
+                            modifier = Modifier.size(36.dp)
+                        ) {
+                            Icon(
+                                Icons.Default.Share,
+                                contentDescription = "Share",
+                                tint = CharcoalMuted,
+                                modifier = Modifier.size(18.dp)
+                            )
+                        }
                         IconButton(
                             onClick = onEdit,
                             modifier = Modifier.size(36.dp)

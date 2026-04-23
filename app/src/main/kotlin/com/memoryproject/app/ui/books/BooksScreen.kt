@@ -1,5 +1,7 @@
 package com.memoryproject.app.ui.books
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.animation.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -14,7 +16,10 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Book
 import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material.icons.filled.MenuBook
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.OpenInNew
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
@@ -24,6 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -41,6 +47,7 @@ fun BooksScreen(
     viewModel: BooksViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    var showMenuForBookId by remember { mutableStateOf<Int?>(null) }
     var showCreateDialog by remember { mutableStateOf(false) }
     var newTitle by remember { mutableStateOf("") }
     var newDescription by remember { mutableStateOf("") }
@@ -199,7 +206,7 @@ fun BooksScreen(
                         )
                         Spacer(modifier = Modifier.height(10.dp))
                         Text(
-                            text = "Create your first memory book and start preserving your family's stories.",
+                            text = "Every family has stories worth keeping. Start yours here.",
                             style = MaterialTheme.typography.bodyLarge,
                             color = CharcoalMuted,
                             textAlign = androidx.compose.ui.text.style.TextAlign.Center
@@ -226,10 +233,23 @@ fun BooksScreen(
                 }
 
                 else -> {
+                    val context = LocalContext.current
                     val pullRefreshState = rememberPullRefreshState(
                         refreshing = uiState.isLoading,
                         onRefresh = { viewModel.loadBooks() }
                     )
+                    val onShareBook: (Book) -> Unit = { book ->
+                        val intent = Intent(Intent.ACTION_SEND).apply {
+                            type = "text/plain"
+                            putExtra(Intent.EXTRA_SUBJECT, book.title)
+                            putExtra(Intent.EXTRA_TEXT, "${book.title}\n\nhttps://web-redrixvixs-projects.vercel.app/books/${book.id}")
+                        }
+                        context.startActivity(Intent.createChooser(intent, "Share via"))
+                    }
+                    val onOpenInBrowser: (Book) -> Unit = { book ->
+                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://web-redrixvixs-projects.vercel.app/books/${book.id}"))
+                        context.startActivity(intent)
+                    }
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
@@ -243,10 +263,17 @@ fun BooksScreen(
                                 items = uiState.books,
                                 key = { it.id }
                             ) { book ->
-                                BookCard(
-                                    book = book,
-                                    onClick = { onBookClick(book.id) }
-                                )
+                                Box {
+                                    BookCard(
+                                        book = book,
+                                        onClick = { onBookClick(book.id) },
+                                        showMenu = showMenuForBookId == book.id,
+                                        onMenuClick = { showMenuForBookId = book.id },
+                                        onMenuDismiss = { showMenuForBookId = null },
+                                        onShareClick = { onShareBook(book) },
+                                        onOpenInBrowserClick = { onOpenInBrowser(book) }
+                                    )
+                                }
                             }
                         }
                         PullRefreshIndicator(
@@ -447,7 +474,15 @@ fun SkeletonCard() {
 }
 
 @Composable
-fun BookCard(book: Book, onClick: () -> Unit) {
+fun BookCard(
+    book: Book,
+    onClick: () -> Unit,
+    showMenu: Boolean = false,
+    onMenuClick: () -> Unit = {},
+    onMenuDismiss: () -> Unit = {},
+    onShareClick: () -> Unit = {},
+    onOpenInBrowserClick: () -> Unit = {}
+) {
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
     val elevation by animateDpAsState(
@@ -463,7 +498,9 @@ fun BookCard(book: Book, onClick: () -> Unit) {
             .clickable(
                 interactionSource = interactionSource,
                 indication = null,
-                onClick = onClick
+                onClick = {
+                    if (showMenu) onMenuDismiss() else onClick()
+                }
             ),
         shape = RoundedCornerShape(14.dp),
         colors = CardDefaults.cardColors(
@@ -523,11 +560,7 @@ fun BookCard(book: Book, onClick: () -> Unit) {
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    // Soft section header background
-                    Box(
-                        modifier = Modifier
-                            .weight(1f)
-                    ) {
+                    Box(modifier = Modifier.weight(1f)) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -543,7 +576,6 @@ fun BookCard(book: Book, onClick: () -> Unit) {
                                     style = MaterialTheme.typography.bodySmall,
                                     color = CharcoalMuted
                                 )
-                                // Memory count badge — accent chip style
                                 Box(
                                     modifier = Modifier
                                         .background(
@@ -560,13 +592,21 @@ fun BookCard(book: Book, onClick: () -> Unit) {
                                     )
                                 }
                             }
-                            if (book.updated_at != null) {
+                            val bytes = book.storage_used_bytes.toLongOrNull() ?: 0L
+                        if (bytes > 0) {
+                            Text(text = "•", style = MaterialTheme.typography.bodySmall, color = CharcoalMuted)
+                            Text(
+                                text = formatStorage(bytes),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = CharcoalLight
+                            )
+                        }
+                        if (book.updated_at != null) {
                                 Text(
                                     text = "•",
                                     style = MaterialTheme.typography.bodySmall,
                                     color = CharcoalMuted
                                 )
-                                // Softer muted color for relative date
                                 Text(
                                     text = formatRelativeDate(book.updated_at),
                                     style = MaterialTheme.typography.bodySmall,
@@ -596,7 +636,84 @@ fun BookCard(book: Book, onClick: () -> Unit) {
                     )
                 }
             }
+
+            // Storage indicator
+            val storageBytes = book.storage_used_bytes.toLongOrNull() ?: 0
+            if (storageBytes > 0) {
+                Spacer(modifier = Modifier.width(8.dp))
+                Box(
+                    modifier = Modifier
+                        .background(
+                            color = TeaGreen.copy(alpha = 0.2f),
+                            shape = RoundedCornerShape(6.dp)
+                        )
+                        .padding(horizontal = 8.dp, vertical = 4.dp)
+                ) {
+                    Text(
+                        text = formatStorageSize(storageBytes),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = TeaGreenDark,
+                        fontWeight = FontWeight.Medium
+                    )
+                }
+            }
+
+            // Kebab menu
+            Box {
+                IconButton(
+                    onClick = onMenuClick,
+                    modifier = Modifier.size(36.dp)
+                ) {
+                    Icon(
+                        Icons.Default.MoreVert,
+                        contentDescription = "More options",
+                        tint = CharcoalMuted,
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
+                DropdownMenu(
+                    expanded = showMenu,
+                    onDismissRequest = onMenuDismiss
+                ) {
+                    DropdownMenuItem(
+                        text = { Text("Open in browser", color = Charcoal) },
+                        onClick = {
+                            onMenuDismiss()
+                            onOpenInBrowserClick()
+                        },
+                        leadingIcon = {
+                            Icon(
+                                Icons.Default.OpenInNew,
+                                contentDescription = null,
+                                tint = CharcoalMuted
+                            )
+                        }
+                    )
+                    DropdownMenuItem(
+                        text = { Text("Share", color = Charcoal) },
+                        onClick = {
+                            onMenuDismiss()
+                            onShareClick()
+                        },
+                        leadingIcon = {
+                            Icon(
+                                Icons.Default.Share,
+                                contentDescription = null,
+                                tint = CharcoalMuted
+                            )
+                        }
+                    )
+                }
+            }
         }
+    }
+}
+private fun formatStorageSize(bytes: Long): String {
+    return when {
+        bytes < 1024 -> "${bytes}B"
+        bytes < 1024 * 1024 -> "${bytes / 1024}KB"
+        bytes < 1024 * 1024 * 1024 -> "${bytes / (1024 * 1024)}MB"
+        else -> "${bytes / (1024 * 1024 * 1024)}GB"
     }
 }
 private fun formatRelativeDate(isoDate: String): String {

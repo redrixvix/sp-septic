@@ -31,10 +31,20 @@ import org.koin.androidx.compose.koinViewModel
 fun SettingsScreen(
     onBack: () -> Unit,
     onLogout: () -> Unit,
+    onToggleDarkMode: () -> Unit = {},
     viewModel: SettingsViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var showLogoutDialog by remember { mutableStateOf(false) }
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    // Show coming soon snackbar for profile row
+    LaunchedEffect(uiState.profileMessage) {
+        uiState.profileMessage?.let {
+            snackbarHostState.showSnackbar(it, duration = SnackbarDuration.Short)
+            viewModel.clearProfileMessage()
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -69,6 +79,7 @@ fun SettingsScreen(
                 )
             )
         },
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         containerColor = Cornsilk
     ) { padding ->
         Column(
@@ -85,7 +96,7 @@ fun SettingsScreen(
                     icon = Icons.Default.Person,
                     title = "Profile",
                     subtitle = uiState.userEmail.ifBlank { "Loading..." },
-                    onClick = { }
+                    onClick = { viewModel.showProfileComingSoon() }
                 )
             }
 
@@ -98,7 +109,10 @@ fun SettingsScreen(
                     trailing = {
                         Switch(
                             checked = uiState.isDarkMode,
-                            onCheckedChange = { viewModel.toggleDarkMode() },
+                            onCheckedChange = {
+                                viewModel.toggleDarkMode()
+                                onToggleDarkMode()
+                            },
                             colors = SwitchDefaults.colors(
                                 checkedThumbColor = WarmWhite,
                                 checkedTrackColor = Bronze,
@@ -107,7 +121,10 @@ fun SettingsScreen(
                             )
                         )
                     },
-                    onClick = { viewModel.toggleDarkMode() }
+                    onClick = {
+                        viewModel.toggleDarkMode()
+                        onToggleDarkMode()
+                    }
                 )
             }
 
@@ -139,6 +156,7 @@ fun SettingsScreen(
                     icon = Icons.Default.Info,
                     title = "Version",
                     subtitle = "1.0.0",
+                    showDivider = true,
                     onClick = { }
                 )
                 SettingsItem(
@@ -256,56 +274,66 @@ private fun SettingsItem(
     title: String,
     subtitle: String,
     trailing: (@Composable () -> Unit)? = null,
+    showDivider: Boolean = false,
     onClick: () -> Unit
 ) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(WarmWhite)
-            .padding(horizontal = 16.dp, vertical = 14.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Box(
+    Column {
+        Row(
             modifier = Modifier
-                .size(40.dp)
-                .background(
-                    color = Bronze.copy(alpha = 0.1f),
-                    shape = RoundedCornerShape(10.dp)
-                ),
-            contentAlignment = Alignment.Center
+                .fillMaxWidth()
+                .background(WarmWhite)
+                .padding(horizontal = 16.dp, vertical = 14.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(
-                icon,
-                contentDescription = null,
-                tint = Bronze,
-                modifier = Modifier.size(20.dp)
-            )
+            Box(
+                modifier = Modifier
+                    .size(40.dp)
+                    .background(
+                        color = Bronze.copy(alpha = 0.1f),
+                        shape = RoundedCornerShape(10.dp)
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    icon,
+                    contentDescription = null,
+                    tint = Bronze,
+                    modifier = Modifier.size(20.dp)
+                )
+            }
+
+            Spacer(modifier = Modifier.width(14.dp))
+
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = Charcoal,
+                    fontWeight = FontWeight.Medium
+                )
+                Text(
+                    text = subtitle,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = CharcoalMuted
+                )
+            }
+
+            if (trailing != null) {
+                trailing()
+            } else {
+                Icon(
+                    Icons.Default.ChevronRight,
+                    contentDescription = null,
+                    tint = CharcoalMuted,
+                    modifier = Modifier.size(20.dp)
+                )
+            }
         }
-
-        Spacer(modifier = Modifier.width(14.dp))
-
-        Column(modifier = Modifier.weight(1f)) {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.bodyLarge,
-                color = Charcoal,
-                fontWeight = FontWeight.Medium
-            )
-            Text(
-                text = subtitle,
-                style = MaterialTheme.typography.bodySmall,
-                color = CharcoalMuted
-            )
-        }
-
-        if (trailing != null) {
-            trailing()
-        } else {
-            Icon(
-                Icons.Default.ChevronRight,
-                contentDescription = null,
-                tint = CharcoalMuted,
-                modifier = Modifier.size(20.dp)
+        if (showDivider) {
+            HorizontalDivider(
+                modifier = Modifier.padding(start = 70.dp),
+                color = Divider,
+                thickness = 0.5.dp
             )
         }
     }

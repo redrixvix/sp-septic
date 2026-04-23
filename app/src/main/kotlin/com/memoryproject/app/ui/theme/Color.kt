@@ -6,6 +6,7 @@ import androidx.compose.ui.graphics.Color
 val Cornsilk = Color(0xFFFEFAE0)        // Primary background — warm cream
 val Beige = Color(0xFFE9EDC9)            // Subtle secondary surfaces
 val TeaGreen = Color(0xFFCCD5AE)         // Accents, tags, secondary actions
+val TeaGreenDark = Color(0xFF6A7A5A)       // Darker variant for storage text
 val Bronze = Color(0xFFD4A373)           // Primary brand color — warm gold
 val BronzeLight = Color(0xFFE8C19A)       // Hover/pressed state
 val BronzeDark = Color(0xFFB8815A)       // Active/selected state

@@ -11,7 +11,8 @@ import kotlinx.coroutines.launch
 data class SettingsUiState(
     val userEmail: String = "",
     val isDarkMode: Boolean = false,
-    val notificationsEnabled: Boolean = true
+    val notificationsEnabled: Boolean = true,
+    val profileMessage: String? = null
 )
 
 class SettingsViewModel(
@@ -40,6 +41,14 @@ class SettingsViewModel(
 
     fun toggleNotifications() {
         _uiState.value = _uiState.value.copy(notificationsEnabled = !_uiState.value.notificationsEnabled)
+    }
+
+    fun showProfileComingSoon() {
+        _uiState.value = _uiState.value.copy(profileMessage = "Profile editing coming soon")
+    }
+
+    fun clearProfileMessage() {
+        _uiState.value = _uiState.value.copy(profileMessage = null)
     }
 
     fun logout() {
