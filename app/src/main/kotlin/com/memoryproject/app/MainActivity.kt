@@ -1,0 +1,107 @@
+package com.memoryproject.app
+
+import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
+import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import com.memoryproject.app.ui.auth.AuthScreen
+import com.memoryproject.app.ui.books.BookDetailScreen
+import com.memoryproject.app.ui.books.BooksScreen
+import com.memoryproject.app.ui.settings.SettingsScreen
+import com.memoryproject.app.ui.theme.MemoryProjectTheme
+
+class MainActivity : ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
+        setContent {
+            MemoryProjectTheme {
+                MemoryNavHost(modifier = Modifier.fillMaxSize())
+            }
+        }
+    }
+}
+
+@Composable
+fun MemoryNavHost(modifier: Modifier = Modifier) {
+    val navController = rememberNavController()
+
+    NavHost(
+        navController = navController,
+        startDestination = "auth",
+        modifier = modifier
+    ) {
+        composable(
+            "auth",
+            enterTransition = { fadeIn(animationSpec = tween(300)) },
+            exitTransition = { fadeOut(animationSpec = tween(300)) }
+        ) {
+            AuthScreen(
+                onLoginSuccess = {
+                    navController.navigate("books") {
+                        popUpTo("auth") { inclusive = true }
+                    }
+                }
+            )
+        }
+
+        composable(
+            "books",
+            enterTransition = { fadeIn(animationSpec = tween(300)) },
+            exitTransition = { fadeOut(animationSpec = tween(300)) }
+        ) {
+            BooksScreen(
+                onBookClick = { bookId ->
+                    navController.navigate("book/$bookId")
+                },
+                onLogout = {
+                    navController.navigate("auth") {
+                        popUpTo("books") { inclusive = true }
+                    }
+                },
+                onSettings = {
+                    navController.navigate("settings")
+                }
+            )
+        }
+
+        composable(
+            route = "book/{bookId}",
+            arguments = listOf(navArgument("bookId") { type = NavType.IntType }),
+            enterTransition = { fadeIn(animationSpec = tween(300)) },
+            exitTransition = { fadeOut(animationSpec = tween(300)) }
+        ) { backStackEntry ->
+            val bookId = backStackEntry.arguments?.getInt("bookId") ?: return@composable
+            BookDetailScreen(
+                bookId = bookId,
+                onBack = { navController.popBackStack() }
+            )
+        }
+
+        composable(
+            "settings",
+            enterTransition = { fadeIn(animationSpec = tween(300)) },
+            exitTransition = { fadeOut(animationSpec = tween(300)) }
+        ) {
+            SettingsScreen(
+                onBack = { navController.popBackStack() },
+                onLogout = {
+                    navController.navigate("auth") {
+                        popUpTo("books") { inclusive = true }
+                    }
+                }
+            )
+        }
+    }
+}

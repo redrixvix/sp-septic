@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Memory Project</string>
+    <style name="Theme.MemoryProject" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:statusBarColor">#FEFAE0</item>
+        <item name="android:navigationBarColor">#FEFAE0</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowBackground">#FEFAE0</item>
+    </style>
+</resources>

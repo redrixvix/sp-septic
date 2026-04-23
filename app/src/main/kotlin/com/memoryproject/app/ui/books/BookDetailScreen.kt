@@ -1,0 +1,682 @@
+package com.memoryproject.app.ui.books
+
+import androidx.compose.animation.*
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.LightMode
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.memoryproject.app.data.model.Memory
+import com.memoryproject.app.ui.theme.*
+import org.koin.androidx.compose.koinViewModel
+import org.koin.core.parameter.parametersOf
+
+private val PROMPT_SUGGESTIONS = listOf(
+    "Tell me about your first job",
+    "What was your wedding day like?",
+    "Describe your childhood home",
+    "What's your favorite holiday memory?",
+    "Tell me about your parents",
+    "What was school like for you?",
+    "Describe a time you laughed until you cried",
+    "What's the best advice you ever received?",
+    "Tell me about learning to drive",
+    "What music did you grow up listening to?"
+)
+
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
+@Composable
+fun BookDetailScreen(
+    bookId: Int,
+    onBack: () -> Unit,
+    viewModel: BookDetailViewModel = koinViewModel { parametersOf(bookId) }
+) {
+    val uiState by viewModel.uiState.collectAsState()
+    var promptInput by remember { mutableStateOf("") }
+    var answerInput by remember { mutableStateOf("") }
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    // Clear form when dialogs close
+    LaunchedEffect(uiState.showAddMemory, uiState.editMemory) {
+        if (!uiState.showAddMemory && uiState.editMemory == null) {
+            promptInput = ""
+            answerInput = ""
+        }
+    }
+
+    // Pre-fill edit form
+    LaunchedEffect(uiState.editMemory) {
+        uiState.editMemory?.let { memory ->
+            promptInput = memory.prompt_question
+            answerInput = memory.answer_text
+        }
+    }
+
+    // Show snackbar on errors
+    LaunchedEffect(uiState.error) {
+        uiState.error?.let {
+            snackbarHostState.showSnackbar(it)
+        }
+    }
+
+    Scaffold(
+        topBar = {
+            LargeTopAppBar(
+                title = {
+                    Column {
+                        Text(
+                            uiState.book?.title ?: "Book",
+                            style = MaterialTheme.typography.headlineMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = Charcoal,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                        uiState.book?.description?.takeIf { it.isNotBlank() }?.let { desc ->
+                            Text(
+                                desc,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = CharcoalMuted,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        }
+                    }
+                },
+                navigationIcon = {
+                    IconButton(
+                        onClick = onBack,
+                        modifier = Modifier
+                            .size(44.dp)
+                            .background(
+                                color = WarmWhite,
+                                shape = RoundedCornerShape(12.dp)
+                            )
+                    ) {
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Back",
+                            tint = Charcoal
+                        )
+                    }
+                },
+                colors = TopAppBarDefaults.largeTopAppBarColors(
+                    containerColor = Cornsilk,
+                    scrolledContainerColor = Cornsilk
+                )
+            )
+        },
+        floatingActionButton = {
+            ExtendedFloatingActionButton(
+                onClick = { viewModel.showAddMemory() },
+                containerColor = Bronze,
+                contentColor = WarmWhite,
+                elevation = FloatingActionButtonDefaults.elevation(
+                    defaultElevation = 6.dp,
+                    pressedElevation = 12.dp
+                )
+            ) {
+                Icon(Icons.Default.Add, contentDescription = null)
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    "Add Memory",
+                    style = MaterialTheme.typography.labelLarge,
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
+        },
+        snackbarHost = { SnackbarHost(snackbarHostState) },
+        containerColor = Cornsilk
+    ) { padding ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+        ) {
+            when {
+                uiState.isLoading && uiState.memories.isEmpty() -> {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(14.dp)
+                    ) {
+                        repeat(3) { MemorySkeletonCard() }
+                    }
+                }
+
+                uiState.error != null && uiState.memories.isEmpty() -> {
+                    Column(
+                        modifier = Modifier.align(Alignment.Center),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text("😕", fontSize = 56.sp)
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text(
+                            "Couldn't load this book",
+                            style = MaterialTheme.typography.headlineSmall,
+                            color = Charcoal
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            uiState.error!!,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = CharcoalMuted
+                        )
+                        Spacer(modifier = Modifier.height(20.dp))
+                        OutlinedButton(
+                            onClick = { viewModel.loadBook() },
+                            shape = RoundedCornerShape(12.dp),
+                            colors = ButtonDefaults.outlinedButtonColors(contentColor = Bronze)
+                        ) {
+                            Text("Try Again")
+                        }
+                    }
+                }
+
+                uiState.memories.isEmpty() -> {
+                    Column(
+                        modifier = Modifier
+                            .align(Alignment.Center)
+                            .padding(horizontal = 40.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(100.dp)
+                                .background(
+                                    brush = Brush.radialGradient(
+                                        colors = listOf(Papaya, Beige)
+                                    ),
+                                    shape = RoundedCornerShape(24.dp)
+                                ),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text("✨", fontSize = 48.sp)
+                        }
+                        Spacer(modifier = Modifier.height(28.dp))
+                        Text(
+                            "Start your collection",
+                            style = MaterialTheme.typography.headlineSmall,
+                            fontWeight = FontWeight.SemiBold,
+                            color = Charcoal
+                        )
+                        Spacer(modifier = Modifier.height(10.dp))
+                        Text(
+                            "Add your first memory and watch your story come to life.",
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = CharcoalMuted,
+                            textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                        )
+                        Spacer(modifier = Modifier.height(32.dp))
+                        Button(
+                            onClick = { viewModel.showAddMemory() },
+                            modifier = Modifier.height(52.dp),
+                            shape = RoundedCornerShape(14.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Bronze,
+                                contentColor = WarmWhite
+                            )
+                        ) {
+                            Icon(Icons.Default.Add, contentDescription = null)
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                "Add Your First Memory",
+                                style = MaterialTheme.typography.labelLarge,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        }
+                    }
+                }
+
+                else -> {
+                    val pullRefreshState = rememberPullRefreshState(
+                        refreshing = uiState.isLoading,
+                        onRefresh = { viewModel.loadBook() }
+                    )
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .pullRefresh(pullRefreshState)
+                    ) {
+                        LazyColumn(
+                            contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 96.dp),
+                            verticalArrangement = Arrangement.spacedBy(14.dp)
+                        ) {
+                            // Memory count header
+                            item {
+                                Text(
+                                    "${uiState.memories.size} ${if (uiState.memories.size == 1) "memory" else "memories"}",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = CharcoalMuted,
+                                    modifier = Modifier.padding(bottom = 4.dp)
+                                )
+                            }
+                            items(
+                                items = uiState.memories,
+                                key = { it.id }
+                            ) { memory ->
+                                MemoryCard(
+                                    memory = memory,
+                                    onEdit = { viewModel.showEditMemory(memory) },
+                                    onDelete = { viewModel.showDeleteConfirm(memory) }
+                                )
+                            }
+                        }
+                        PullRefreshIndicator(
+                            refreshing = uiState.isLoading,
+                            state = pullRefreshState,
+                            modifier = Modifier.align(Alignment.TopCenter),
+                            contentColor = Bronze,
+                            backgroundColor = Papaya
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    // Add Memory Dialog
+    if (uiState.showAddMemory) {
+        MemoryDialog(
+            title = "Add a Memory",
+            promptInput = promptInput,
+            answerInput = answerInput,
+            onPromptChange = { promptInput = it },
+            onAnswerChange = { answerInput = it },
+            onDismiss = {
+                viewModel.hideAddMemory()
+                promptInput = ""
+                answerInput = ""
+            },
+            onConfirm = {
+                viewModel.addMemory(promptInput, answerInput)
+                promptInput = ""
+                answerInput = ""
+            },
+            isSaving = uiState.isSaving,
+            confirmLabel = "Add Memory"
+        )
+    }
+
+    // Edit Memory Dialog
+    uiState.editMemory?.let { memory ->
+        MemoryDialog(
+            title = "Edit Memory",
+            promptInput = promptInput,
+            answerInput = answerInput,
+            onPromptChange = { promptInput = it },
+            onAnswerChange = { answerInput = it },
+            onDismiss = {
+                viewModel.hideEditMemory()
+                promptInput = ""
+                answerInput = ""
+            },
+            onConfirm = {
+                viewModel.editMemory(memory.id, promptInput, answerInput)
+                promptInput = ""
+                answerInput = ""
+            },
+            isSaving = uiState.isSaving,
+            confirmLabel = "Save Changes"
+        )
+    }
+
+    // Delete Confirmation Dialog
+    uiState.deleteConfirmMemory?.let { memory ->
+        AlertDialog(
+            onDismissRequest = { viewModel.hideDeleteConfirm() },
+            icon = {
+                Icon(
+                    Icons.Default.Delete,
+                    contentDescription = null,
+                    tint = ErrorRed,
+                    modifier = Modifier.size(28.dp)
+                )
+            },
+            title = {
+                Text(
+                    "Delete this memory?",
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.SemiBold
+                )
+            },
+            text = {
+                Text(
+                    "This memory will be permanently removed. This cannot be undone.",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = CharcoalMuted
+                )
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        viewModel.deleteMemory(memory.id)
+                        viewModel.hideDeleteConfirm()
+                    },
+                    shape = RoundedCornerShape(12.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = ErrorRed,
+                        contentColor = WarmWhite
+                    )
+                ) {
+                    Text("Delete", fontWeight = FontWeight.SemiBold)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { viewModel.hideDeleteConfirm() }) {
+                    Text("Keep It", color = CharcoalMuted)
+                }
+            },
+            shape = RoundedCornerShape(20.dp)
+        )
+    }
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun MemoryDialog(
+    title: String,
+    promptInput: String,
+    answerInput: String,
+    onPromptChange: (String) -> Unit,
+    onAnswerChange: (String) -> Unit,
+    onDismiss: () -> Unit,
+    onConfirm: () -> Unit,
+    isSaving: Boolean,
+    confirmLabel: String
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Text(
+                title,
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.SemiBold
+            )
+        },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
+                OutlinedTextField(
+                    value = promptInput,
+                    onValueChange = onPromptChange,
+                    label = { Text("What moment is this about?") },
+                    placeholder = { Text("e.g. Tell me about your first job") },
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(12.dp),
+                    singleLine = true,
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = Bronze,
+                        unfocusedBorderColor = Border,
+                        focusedLabelColor = Bronze
+                    )
+                )
+
+                // Prompt suggestions
+                Text(
+                    "Or choose a prompt:",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = CharcoalMuted
+                )
+                FlowRow(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                    verticalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    PROMPT_SUGGESTIONS.take(5).forEach { prompt ->
+                        SuggestionChip(
+                            onClick = { onPromptChange(prompt) },
+                            label = {
+                                Text(
+                                    prompt,
+                                    style = MaterialTheme.typography.labelSmall,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                            },
+                            colors = SuggestionChipDefaults.suggestionChipColors(
+                                containerColor = Papaya,
+                                labelColor = Charcoal
+                            ),
+                            border = SuggestionChipDefaults.suggestionChipBorder(
+                                enabled = true,
+                                borderColor = Border
+                            )
+                        )
+                    }
+                }
+
+                OutlinedTextField(
+                    value = answerInput,
+                    onValueChange = onAnswerChange,
+                    label = { Text("Your story") },
+                    placeholder = { Text("Write freely — this is yours") },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(min = 120.dp),
+                    shape = RoundedCornerShape(12.dp),
+                    minLines = 4,
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = Bronze,
+                        unfocusedBorderColor = Border,
+                        focusedLabelColor = Bronze
+                    )
+                )
+            }
+        },
+        confirmButton = {
+            Button(
+                onClick = onConfirm,
+                enabled = promptInput.isNotBlank() && answerInput.isNotBlank() && !isSaving,
+                shape = RoundedCornerShape(12.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Bronze,
+                    contentColor = WarmWhite
+                )
+            ) {
+                if (isSaving) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(18.dp),
+                        color = WarmWhite,
+                        strokeWidth = 2.dp
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text("Saving...")
+                } else {
+                    Text(confirmLabel, fontWeight = FontWeight.SemiBold)
+                }
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Cancel", color = CharcoalMuted)
+            }
+        },
+        shape = RoundedCornerShape(20.dp)
+    )
+}
+
+@Composable
+private fun MemorySkeletonCard() {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(14.dp),
+        colors = CardDefaults.cardColors(containerColor = WarmWhite),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth(0.7f)
+                    .height(16.dp)
+                    .background(Divider, RoundedCornerShape(4.dp))
+            )
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(14.dp)
+                    .background(Divider.copy(alpha = 0.6f), RoundedCornerShape(4.dp))
+            )
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth(0.8f)
+                    .height(14.dp)
+                    .background(Divider.copy(alpha = 0.4f), RoundedCornerShape(4.dp))
+            )
+        }
+    }
+}
+
+@Composable
+private fun MemoryCard(
+    memory: Memory,
+    onEdit: () -> Unit,
+    onDelete: () -> Unit
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val isPressed by interactionSource.collectIsPressedAsState()
+    val elevation by animateDpAsState(
+        targetValue = if (isPressed) 6.dp else 2.dp,
+        animationSpec = androidx.compose.animation.core.spring(),
+        label = "memCardElevation"
+    )
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .scale(if (isPressed) 0.99f else 1f)
+            .clickable(
+                interactionSource = interactionSource,
+                indication = null,
+                onClick = { }
+            ),
+        shape = RoundedCornerShape(14.dp),
+        colors = CardDefaults.cardColors(containerColor = WarmWhite),
+        elevation = CardDefaults.cardElevation(defaultElevation = elevation)
+    ) {
+        Row(modifier = Modifier.fillMaxWidth()) {
+            // Left color accent strip — subtle vertical bar
+            Box(
+                modifier = Modifier
+                    .width(4.dp)
+                    .fillMaxHeight()
+                    .background(
+                        color = Bronze.copy(alpha = 0.25f),
+                        shape = RoundedCornerShape(topStart = 14.dp, bottomStart = 14.dp)
+                    )
+            )
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(18.dp)
+            ) {
+                // Header row: prompt + actions
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    // Prompt badge — premium feel with softer background
+                    Box(
+                        modifier = Modifier
+                            .background(
+                                color = Papaya.copy(alpha = 0.8f),
+                                shape = RoundedCornerShape(10.dp)
+                            )
+                            .padding(horizontal = 12.dp, vertical = 7.dp)
+                    ) {
+                        Text(
+                            text = memory.prompt_question,
+                            style = MaterialTheme.typography.labelMedium,
+                            color = BronzeDark,
+                            fontWeight = FontWeight.Medium,
+                            maxLines = 2,
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier.weight(1f, fill = false)
+                        )
+                    }
+                    Row {
+                        IconButton(
+                            onClick = onEdit,
+                            modifier = Modifier.size(36.dp)
+                        ) {
+                            Icon(
+                                Icons.Default.Edit,
+                                contentDescription = "Edit",
+                                tint = CharcoalMuted,
+                                modifier = Modifier.size(18.dp)
+                            )
+                        }
+                        IconButton(
+                            onClick = onDelete,
+                            modifier = Modifier.size(36.dp)
+                        ) {
+                            Icon(
+                                Icons.Default.Delete,
+                                contentDescription = "Delete",
+                                tint = CharcoalMuted,
+                                modifier = Modifier.size(18.dp)
+                            )
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                // Answer text — the actual memory content with improved line height
+                Text(
+                    text = memory.answer_text,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = Charcoal,
+                    lineHeight = 26.sp
+                )
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                // Date footer
+                Text(
+                    text = formatDate(memory.created_at),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = CharcoalMuted
+                )
+            }
+        }
+    }
+}
+
+private fun formatDate(isoDate: String): String {
+    return try {
+        val parts = isoDate.substringBefore("T").split("-")
+        val months = listOf(
+            "", "January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"
+        )
+        "${months[parts[1].toInt()]} ${parts[2].toInt()}, ${parts[0].toInt()}"
+    } catch (e: Exception) {
+        isoDate.substringBefore("T")
+    }
+}

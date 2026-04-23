@@ -1,0 +1,20 @@
+{
+    "logs": [
+        {
+            "outputFile": "com.memoryproject.app-mergeDebugResources-60:/values-watch-v21/values-watch-v21.xml",
+            "map": [
+                {
+                    "source": "/home/rixvix/.gradle/caches/transforms-4/1eda4860fc9a1adf31647352cc14f286/transformed/appcompat-1.6.1/res/values-watch-v21/values-watch-v21.xml",
+                    "from": {
+                        "startLines": "2,6,10",
+                        "startColumns": "4,4,4",
+                        "startOffsets": "55,271,499",
+                        "endLines": "5,9,13",
+                        "endColumns": "12,12,12",
+                        "endOffsets": "266,494,724"
+                    }
+                }
+            ]
+        }
+    ]
+}
