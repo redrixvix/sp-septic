@@ -18,14 +18,19 @@ class PreferencesManager(context: Context) {
     fun clearAll() {
         // Clear auth tokens/session data but preserve user preferences
         prefs.edit()
-            .remove(KEY_DARK_MODE)
-            .remove(KEY_NOTIFICATIONS)
+            .remove(KEY_SESSION_COOKIE)
+            .remove(KEY_AUTH_TOKEN)
             .apply()
+        // Note: darkMode and notificationsEnabled are preserved intentionally
+        // so the user's appearance/notification preferences survive logout
     }
 
     companion object {
         private const val PREFS_NAME = "memory_project_prefs"
         private const val KEY_DARK_MODE = "dark_mode"
         private const val KEY_NOTIFICATIONS = "notifications_enabled"
+        // Auth keys — stored in SharedPreferences (not currently used; session is in-memory)
+        private const val KEY_SESSION_COOKIE = "session_cookie"
+        private const val KEY_AUTH_TOKEN = "auth_token"
     }
 }

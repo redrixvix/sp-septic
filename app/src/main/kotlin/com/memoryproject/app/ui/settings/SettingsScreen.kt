@@ -23,6 +23,7 @@ import com.memoryproject.app.BuildConfig
 import com.memoryproject.app.ui.theme.*
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
+import androidx.compose.runtime.rememberCoroutineScope
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -36,6 +37,7 @@ fun SettingsScreen(
     val uiState by viewModel.uiState.collectAsState()
     var showLogoutDialog by remember { mutableStateOf(false) }
     val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
 
     // Show coming soon snackbar for profile row
     LaunchedEffect(uiState.profileMessage) {
@@ -163,8 +165,7 @@ fun SettingsScreen(
                     title = "Privacy",
                     subtitle = "Your data is always private",
                     onClick = {
-                        // TODO: Link to privacy policy when available
-                        kotlinx.coroutines.MainScope().launch {
+                        scope.launch {
                             snackbarHostState.showSnackbar(
                                 message = "Privacy policy coming soon",
                                 duration = SnackbarDuration.Short
