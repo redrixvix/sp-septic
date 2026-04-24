@@ -84,61 +84,81 @@ fun ProfileScreen(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
-            // Profile avatar + name card
+            // Profile avatar + name card — warm, inviting, premium
             Card(
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(18.dp),
+                shape = RoundedCornerShape(20.dp),
                 colors = CardDefaults.cardColors(containerColor = WarmWhite),
-                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+                elevation = CardDefaults.cardElevation(defaultElevation = 3.dp)
             ) {
-                Column(
+                Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(28.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    // Avatar — shows first initial in a bronze gradient circle
-                    Box(
-                        modifier = Modifier
-                            .size(80.dp)
-                            .background(
-                                brush = Brush.linearGradient(
-                                    colors = if (uiState.userInitial != "?") 
-                                        listOf(Bronze, BronzeLight) 
-                                    else 
-                                        listOf(Border, Divider)
-                                ),
-                                shape = CircleShape
-                            ),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = uiState.userInitial,
-                            style = MaterialTheme.typography.displayMedium,
-                            color = if (uiState.userInitial != "?") WarmWhite else CharcoalMuted,
-                            fontWeight = FontWeight.Bold
+                        .background(
+                            brush = Brush.linearGradient(
+                                colors = listOf(
+                                    Papaya.copy(alpha = 0.3f),
+                                    Cornsilk.copy(alpha = 0.1f)
+                                )
+                            )
                         )
-                    }
+                        .padding(32.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        // Avatar — larger, warmer, with subtle glow
+                        Box(
+                            modifier = Modifier
+                                .size(96.dp)
+                                .background(
+                                    brush = Brush.linearGradient(
+                                        colors = if (uiState.userInitial != "?")
+                                            listOf(Bronze, BronzeLight)
+                                        else
+                                            listOf(Border, Divider)
+                                    ),
+                                    shape = CircleShape
+                                )
+                                .then(
+                                    if (uiState.userInitial != "?") {
+                                        Modifier.background(
+                                            color = Bronze.copy(alpha = 0.08f),
+                                            shape = CircleShape
+                                        )
+                                    } else Modifier
+                                ),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = uiState.userInitial,
+                                style = MaterialTheme.typography.displayLarge,
+                                color = if (uiState.userInitial != "?") WarmWhite else CharcoalMuted,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
 
-                    Spacer(modifier = Modifier.height(16.dp))
+                        Spacer(modifier = Modifier.height(20.dp))
 
-                    // Name
-                    Text(
-                        text = uiState.userName.ifBlank { "Welcome" },
-                        style = MaterialTheme.typography.headlineMedium,
-                        color = Charcoal,
-                        fontWeight = FontWeight.SemiBold,
-                        textAlign = TextAlign.Center
-                    )
-
-                    if (uiState.userEmail.isNotBlank()) {
-                        Spacer(modifier = Modifier.height(4.dp))
+                        // Name — warm, confident
                         Text(
-                            text = uiState.userEmail,
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = CharcoalMuted,
+                            text = uiState.userName.ifBlank { "Welcome" },
+                            style = MaterialTheme.typography.headlineMedium,
+                            color = Charcoal,
+                            fontWeight = FontWeight.SemiBold,
                             textAlign = TextAlign.Center
                         )
+
+                        if (uiState.userEmail.isNotBlank()) {
+                            Spacer(modifier = Modifier.height(6.dp))
+                            Text(
+                                text = uiState.userEmail,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = CharcoalMuted,
+                                textAlign = TextAlign.Center
+                            )
+                        }
                     }
                 }
             }
