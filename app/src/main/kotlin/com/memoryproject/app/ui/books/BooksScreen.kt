@@ -568,8 +568,7 @@ private fun BookCard(
     primaryText: Color,
     mutedText: Color
 ) {
-    val interactionSource = remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
-    val isPressed by interactionSource.collectIsPressedAsState()
+    var isPressed by remember { mutableStateOf(false) }
     val elevation by animateDpAsState(
         targetValue = if (isPressed) 6.dp else 2.dp,
         animationSpec = spring(stiffness = Spring.StiffnessMedium),
@@ -582,7 +581,10 @@ private fun BookCard(
     )
 
     Card(
-        onClick = onClick,
+        onClick = {
+            isPressed = true
+            onClick()
+        },
         modifier = Modifier
             .fillMaxWidth()
             .scale(cardScale),
