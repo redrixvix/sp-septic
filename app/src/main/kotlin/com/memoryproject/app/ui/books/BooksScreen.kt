@@ -11,7 +11,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Sort
 import androidx.compose.material3.*
 import androidx.compose.material3.pulltorefresh.PullRefreshIndicator
 import androidx.compose.material3.pulltorefresh.pullRefresh
@@ -56,6 +59,25 @@ fun BooksScreen(
         refreshing = uiState.isLoading,
         onRefresh = { viewModel.loadBooks() }
     )
+    var searchQuery by remember { mutableStateOf("") }
+    var sortOrder by remember { mutableStateOf(SortOrder.RECENT) }
+    var showSortMenu by remember { mutableStateOf(false) }
+
+    val filteredBooks = remember(searchQuery, sortOrder, uiState.books) {
+        uiState.books
+            .filter { book ->
+                searchQuery.isBlank() ||
+                book.title.contains(searchQuery, ignoreCase = true) ||
+                (book.description?.contains(searchQuery, ignoreCase = true) == true)
+            }
+            .let { filtered ->
+                when (sortOrder) {
+                    SortOrder.RECENT -> filtered.sortedByDescending { it.updatedAt }
+                    SortOrder.AZ -> filtered.sortedBy { it.title.lowercase() }
+                    SortOrder.CREATED -> filtered.sortedByDescending { it.createdAt }
+                }
+            }
+    }
 
     // Show error as snackbar
     LaunchedEffect(uiState.error) {
@@ -81,9 +103,9 @@ fun BooksScreen(
                             fontWeight = FontWeight.Bold,
                             color = primaryText
                         )
-                        if (uiState.books.isNotEmpty()) {
+                        if (filteredBooks.isNotEmpty()) {
                             Text(
-                                "${uiState.books.size} ${uiState.books.size == 1 ? "book" else "books"}",
+                                "${filteredBooks.size} ${filteredBooks.size == 1 ? "book" else "books"}",
                                 style = MaterialTheme.typography.bodySmall,
                                 color = mutedText
                             )
@@ -92,23 +114,56 @@ fun BooksScreen(
                 },
                 actions = {
                     IconButton(
+                        onClick = { showSortMenu = true },
+                        modifier = Modifier
+                            .size(40.dp)
+                            .background(color = cardBg, shape = RoundedCornerShape(10.dp))
+                    ) {
+                        Icon(Icons.Default.Sort, contentDescription = "Sort", tint = primaryText, modifier = Modifier.size(20.dp))
+                    }
+                    DropdownMenu(expanded = showSortMenu, onDismissRequest = { showSortMenu = false }) {
+                        DropdownMenuItem(text = { Text("Recent"  , fontWeight = if (sortOrder == SortOrder.RECENT) FontWeight.Bold else FontWeight.Normal) }, onClick = { sortOrder = SortOrder.RECENT; showSortMenu = false })
+                        DropdownMenuItem(text = { Text("A–Z"    , fontWeight = if (sortOrder == SortOrder.AZ) FontWeight.Bold else FontWeight.Normal) }, onClick = { sortOrder = SortOrder.AZ; showSortMenu = false })
+                        DropdownMenuItem(text = { Text("Created", fontWeight = if (sortOrder == SortOrder.CREATED) FontWeight.Bold else FontWeight.Normal) }, onClick = { sortOrder = SortOrder.CREATED; showSortMenu = false })
+                    }
+                    IconButton(
                         onClick = onSettings,
                         modifier = Modifier
                             .size(40.dp)
-                            .background(
-                                color = cardBg,
-                                shape = RoundedCornerShape(10.dp)
-                            )
+                            .background(color = cardBg, shape = RoundedCornerShape(10.dp))
                     ) {
-                        Icon(
-                            Icons.Default.Settings,
-                            contentDescription = "Settings",
-                            tint = primaryText,
-                            modifier = Modifier.size(20.dp)
-                        )
+                        Icon(Icons.Default.Settings, contentDescription = "Settings", tint = primaryText, modifier = Modifier.size(20.dp))
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = scaffoldBg)
+            )
+
+            // Search bar
+            OutlinedTextField(
+                value = searchQuery,
+                onValueChange = { searchQuery = it },
+                placeholder = { Text("Search books...", color = mutedText) },
+                leadingIcon = { Icon(Icons.Default.Search, contentDescription = null, tint = mutedText) },
+                trailingIcon = {
+                    if (searchQuery.isNotEmpty()) {
+                        IconButton(onClick = { searchQuery = "" }) {
+                            Icon(Icons.Default.Clear, contentDescription = "Clear", tint = mutedText)
+                        }
+                    }
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                singleLine = true,
+                shape = RoundedCornerShape(14.dp),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = Bronze,
+                    unfocusedBorderColor = if (isDark) DarkBorder else Border,
+                    focusedContainerColor = cardBg,
+                    unfocusedContainerColor = cardBg,
+                    focusedLeadingIconColor = mutedText,
+                    unfocusedLeadingIconColor = mutedText
+                )
             )
 
             Box(
@@ -185,7 +240,7 @@ fun BooksScreen(
                         }
                     }
 
-                    uiState.books.isEmpty() && !uiState.isLoading -> {
+                    filteredBooks.isEmpty() && !uiState.isLoading && searchQuery.isBlank() -> {
                         // Empty state
                         Column(
                             modifier = Modifier
@@ -231,13 +286,51 @@ fun BooksScreen(
                         }
                     }
 
+                    filteredBooks.isEmpty() && !uiState.isLoading -> {
+                        // No search results
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(40.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(96.dp)
+                                    .background(
+                                        brush = Brush.radialGradient(
+                                            colors = if (isDark) listOf(DarkSurfaceVariant, DarkSurface) else listOf(Papaya, Beige)
+                                        ),
+                                        shape = RoundedCornerShape(24.dp)
+                                    ),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text("🔍", fontSize = 48.sp)
+                            }
+                            Spacer(modifier = Modifier.height(28.dp))
+                            Text(
+                                "No books found",
+                                style = MaterialTheme.typography.headlineSmall,
+                                fontWeight = FontWeight.SemiBold,
+                                color = primaryText
+                            )
+                            Spacer(modifier = Modifier.height(10.dp))
+                            Text(
+                                "Try a different search term.",
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = mutedText
+                            )
+                        }
+                    }
+
                     else -> {
                         LazyColumn(
                             contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 96.dp),
                             verticalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
                             itemsIndexed(
-                                items = uiState.books,
+                                items = filteredBooks,
                                 key = { _, book -> "book_${book.id}" }
                             ) { index, book ->
                                 var visible by remember { mutableStateOf(false) }
@@ -274,7 +367,7 @@ fun BooksScreen(
         }
 
         // FAB — always visible when books exist
-        if (uiState.books.isNotEmpty()) {
+        if (filteredBooks.isNotEmpty()) {
             ExtendedFloatingActionButton(
                 onClick = { showCreateDialog = true },
                 modifier = Modifier
@@ -628,6 +721,8 @@ private fun BooksSkeletonCard(isDark: Boolean) {
         }
     }
 }
+
+private enum class SortOrder { RECENT, AZ, CREATED }
 
 private fun formatDate(isoDate: String): String {
     return try {
