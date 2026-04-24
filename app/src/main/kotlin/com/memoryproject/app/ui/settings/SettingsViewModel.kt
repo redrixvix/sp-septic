@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 data class SettingsUiState(
+    val userName: String = "",
     val userEmail: String = "",
     val isDarkMode: Boolean = false,
     val notificationsEnabled: Boolean = true,
@@ -36,7 +37,10 @@ class SettingsViewModel(
         viewModelScope.launch {
             repository.getCurrentUser()
                 .onSuccess { user ->
-                    _uiState.value = _uiState.value.copy(userEmail = user.email)
+                    _uiState.value = _uiState.value.copy(
+                        userEmail = user.email,
+                        userName = user.name
+                    )
                 }
         }
     }

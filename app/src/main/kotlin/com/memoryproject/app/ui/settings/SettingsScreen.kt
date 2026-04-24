@@ -27,6 +27,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.memoryproject.app.BuildConfig
 import com.memoryproject.app.ui.theme.*
+import com.memoryproject.app.BuildConfig
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import androidx.compose.runtime.rememberCoroutineScope
@@ -107,7 +108,7 @@ fun SettingsScreen(
                 SettingsItem(
                     icon = Icons.Default.Person,
                     title = "Profile",
-                    subtitle = uiState.userEmail.ifBlank { "Loading..." },
+                    subtitle = uiState.userName.ifBlank { uiState.userEmail.ifBlank { "Loading..." } },
                     trailing = {
                         IconButton(
                             onClick = onProfileClick,
@@ -158,7 +159,7 @@ fun SettingsScreen(
                 SettingsItem(
                     icon = Icons.Default.Notifications,
                     title = "Reminders",
-                    subtitle = "Get gentle reminders to add memories",
+                    subtitle = "Get gentle reminders to add memories (coming soon)",
                     trailing = {
                         Switch(
                             checked = uiState.notificationsEnabled,
@@ -179,7 +180,7 @@ fun SettingsScreen(
             SettingsSection(title = "About") {
                 SettingsItem(
                     icon = Icons.Default.Info,
-                    title = "Version",
+                    title = "Memory Project",
                     subtitle = "Version ${BuildConfig.VERSION_NAME}",
                     trailing = { ->
                         Box(
