@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.sp
 import com.memoryproject.app.ui.theme.*
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
+import androidx.compose.runtime.rememberCoroutineScope
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -143,7 +144,8 @@ fun ProfileScreen(
                     onClick = {
                         showInviteDialog = false
                         inviteEmail = ""
-                        coroutineScope.launch {
+                        val scope = rememberCoroutineScope()
+                    scope.launch {
                             snackbarHostState.showSnackbar("Coming soon! Family sharing will be available soon.", duration = SnackbarDuration.Short)
                         }
                     },

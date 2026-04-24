@@ -31,6 +31,8 @@ import com.memoryproject.app.data.model.Book
 import com.memoryproject.app.data.model.Memory
 import com.memoryproject.app.ui.theme.*
 import org.koin.androidx.compose.koinViewModel
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.foundation.isSystemInDarkTheme
 
 private val HOME_PROMPTS = listOf(
     "What made you laugh today?",

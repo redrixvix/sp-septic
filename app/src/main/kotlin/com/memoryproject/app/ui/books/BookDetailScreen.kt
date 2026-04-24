@@ -159,6 +159,11 @@ fun BookDetailScreen(
     val topBarTitleColor = if (isDark) DarkOnSurface else Charcoal
     val topBarSubtitleColor = if (isDark) DarkOnSurfaceVariant else CharcoalMuted
 
+    val pullRefreshState = rememberPullRefreshState(
+        refreshing = uiState.isLoading,
+        onRefresh = { viewModel.loadBook() }
+    )
+
     // Clear form when dialogs close
 
     LaunchedEffect(uiState.showAddMemory, uiState.editMemory) {
@@ -390,11 +395,6 @@ fun BookDetailScreen(
                 .pullRefresh(pullRefreshState)
 
         ) {
-
-            val pullRefreshState = rememberPullRefreshState(
-                refreshing = uiState.isLoading,
-                onRefresh = { viewModel.loadBook() }
-            )
 
             when {
 
@@ -922,16 +922,14 @@ ${memory.answer_text}")
 
 
     // Photo viewer — full-screen lightbox
-
     showPhotoViewer?.let { photoUrl ->
-
         PhotoViewer(
-
             photoUrl = photoUrl,
-
             onDismiss = { showPhotoViewer = null }
+        )
+    }
 
-
+    // Members sheet
     if (showMembersSheet) {
         MembersBottomSheet(
             bookId = bookId,
@@ -940,10 +938,6 @@ ${memory.answer_text}")
             snackbarHostState = snackbarHostState
         )
     }
-        )
-
-    }
-
 }
 
 
