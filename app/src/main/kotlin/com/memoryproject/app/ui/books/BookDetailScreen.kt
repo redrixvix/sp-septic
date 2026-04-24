@@ -78,10 +78,11 @@ fun BookDetailScreen(
         }
     }
 
-    // Show snackbar on errors
+    // Show snackbar on errors, then clear them
     LaunchedEffect(uiState.error) {
         uiState.error?.let {
             snackbarHostState.showSnackbar(it, duration = SnackbarDuration.Long)
+            viewModel.clearError()
         }
     }
 
@@ -743,7 +744,8 @@ private fun MemoryCard(
                                 contentDescription = null,
                                 modifier = Modifier
                                     .size(48.dp)
-                                    .clip(RoundedCornerShape(8.dp))
+                                    .clip(RoundedCornerShape(8.dp)),
+                                onError = { /* Silently handle failed image loads */ }
                             )
                         }
                     }

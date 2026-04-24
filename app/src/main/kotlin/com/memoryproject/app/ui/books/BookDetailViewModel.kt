@@ -113,6 +113,10 @@ class BookDetailViewModel(
         _uiState.value = _uiState.value.copy(deleteConfirmMemory = null)
     }
 
+    fun clearError() {
+        _uiState.value = _uiState.value.copy(error = null)
+    }
+
     fun deleteMemory(id: Int) {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(deleteConfirmMemory = null)
