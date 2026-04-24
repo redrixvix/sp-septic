@@ -423,8 +423,10 @@ private fun MemoryDialog(
     isSaving: Boolean,
     confirmLabel: String
 ) {
-    // Shuffle suggestions when dialog opens — each open shows different options
-    val suggestions = remember(title) { PROMPT_SUGGESTIONS.shuffled().take(6) }
+    // Shuffle suggestions each time the dialog opens — fresh variety keeps exploration fun
+    val suggestions = remember(title) { 
+        PROMPT_SUGGESTIONS.shuffled(java.util.Random(System.currentTimeMillis() / 10000)).take(6) 
+    }
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -449,7 +451,10 @@ private fun MemoryDialog(
                         focusedBorderColor = Bronze,
                         unfocusedBorderColor = Border,
                         focusedLabelColor = Bronze
-                    )
+                    ),
+                    supportingText = if (promptInput.isBlank()) {
+                        { Text("Or pick a prompt below to get started", color = CharcoalMuted, style = MaterialTheme.typography.bodySmall) }
+                    } else null
                 )
 
                 // Prompt picker — warm, inviting, visually distinct from form fields
@@ -499,14 +504,21 @@ private fun MemoryDialog(
                     placeholder = { Text("Write freely — this is yours.") },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .heightIn(min = 120.dp),
+                        .heightIn(min = 140.dp),
                     shape = RoundedCornerShape(12.dp),
-                    minLines = 4,
+                    minLines = 5,
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = Bronze,
                         unfocusedBorderColor = Border,
                         focusedLabelColor = Bronze
-                    )
+                    ),
+                    supportingText = {
+                        Text(
+                            "${answerInput.length} characters",
+                            color = CharcoalMuted,
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    }
                 )
             }
         },
