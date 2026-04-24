@@ -441,9 +441,23 @@ private fun BookCard(
                 ) { Text("📖", fontSize = 24.sp) }
                 Spacer(modifier = Modifier.width(14.dp))
                 Column(modifier = Modifier.weight(1f)) {
-                    Text(book.title, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold, color = Charcoal, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                        Text(book.title, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold, color = Charcoal, maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier.weight(1f, fill = false))
+                        // Shared pill — shows when user is a collaborator, not owner
+                        if (book.role != "owner") {
+                            Box(
+                                modifier = Modifier.background(color = TeaGreen.copy(alpha = 0.3f), shape = RoundedCornerShape(6.dp)).padding(horizontal = 7.dp, vertical = 3.dp)
+                            ) {
+                                Text("Shared", style = MaterialTheme.typography.labelSmall, color = TeaGreenDark, fontWeight = FontWeight.Medium)
+                            }
+                        }
+                    }
                     if (book.description.isNotBlank()) {
                         Text(book.description, style = MaterialTheme.typography.bodySmall, color = CharcoalMuted, maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier.padding(top = 2.dp))
+                    }
+                    // Show owner name for shared books
+                    if (book.role != "owner" && book.owner_name.isNotBlank()) {
+                        Text("Owned by ${book.owner_name}", style = MaterialTheme.typography.labelSmall, color = CharcoalMuted, modifier = Modifier.padding(top = 3.dp))
                     }
                 }
                 Box {
