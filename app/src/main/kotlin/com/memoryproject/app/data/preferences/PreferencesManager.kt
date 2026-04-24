@@ -16,7 +16,11 @@ class PreferencesManager(context: Context) {
         set(value) = prefs.edit().putBoolean(KEY_NOTIFICATIONS, value).apply()
 
     fun clearAll() {
-        prefs.edit().clear().apply()
+        // Clear auth tokens/session data but preserve user preferences
+        prefs.edit()
+            .remove(KEY_DARK_MODE)
+            .remove(KEY_NOTIFICATIONS)
+            .apply()
     }
 
     companion object {
