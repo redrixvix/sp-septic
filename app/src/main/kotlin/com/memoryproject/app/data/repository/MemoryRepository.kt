@@ -33,5 +33,15 @@ class MemoryRepository(private val api: ApiClient) {
 
     suspend fun deleteBook(id: Int): Result<Unit> = api.deleteBook(id)
 
+    suspend fun getInviteInfo(token: String): Result<InviteInfo> = api.getInviteInfo(token)
+
+    suspend fun acceptInvite(token: String): Result<InviteAcceptResponse> = api.acceptInvite(token)
+
+    suspend fun getBookMembers(bookId: Int): Result<List<BookMember>> = api.getBookMembers(bookId)
+
+    suspend fun inviteMember(bookId: Int, email: String): Result<InviteResponse> = api.inviteMember(bookId, email)
+
+    suspend fun removeMember(bookId: Int, userId: Int): Result<Unit> = api.removeMember(bookId, userId)
+
     fun isLoggedIn(): Boolean = api.isLoggedIn()
 }

@@ -59,3 +59,21 @@ data class CreateBookRequest(val title: String, val description: String? = null)
 data class CreateMemoryRequest(val prompt_question: String, val answer_text: String)
 @Serializable
 data class UpdateMemoryRequest(val prompt_question: String, val answer_text: String)
+
+@Serializable
+data class InviteInfoResponse(val data: InviteInfo)
+@Serializable
+data class InviteInfo(val book_id: Int, val book_title: String, val role: String, val invite_email: String)
+
+@Serializable
+data class InviteAcceptRequest(val book_id: Int)
+@Serializable
+data class InviteAcceptResponse(val success: Boolean, val book_id: Int = 0)
+@Serializable
+data class InviteResponse(val invite_link: String)
+@Serializable
+data class InviteRequest(val email: String)
+@Serializable
+data class MemberResponse(val members: List<BookMember>)
+@Serializable
+data class BookMember(val user_id: Int, val role: String, val name: String = "", val email: String = "", val joined_at: String? = null, val invite_email: String? = null)

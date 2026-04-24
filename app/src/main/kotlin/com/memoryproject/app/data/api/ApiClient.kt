@@ -155,6 +155,21 @@ class ApiClient {
 
     suspend fun deleteBook(id: Int): Result<Unit> = deleteRequest("/api/books/$id")
 
+    suspend fun getInviteInfo(token: String): Result<InviteInfo> =
+        getRequest<InviteInfoResponse>("/api/invite/$token").map { it.data }
+
+    suspend fun acceptInvite(token: String): Result<InviteAcceptResponse> =
+        postRequest<InviteAcceptResponse>("/api/invite/$token/accept")
+
+    suspend fun getBookMembers(bookId: Int): Result<List<BookMember>> =
+        getRequest<MemberResponse>("/api/books/$bookId/members").map { it.members }
+
+    suspend fun inviteMember(bookId: Int, email: String): Result<InviteResponse> =
+        postRequest<InviteResponse>("/api/books/$bookId/invite", InviteRequest(email))
+
+    suspend fun removeMember(bookId: Int, userId: Int): Result<Unit> =
+        deleteRequest("/api/books/$bookId/members/$userId")
+
     fun isLoggedIn(): Boolean = sessionCookie != null
 
     companion object {

@@ -42,6 +42,7 @@ import com.memoryproject.app.ui.auth.AuthScreen
 import com.memoryproject.app.ui.books.BookDetailScreen
 import com.memoryproject.app.ui.books.BooksScreen
 import com.memoryproject.app.ui.home.HomeScreen
+import com.memoryproject.app.ui.invite.InviteScreen
 import com.memoryproject.app.ui.onboarding.OnboardingScreen
 import com.memoryproject.app.ui.screens.ProfileScreen
 import com.memoryproject.app.ui.settings.SettingsScreen
@@ -276,6 +277,28 @@ fun MemoryNavHost(
             ) {
                 ProfileScreen(
                     onBack = { navController.popBackStack() }
+                )
+            }
+
+            composable(
+                "invite/{token}",
+                arguments = listOf(navArgument("token") { type = NavType.StringType }),
+                enterTransition = { fadeIn(animationSpec = tween(300)) },
+                exitTransition = { fadeOut(animationSpec = tween(300)) }
+            ) { backStackEntry ->
+                val token = backStackEntry.arguments?.getString("token") ?: return@composable
+                InviteScreen(
+                    token = token,
+                    onAccepted = { bookId ->
+                        navController.navigate("book/$bookId") {
+                            popUpTo("invite/{token}") { inclusive = true }
+                        }
+                    },
+                    onLoginRequired = {
+                        navController.navigate("auth") {
+                            popUpTo("invite/{token}") { inclusive = true }
+                        }
+                    }
                 )
             }
         }
