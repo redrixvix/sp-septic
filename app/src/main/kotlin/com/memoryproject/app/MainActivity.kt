@@ -145,17 +145,5 @@ fun MemoryNavHost(
                 onBack = { navController.popBackStack() }
             )
         }
-
-        composable(
-            "toggleDarkMode",
-            enterTransition = { fadeIn() },
-            exitTransition = { fadeOut() }
-        ) {
-            LaunchedEffect(Unit) {
-                onDarkThemeToggle()
-                navController.popBackStack()
-            }
-            Box(modifier = Modifier.fillMaxSize())
-        }
     }
 }
