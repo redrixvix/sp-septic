@@ -25,8 +25,6 @@ import com.memoryproject.app.ui.books.BooksScreen
 import com.memoryproject.app.ui.screens.ProfileScreen
 import com.memoryproject.app.ui.settings.SettingsScreen
 import com.memoryproject.app.ui.theme.MemoryProjectTheme
-import com.memoryproject.app.ui.books.BooksViewModel
-import com.memoryproject.app.ui.screens.ProfileViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
