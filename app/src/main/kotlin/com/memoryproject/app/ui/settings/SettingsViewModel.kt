@@ -2,6 +2,7 @@ package com.memoryproject.app.ui.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.memoryproject.app.data.preferences.PreferencesManager
 import com.memoryproject.app.data.repository.MemoryRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -16,7 +17,8 @@ data class SettingsUiState(
 )
 
 class SettingsViewModel(
-    private val repository: MemoryRepository
+    private val repository: MemoryRepository,
+    private val prefsManager: PreferencesManager
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SettingsUiState())
@@ -24,6 +26,10 @@ class SettingsViewModel(
 
     init {
         loadUser()
+        _uiState.value = _uiState.value.copy(
+            isDarkMode = prefsManager.darkMode,
+            notificationsEnabled = prefsManager.notificationsEnabled
+        )
     }
 
     private fun loadUser() {
@@ -36,11 +42,15 @@ class SettingsViewModel(
     }
 
     fun toggleDarkMode() {
-        _uiState.value = _uiState.value.copy(isDarkMode = !_uiState.value.isDarkMode)
+        val newValue = !_uiState.value.isDarkMode
+        _uiState.value = _uiState.value.copy(isDarkMode = newValue)
+        prefsManager.darkMode = newValue
     }
 
     fun toggleNotifications() {
-        _uiState.value = _uiState.value.copy(notificationsEnabled = !_uiState.value.notificationsEnabled)
+        val newValue = !_uiState.value.notificationsEnabled
+        _uiState.value = _uiState.value.copy(notificationsEnabled = newValue)
+        prefsManager.notificationsEnabled = newValue
     }
 
     fun showProfileComingSoon() {
@@ -54,6 +64,7 @@ class SettingsViewModel(
     fun logout() {
         viewModelScope.launch {
             repository.logout()
+            prefsManager.clearAll()
         }
     }
 }

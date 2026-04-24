@@ -16,6 +16,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.memoryproject.app.data.preferences.PreferencesManager
 import com.memoryproject.app.ui.auth.AuthScreen
 import com.memoryproject.app.ui.books.BookDetailScreen
 import com.memoryproject.app.ui.books.BooksScreen
@@ -26,8 +27,12 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        val prefsManager = PreferencesManager(this)
+        val initialDarkMode = prefsManager.darkMode
+
         setContent {
-            var darkThemeEnabled by remember { mutableStateOf(false) }
+            var darkThemeEnabled by remember { mutableStateOf(initialDarkMode) }
             MemoryProjectTheme(darkTheme = darkThemeEnabled) {
                 MemoryNavHost(
                     modifier = Modifier.fillMaxSize(),

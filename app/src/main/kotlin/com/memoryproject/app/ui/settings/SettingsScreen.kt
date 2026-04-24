@@ -10,6 +10,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.ChevronRight
+import androidx.compose.material.icons.filled.Cloud
 import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Notifications
@@ -17,13 +18,10 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PrivacyTip
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.memoryproject.app.ui.theme.*
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -150,6 +148,17 @@ fun SettingsScreen(
                 )
             }
 
+            // Storage section
+            SettingsSection(title = "Storage") {
+                SettingsItem(
+                    icon = Icons.Default.Cloud,
+                    title = "Text Memories",
+                    subtitle = "Unlimited on Free plan",
+                    showDivider = true,
+                    onClick = { }
+                )
+            }
+
             // About section
             SettingsSection(title = "About") {
                 SettingsItem(
@@ -163,7 +172,15 @@ fun SettingsScreen(
                     icon = Icons.Default.PrivacyTip,
                     title = "Privacy",
                     subtitle = "Your data is always private",
-                    onClick = { }
+                    onClick = {
+                        // TODO: Link to privacy policy when available
+                        kotlinx.coroutines.MainScope().launch {
+                            snackbarHostState.showSnackbar(
+                                message = "Privacy policy coming soon",
+                                duration = SnackbarDuration.Short
+                            )
+                        }
+                    }
                 )
             }
 
@@ -224,11 +241,7 @@ fun SettingsScreen(
                         onLogout()
                     }
                 ) {
-                    Text(
-                        "Sign Out",
-                        color = ErrorRed,
-                        fontWeight = FontWeight.SemiBold
-                    )
+                    Text("Sign Out", color = ErrorRed, fontWeight = FontWeight.SemiBold)
                 }
             },
             dismissButton = {
@@ -259,9 +272,7 @@ private fun SettingsSection(
             colors = CardDefaults.cardColors(containerColor = WarmWhite),
             elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
         ) {
-            Column(
-                modifier = Modifier.fillMaxWidth()
-            ) {
+            Column(modifier = Modifier.fillMaxWidth()) {
                 content()
             }
         }

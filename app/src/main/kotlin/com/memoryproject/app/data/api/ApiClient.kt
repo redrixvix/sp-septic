@@ -1,6 +1,5 @@
 package com.memoryproject.app.data.api
 
-import android.util.Log
 import com.memoryproject.app.data.model.*
 import io.ktor.client.*
 import io.ktor.client.call.*
@@ -116,12 +115,9 @@ class ApiClient {
         }
     }
 
-    suspend fun login(email: String, password: String): Result<User> {
-        Log.d("MP", "login: starting")
-        return postRequest<LoginResponse>("/api/auth/login", LoginRequest(email, password))
-            .map { it.user.also { Log.d("MP", "login: success") } }
-            .onFailure { Log.e("MP", "login fail: ${it.message}") }
-    }
+    suspend fun login(email: String, password: String): Result<User> =
+        postRequest<LoginResponse>("/api/auth/login", LoginRequest(email, password))
+            .map { it.user }
 
     suspend fun signup(email: String, name: String, password: String): Result<User> =
         postRequest<LoginResponse>("/api/auth/signup", SignupRequest(email, name, password)).map { it.user }
@@ -136,12 +132,9 @@ class ApiClient {
 
     suspend fun me(): Result<User> = getRequest<UserResponse>("/api/auth/me").map { it.user }
 
-    suspend fun getBooks(): Result<List<Book>> {
-        Log.d("MP", "getBooks: cookie=${sessionCookie?.take(20)}")
-        return getRequest<BooksResponse>("/api/books")
-            .map { it.books.also { b -> Log.d("MP", "getBooks: ${b.size} books") } }
-            .onFailure { Log.e("MP", "getBooks fail: ${it.message}") }
-    }
+    suspend fun getBooks(): Result<List<Book>> =
+        getRequest<BooksResponse>("/api/books")
+            .map { it.books }
 
     suspend fun getBook(id: Int): Result<Pair<Book, List<Memory>>> =
         getRequest<BookResponse>("/api/books/$id").map { it.book to it.memories }

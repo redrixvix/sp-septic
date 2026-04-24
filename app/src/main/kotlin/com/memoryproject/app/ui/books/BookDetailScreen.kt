@@ -292,7 +292,8 @@ fun BookDetailScreen(
                                     memory = memory,
                                     onEdit = { viewModel.showEditMemory(memory) },
                                     onDelete = { viewModel.showDeleteConfirm(memory) },
-                                    onShareClick = { onShareMemory(memory) }
+                                    onShareClick = { onShareMemory(memory) },
+                                    accentIndex = uiState.memories.indexOf(memory)
                                 )
                             }
                         }
@@ -570,7 +571,8 @@ private fun MemoryCard(
     memory: Memory,
     onEdit: () -> Unit,
     onDelete: () -> Unit,
-    onShareClick: () -> Unit = {}
+    onShareClick: () -> Unit = {},
+    accentIndex: Int = 0
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
@@ -579,6 +581,10 @@ private fun MemoryCard(
         animationSpec = androidx.compose.animation.core.spring(),
         label = "memCardElevation"
     )
+
+    // Rotate through accent colors based on index
+    val accentColors = listOf(CardAccentBronze, CardAccentTea, CardAccentPapaya)
+    val accentColor = accentColors[accentIndex % accentColors.size]
 
     Card(
         modifier = Modifier
@@ -594,13 +600,13 @@ private fun MemoryCard(
         elevation = CardDefaults.cardElevation(defaultElevation = elevation)
     ) {
         Row(modifier = Modifier.fillMaxWidth()) {
-            // Left color accent strip — subtle vertical bar
+            // Left color accent strip — subtle vertical bar, varies by index
             Box(
                 modifier = Modifier
                     .width(4.dp)
                     .fillMaxHeight()
                     .background(
-                        color = Bronze.copy(alpha = 0.25f),
+                        color = accentColor.copy(alpha = 0.3f),
                         shape = RoundedCornerShape(topStart = 14.dp, bottomStart = 14.dp)
                     )
             )

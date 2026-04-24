@@ -1,6 +1,5 @@
 package com.memoryproject.app.ui.books
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.memoryproject.app.data.model.Book
@@ -14,16 +13,35 @@ data class BooksUiState(
     val isLoading: Boolean = false,
     val books: List<Book> = emptyList(),
     val error: String? = null,
-    val isCreating: Boolean = false
+    val isCreating: Boolean = false,
+    val userName: String = "",
+    val userInitial: String = ""
 )
 
-class BooksViewModel(private val repository: MemoryRepository) : ViewModel() {
+class BooksViewModel(
+    private val repository: MemoryRepository,
+    private val prefsManager: com.memoryproject.app.data.preferences.PreferencesManager
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow(BooksUiState())
     val uiState: StateFlow<BooksUiState> = _uiState.asStateFlow()
 
     init {
         loadBooks()
+        loadCurrentUser()
+    }
+
+    private fun loadCurrentUser() {
+        viewModelScope.launch {
+            repository.getCurrentUser()
+                .onSuccess { user ->
+                    val initial = user.name.firstOrNull()?.uppercaseChar()?.toString() ?: ""
+                    _uiState.value = _uiState.value.copy(
+                        userName = user.name,
+                        userInitial = initial
+                    )
+                }
+        }
     }
 
     fun loadBooks() {
@@ -31,11 +49,9 @@ class BooksViewModel(private val repository: MemoryRepository) : ViewModel() {
             _uiState.value = _uiState.value.copy(isLoading = true, error = null)
             repository.getBooks()
                 .onSuccess { books ->
-                    Log.d("MP", "loadBooks: success ${books.size}")
                     _uiState.value = _uiState.value.copy(isLoading = false, books = books)
                 }
                 .onFailure { e ->
-                    Log.e("MP", "loadBooks: FAILED ${e.message}")
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
                         error = e.message ?: "Failed to load books"

@@ -10,14 +10,17 @@ import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Book
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material.icons.filled.MenuBook
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.OpenInNew
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
@@ -27,10 +30,12 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -52,18 +57,62 @@ fun BooksScreen(
     var newTitle by remember { mutableStateOf("") }
     var newDescription by remember { mutableStateOf("") }
     var showLogoutDialog by remember { mutableStateOf(false) }
+    var searchQuery by remember { mutableStateOf("") }
+
+    // Filter books by search query
+    val filteredBooks = if (searchQuery.isBlank()) {
+        uiState.books
+    } else {
+        uiState.books.filter { it.title.contains(searchQuery, ignoreCase = true) }
+    }
+
+    // Time-aware greeting
+    val greeting = if (uiState.userName.isNotBlank()) {
+        val hour = java.util.Calendar.getInstance().get(java.util.Calendar.HOUR_OF_DAY)
+        val timeGreeting = when {
+            hour < 12 -> "Good morning"
+            hour < 17 -> "Good afternoon"
+            else -> "Good evening"
+        }
+        "$timeGreeting, ${uiState.userName.split(" ").first()}"
+    } else {
+        "My Books"
+    }
 
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {
                     Column {
-                        Text(
-                            "My Books",
-                            style = MaterialTheme.typography.headlineMedium,
-                            fontWeight = FontWeight.Bold,
-                            color = Charcoal
-                        )
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            Text(
+                                if (uiState.userName.isNotBlank()) greeting else "My Books",
+                                style = MaterialTheme.typography.headlineMedium,
+                                fontWeight = FontWeight.Bold,
+                                color = Charcoal
+                            )
+                            if (uiState.userInitial.isNotBlank()) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(32.dp)
+                                        .background(
+                                            color = Bronze.copy(alpha = 0.15f),
+                                            shape = CircleShape
+                                        ),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(
+                                        text = uiState.userInitial,
+                                        style = MaterialTheme.typography.labelMedium,
+                                        color = Bronze,
+                                        fontWeight = FontWeight.SemiBold
+                                    )
+                                }
+                            }
+                        }
                         if (uiState.books.isNotEmpty()) {
                             Text(
                                 "${uiState.books.size} ${if (uiState.books.size == 1) "book" else "books"}",
@@ -126,29 +175,22 @@ fun BooksScreen(
         ) {
             when {
                 uiState.isLoading && uiState.books.isEmpty() -> {
-                    // Skeleton loading state — premium feel
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(horizontal = 16.dp, vertical = 8.dp),
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
-                        repeat(4) {
-                            SkeletonCard()
-                        }
+                        repeat(4) { SkeletonCard() }
                     }
                 }
 
                 uiState.error != null && uiState.books.isEmpty() -> {
-                    // Error state with retry
                     Column(
                         modifier = Modifier.align(Alignment.Center),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Text(
-                            text = "😕",
-                            fontSize = 56.sp
-                        )
+                        Text(text = "😕", fontSize = 56.sp)
                         Spacer(modifier = Modifier.height(16.dp))
                         Text(
                             text = "Couldn't load your books",
@@ -160,7 +202,7 @@ fun BooksScreen(
                             text = uiState.error!!,
                             style = MaterialTheme.typography.bodyMedium,
                             color = CharcoalMuted,
-                            textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                            textAlign = TextAlign.Center
                         )
                         Spacer(modifier = Modifier.height(20.dp))
                         OutlinedButton(
@@ -174,7 +216,6 @@ fun BooksScreen(
                 }
 
                 uiState.books.isEmpty() -> {
-                    // Empty state — warm, inviting, actionable
                     Column(
                         modifier = Modifier
                             .align(Alignment.Center)
@@ -192,10 +233,7 @@ fun BooksScreen(
                                 ),
                             contentAlignment = Alignment.Center
                         ) {
-                            Text(
-                                text = "📖",
-                                fontSize = 48.sp
-                            )
+                            Text(text = "📖", fontSize = 48.sp)
                         }
                         Spacer(modifier = Modifier.height(28.dp))
                         Text(
@@ -209,7 +247,7 @@ fun BooksScreen(
                             text = "Every family has stories worth keeping. Start yours here.",
                             style = MaterialTheme.typography.bodyLarge,
                             color = CharcoalMuted,
-                            textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                            textAlign = TextAlign.Center
                         )
                         Spacer(modifier = Modifier.height(32.dp))
                         Button(
@@ -259,8 +297,67 @@ fun BooksScreen(
                             contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 96.dp),
                             verticalArrangement = Arrangement.spacedBy(14.dp)
                         ) {
+                            // Search bar
+                            item {
+                                OutlinedTextField(
+                                    value = searchQuery,
+                                    onValueChange = { searchQuery = it },
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(bottom = 4.dp),
+                                    placeholder = { Text("Search books...") },
+                                    leadingIcon = {
+                                        Icon(
+                                            Icons.Default.Search,
+                                            contentDescription = null,
+                                            tint = CharcoalMuted
+                                        )
+                                    },
+                                    trailingIcon = {
+                                        if (searchQuery.isNotBlank()) {
+                                            IconButton(onClick = { searchQuery = "" }) {
+                                                Icon(
+                                                    Icons.Default.Clear,
+                                                    contentDescription = "Clear search",
+                                                    tint = CharcoalMuted
+                                                )
+                                            }
+                                        }
+                                    },
+                                    singleLine = true,
+                                    shape = RoundedCornerShape(12.dp),
+                                    colors = OutlinedTextFieldDefaults.colors(
+                                        focusedBorderColor = Bronze,
+                                        unfocusedBorderColor = Border,
+                                        focusedLabelColor = Bronze
+                                    )
+                                )
+                            }
+
+                            // Empty search result
+                            if (filteredBooks.isEmpty() && searchQuery.isNotBlank()) {
+                                item {
+                                    Column(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(vertical = 32.dp),
+                                        horizontalAlignment = Alignment.CenterHorizontally
+                                    ) {
+                                        Text(
+                                            text = "No books match \"$searchQuery\"",
+                                            style = MaterialTheme.typography.bodyLarge,
+                                            color = CharcoalMuted
+                                        )
+                                        Spacer(modifier = Modifier.height(8.dp))
+                                        TextButton(onClick = { searchQuery = "" }) {
+                                            Text("Clear search", color = Bronze)
+                                        }
+                                    }
+                                }
+                            }
+
                             items(
-                                items = uiState.books,
+                                items = filteredBooks,
                                 key = { it.id }
                             ) { book ->
                                 Box {
@@ -418,11 +515,7 @@ fun BooksScreen(
                         onLogout()
                     }
                 ) {
-                    Text(
-                        "Sign Out",
-                        color = ErrorRed,
-                        fontWeight = FontWeight.SemiBold
-                    )
+                    Text("Sign Out", color = ErrorRed, fontWeight = FontWeight.SemiBold)
                 }
             },
             dismissButton = {
@@ -503,9 +596,7 @@ fun BookCard(
                 }
             ),
         shape = RoundedCornerShape(14.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = WarmWhite
-        ),
+        colors = CardDefaults.cardColors(containerColor = WarmWhite),
         elevation = CardDefaults.cardElevation(defaultElevation = elevation)
     ) {
         Row(
@@ -565,6 +656,27 @@ fun BookCard(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
+                            // Owner avatar (32dp circle with initial)
+                            if (book.owner_name.isNotBlank()) {
+                                val ownerInitial = book.owner_name.firstOrNull()?.uppercaseChar()?.toString() ?: ""
+                                Box(
+                                    modifier = Modifier
+                                        .size(24.dp)
+                                        .background(
+                                            color = Papaya,
+                                            shape = CircleShape
+                                        ),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(
+                                        text = ownerInitial,
+                                        style = MaterialTheme.typography.labelSmall,
+                                        color = Bronze,
+                                        fontWeight = FontWeight.SemiBold
+                                    )
+                                }
+                                Spacer(modifier = Modifier.width(4.dp))
+                            }
                             Text(
                                 text = if (book.role != "owner") "Shared with you" else "Created by ${book.owner_name}",
                                 style = MaterialTheme.typography.bodySmall,
@@ -593,20 +705,16 @@ fun BookCard(
                                 }
                             }
                             val bytes = book.storage_used_bytes.toLongOrNull() ?: 0L
-                        if (bytes > 0) {
-                            Text(text = "•", style = MaterialTheme.typography.bodySmall, color = CharcoalMuted)
-                            Text(
-                                text = formatStorage(bytes),
-                                style = MaterialTheme.typography.bodySmall,
-                                color = CharcoalLight
-                            )
-                        }
-                        if (book.updated_at != null) {
+                            if (bytes > 0) {
+                                Text(text = "•", style = MaterialTheme.typography.bodySmall, color = CharcoalMuted)
                                 Text(
-                                    text = "•",
+                                    text = formatStorage(bytes),
                                     style = MaterialTheme.typography.bodySmall,
-                                    color = CharcoalMuted
+                                    color = CharcoalLight
                                 )
+                            }
+                            if (book.updated_at != null) {
+                                Text(text = "•", style = MaterialTheme.typography.bodySmall, color = CharcoalMuted)
                                 Text(
                                     text = formatRelativeDate(book.updated_at),
                                     style = MaterialTheme.typography.bodySmall,
@@ -660,10 +768,7 @@ fun BookCard(
 
             // Kebab menu
             Box {
-                IconButton(
-                    onClick = onMenuClick,
-                    modifier = Modifier.size(36.dp)
-                ) {
+                IconButton(onClick = onMenuClick, modifier = Modifier.size(36.dp)) {
                     Icon(
                         Icons.Default.MoreVert,
                         contentDescription = "More options",
@@ -671,10 +776,7 @@ fun BookCard(
                         modifier = Modifier.size(20.dp)
                     )
                 }
-                DropdownMenu(
-                    expanded = showMenu,
-                    onDismissRequest = onMenuDismiss
-                ) {
+                DropdownMenu(expanded = showMenu, onDismissRequest = onMenuDismiss) {
                     DropdownMenuItem(
                         text = { Text("Open in browser", color = Charcoal) },
                         onClick = {
@@ -682,11 +784,7 @@ fun BookCard(
                             onOpenInBrowserClick()
                         },
                         leadingIcon = {
-                            Icon(
-                                Icons.Default.OpenInNew,
-                                contentDescription = null,
-                                tint = CharcoalMuted
-                            )
+                            Icon(Icons.Default.OpenInNew, contentDescription = null, tint = CharcoalMuted)
                         }
                     )
                     DropdownMenuItem(
@@ -696,11 +794,7 @@ fun BookCard(
                             onShareClick()
                         },
                         leadingIcon = {
-                            Icon(
-                                Icons.Default.Share,
-                                contentDescription = null,
-                                tint = CharcoalMuted
-                            )
+                            Icon(Icons.Default.Share, contentDescription = null, tint = CharcoalMuted)
                         }
                     )
                 }
@@ -708,6 +802,7 @@ fun BookCard(
         }
     }
 }
+
 private fun formatStorageSize(bytes: Long): String {
     return when {
         bytes < 1024 -> "${bytes}B"
@@ -716,6 +811,7 @@ private fun formatStorageSize(bytes: Long): String {
         else -> "${bytes / (1024 * 1024 * 1024)}GB"
     }
 }
+
 private fun formatRelativeDate(isoDate: String): String {
     return try {
         val dateParts = isoDate.substringBefore("T").split("-")
