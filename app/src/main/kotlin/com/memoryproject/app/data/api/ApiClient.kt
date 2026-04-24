@@ -23,7 +23,7 @@ class ApiClient {
                 prettyPrint = false
             })
         }
-        install(Logging) { level = LogLevel.ALL }
+        install(Logging) { level = LogLevel.BODY }
         expectSuccess = false
         install(HttpTimeout) {
             requestTimeoutMillis = 15000
