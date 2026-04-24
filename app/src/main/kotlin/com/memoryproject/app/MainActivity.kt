@@ -176,7 +176,8 @@ fun MemoryNavHost(
                         navController.navigate("auth") {
                             popUpTo("onboarding") { inclusive = true }
                         }
-                    }
+                    },
+                    darkTheme = darkThemeEnabled
                 )
             }
 
@@ -212,7 +213,8 @@ fun MemoryNavHost(
                     onNavigateToAddMemory = {
                         // Navigate to books first so user can pick a book to add memory to
                         navController.navigate("books")
-                    }
+                    },
+                    darkTheme = darkThemeEnabled
                 )
             }
 

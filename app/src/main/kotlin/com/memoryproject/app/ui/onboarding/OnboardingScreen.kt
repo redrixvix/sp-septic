@@ -90,9 +90,10 @@ private val PAGES = listOf(
 @Composable
 fun OnboardingScreen(
     onComplete: () -> Unit,
+    darkTheme: Boolean,
     viewModel: OnboardingViewModel = koinViewModel()
 ) {
-    val isDark = isSystemInDarkTheme()
+    val isDark = darkTheme
     val scaffoldBg = if (isDark) DarkBackground else Cornsilk
     val cardBg = if (isDark) DarkSurface else WarmWhite
     val primaryText = if (isDark) DarkOnSurface else Color(0xFF2D2D2D)

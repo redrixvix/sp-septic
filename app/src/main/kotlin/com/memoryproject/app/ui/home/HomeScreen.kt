@@ -47,10 +47,10 @@ fun HomeScreen(
     onNavigateToBook: (Int) -> Unit,
     onNavigateToProfile: () -> Unit,
     onNavigateToAddMemory: () -> Unit,
+    darkTheme: Boolean,
     viewModel: HomeViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val darkTheme = isSystemInDarkTheme()
     val scaffoldBg = if (darkTheme) DarkBackground else Cornsilk
     val primaryText = if (darkTheme) DarkOnSurface else Charcoal
     val mutedText = if (darkTheme) DarkOnSurfaceVariant else CharcoalMuted
