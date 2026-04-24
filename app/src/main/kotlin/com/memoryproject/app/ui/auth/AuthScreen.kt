@@ -2,6 +2,7 @@ package com.memoryproject.app.ui.auth
 
 import androidx.compose.animation.*
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
@@ -43,6 +44,13 @@ fun AuthScreen(
     val uiState by viewModel.uiState.collectAsState()
     val focusManager = LocalFocusManager.current
 
+    val isDark = isSystemInDarkTheme()
+    val backgroundGradient = if (isDark) listOf(DarkBackground, DarkSurfaceVariant) else listOf(Cornsilk, Papaya.copy(alpha = 0.5f))
+    val cardBg = if (isDark) DarkSurface else WarmWhite
+    val cardBgBrush = if (isDark) Brush.linearGradient(listOf(DarkSurface, DarkSurfaceVariant)) else null
+    val primaryText = if (isDark) DarkOnSurface else Charcoal
+    val mutedText = if (isDark) DarkOnSurfaceVariant else CharcoalMuted
+
     var email by remember { mutableStateOf("") }
     var name by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -75,7 +83,7 @@ fun AuthScreen(
             .fillMaxSize()
             .background(
                 Brush.verticalGradient(
-                    colors = listOf(Cornsilk, Papaya.copy(alpha = 0.5f))
+                    colors = backgroundGradient
                 )
             )
     ) {
@@ -112,7 +120,7 @@ fun AuthScreen(
             Text(
                 text = "Memory Project",
                 style = MaterialTheme.typography.displayMedium,
-                color = Charcoal,
+                color = primaryText,
                 fontWeight = FontWeight.Bold
             )
 
@@ -122,7 +130,7 @@ fun AuthScreen(
             Text(
                 text = "Your family's stories, preserved forever",
                 style = MaterialTheme.typography.bodyLarge,
-                color = CharcoalMuted,
+                color = mutedText,
                 textAlign = TextAlign.Center
             )
 
@@ -133,7 +141,7 @@ fun AuthScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(
-                        color = WarmWhite,
+                        color = cardBg,
                         shape = RoundedCornerShape(12.dp)
                     )
                     .padding(4.dp)
@@ -165,7 +173,7 @@ fun AuthScreen(
                         Text(
                             text = label,
                             style = MaterialTheme.typography.labelLarge,
-                            color = if (isActive) WarmWhite else CharcoalMuted,
+                            color = if (isActive) WarmWhite else mutedText,
                             fontWeight = if (isActive) FontWeight.SemiBold else FontWeight.Normal
                         )
                     }
@@ -178,7 +186,7 @@ fun AuthScreen(
             Text(
                 text = if (uiState.isSignUp) "Create your account" else "Welcome back",
                 style = MaterialTheme.typography.headlineMedium,
-                color = Charcoal,
+                color = primaryText,
                 fontWeight = FontWeight.SemiBold
             )
 
@@ -190,7 +198,7 @@ fun AuthScreen(
                 else
                     "Sign in to continue your story",
                 style = MaterialTheme.typography.bodyMedium,
-                color = CharcoalMuted
+                color = mutedText
             )
 
             Spacer(modifier = Modifier.height(28.dp))
@@ -207,7 +215,7 @@ fun AuthScreen(
                     Icon(
                         Icons.Default.Email,
                         contentDescription = null,
-                        tint = CharcoalMuted
+                        tint = mutedText
                     )
                 },
                 isError = emailError != null && email.isNotEmpty(),
@@ -226,9 +234,9 @@ fun AuthScreen(
                 shape = RoundedCornerShape(14.dp),
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = Bronze,
-                    unfocusedBorderColor = Border,
+                    unfocusedBorderColor = if (isDark) DarkBorder else Border,
                     focusedLabelColor = Bronze,
-                    unfocusedLabelColor = CharcoalMuted,
+                    unfocusedLabelColor = mutedText,
                     cursorColor = Bronze,
                     errorBorderColor = ErrorRed,
                     errorLabelColor = ErrorRed
@@ -255,7 +263,7 @@ fun AuthScreen(
                             Icon(
                                 Icons.Default.Person,
                                 contentDescription = null,
-                                tint = CharcoalMuted
+                                tint = mutedText
                             )
                         },
                         modifier = Modifier.fillMaxWidth(),
@@ -267,9 +275,9 @@ fun AuthScreen(
                         shape = RoundedCornerShape(14.dp),
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedBorderColor = Bronze,
-                            unfocusedBorderColor = Border,
+                            unfocusedBorderColor = if (isDark) DarkBorder else Border,
                             focusedLabelColor = Bronze,
-                            unfocusedLabelColor = CharcoalMuted,
+                            unfocusedLabelColor = mutedText,
                             cursorColor = Bronze
                         ),
                         typography = MaterialTheme.typography.bodyLarge
@@ -291,7 +299,7 @@ fun AuthScreen(
                     Icon(
                         Icons.Default.Lock,
                         contentDescription = null,
-                        tint = CharcoalMuted
+                        tint = mutedText
                     )
                 },
                 trailingIcon = {
@@ -299,12 +307,12 @@ fun AuthScreen(
                         Icon(
                             imageVector = if (showPassword) Icons.Default.VisibilityOff else Icons.Default.Visibility,
                             contentDescription = if (showPassword) "Hide password" else "Show password",
-                            tint = CharcoalMuted
+                            tint = mutedText
                         )
                     }
                 },
                 supportingText = if (passwordHint != null) {
-                    { Text(passwordHint, color = CharcoalMuted) }
+                    { Text(passwordHint, color = mutedText) }
                 } else null,
                 visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
                 modifier = Modifier.fillMaxWidth(),
@@ -327,9 +335,9 @@ fun AuthScreen(
                 shape = RoundedCornerShape(14.dp),
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = Bronze,
-                    unfocusedBorderColor = Border,
+                    unfocusedBorderColor = if (isDark) DarkBorder else Border,
                     focusedLabelColor = Bronze,
-                    unfocusedLabelColor = CharcoalMuted,
+                    unfocusedLabelColor = mutedText,
                     cursorColor = Bronze
                 ),
                 typography = MaterialTheme.typography.bodyLarge
@@ -386,9 +394,9 @@ fun AuthScreen(
                 shape = RoundedCornerShape(14.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Bronze,
-                    contentColor = WarmWhite,
+                    contentColor = if (isDark) DarkOnSurface else WarmWhite,
                     disabledContainerColor = Bronze.copy(alpha = 0.4f),
-                    disabledContentColor = WarmWhite.copy(alpha = 0.6f)
+                    disabledContentColor = if (isDark) DarkOnSurfaceVariant else WarmWhite.copy(alpha = 0.6f)
                 ),
                 elevation = ButtonDefaults.buttonElevation(
                     defaultElevation = 4.dp,
@@ -426,7 +434,7 @@ fun AuthScreen(
                         Text(
                             text = "Forgot your password?",
                             style = MaterialTheme.typography.bodyMedium,
-                            color = CharcoalMuted
+                            color = mutedText
                         )
                     }
                     // Forgot password confirmation message
@@ -467,7 +475,7 @@ fun AuthScreen(
                 Text(
                     text = if (uiState.isSignUp) "Already have an account?" else "New to Memory Project?",
                     style = MaterialTheme.typography.bodyMedium,
-                    color = CharcoalMuted
+                    color = mutedText
                 )
                 TextButton(
                     onClick = {
@@ -492,7 +500,7 @@ fun AuthScreen(
             Text(
                 text = "🔒 Your data is always private",
                 style = MaterialTheme.typography.bodySmall,
-                color = CharcoalMuted,
+                color = mutedText,
                 textAlign = TextAlign.Center
             )
 

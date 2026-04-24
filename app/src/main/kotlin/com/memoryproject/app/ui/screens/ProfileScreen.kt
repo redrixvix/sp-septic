@@ -2,6 +2,7 @@ package com.memoryproject.app.ui.screens
 
 import androidx.compose.animation.*
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -35,6 +36,11 @@ fun ProfileScreen(
     var showEditNameDialog by remember { mutableStateOf(false) }
     var editedName by remember { mutableStateOf("") }
 
+    val isDark = isSystemInDarkTheme()
+    val scaffoldBg = if (isDark) DarkBackground else Cornsilk
+    val primaryText = if (isDark) DarkOnSurface else Charcoal
+    val backIconTint = primaryText
+
     LaunchedEffect(uiState.message) {
         uiState.message?.let {
             snackbarHostState.showSnackbar(it, duration = SnackbarDuration.Short)
@@ -63,7 +69,7 @@ fun ProfileScreen(
                     shape = RoundedCornerShape(12.dp),
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = Bronze,
-                        unfocusedBorderColor = Border,
+                        unfocusedBorderColor = if (isDark) DarkBorder else Border,
                         focusedLabelColor = Bronze
                     )
                 )
@@ -78,7 +84,7 @@ fun ProfileScreen(
                     shape = RoundedCornerShape(12.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Bronze,
-                        contentColor = WarmWhite
+                        contentColor = if (isDark) DarkOnSurface else WarmWhite
                     )
                 ) {
                     Text("Save")
@@ -86,7 +92,7 @@ fun ProfileScreen(
             },
             dismissButton = {
                 TextButton(onClick = { showEditNameDialog = false }) {
-                    Text("Cancel", color = CharcoalMuted)
+                    Text("Cancel", color = if (isDark) DarkOnSurfaceVariant else CharcoalMuted)
                 }
             },
             shape = RoundedCornerShape(20.dp)
@@ -101,7 +107,7 @@ fun ProfileScreen(
                         "Profile",
                         style = MaterialTheme.typography.headlineMedium,
                         fontWeight = FontWeight.Bold,
-                        color = Charcoal
+                        color = primaryText
                     )
                 },
                 navigationIcon = {
@@ -110,24 +116,24 @@ fun ProfileScreen(
                         modifier = Modifier
                             .size(44.dp)
                             .background(
-                                color = WarmWhite,
+                                color = if (isDark) DarkSurface else WarmWhite,
                                 shape = RoundedCornerShape(12.dp)
                             )
                     ) {
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back",
-                            tint = Charcoal
+                            tint = backIconTint
                         )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Cornsilk
+                    containerColor = scaffoldBg
                 )
             )
         },
         snackbarHost = { SnackbarHost(snackbarHostState) },
-        containerColor = Cornsilk
+        containerColor = scaffoldBg
     ) { padding ->
         Column(
             modifier = Modifier
@@ -141,7 +147,7 @@ fun ProfileScreen(
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(20.dp),
-                colors = CardDefaults.cardColors(containerColor = WarmWhite),
+                colors = CardDefaults.cardColors(containerColor = cardBg),
                 elevation = CardDefaults.cardElevation(defaultElevation = 3.dp)
             ) {
                 Box(
@@ -170,7 +176,7 @@ fun ProfileScreen(
                                         colors = if (uiState.userInitial != "?")
                                             listOf(Bronze, BronzeLight)
                                         else
-                                            listOf(Border, Divider)
+                                            listOf(if (isDark) DarkBorder else Border, if (isDark) DarkDivider else Divider)
                                     ),
                                     shape = CircleShape
                                 )
@@ -187,7 +193,7 @@ fun ProfileScreen(
                             Text(
                                 text = uiState.userInitial,
                                 style = MaterialTheme.typography.displayLarge,
-                                color = if (uiState.userInitial != "?") WarmWhite else CharcoalMuted,
+                                color = if (isDark) DarkOnSurface else WarmWhite,
                                 fontWeight = FontWeight.Bold
                             )
                         }
@@ -198,7 +204,7 @@ fun ProfileScreen(
                         Text(
                             text = uiState.userName.ifBlank { "Welcome" },
                             style = MaterialTheme.typography.headlineMedium,
-                            color = Charcoal,
+                            color = primaryText,
                             fontWeight = FontWeight.SemiBold,
                             textAlign = TextAlign.Center
                         )
@@ -208,7 +214,7 @@ fun ProfileScreen(
                             Text(
                                 text = uiState.userEmail,
                                 style = MaterialTheme.typography.bodyMedium,
-                                color = CharcoalMuted,
+                                color = if (isDark) DarkOnSurfaceVariant else CharcoalMuted,
                                 textAlign = TextAlign.Center
                             )
                         }
@@ -222,12 +228,13 @@ fun ProfileScreen(
                     icon = Icons.Default.Person,
                     label = "Display Name",
                     value = uiState.userName.ifBlank { "Tap to set" },
+                    showChevron = true,
                     onClick = {
                         editedName = uiState.userName.ifBlank { "" }
                         showEditNameDialog = true
                     }
                 )
-                HorizontalDivider(color = Divider, thickness = 0.5.dp)
+                HorizontalDivider(color = if (isDark) DarkDivider else Divider, thickness = 0.5.dp)
                 SettingsRow(
                     icon = Icons.Default.Email,
                     label = "Email",
@@ -252,7 +259,7 @@ fun ProfileScreen(
                             modifier = Modifier
                                 .width(1.dp)
                                 .height(40.dp)
-                                .background(Divider)
+                                .background(if (isDark) DarkDivider else Divider)
                         )
                         StatItem(
                             value = "${uiState.memoriesCount}",
@@ -263,7 +270,7 @@ fun ProfileScreen(
                             modifier = Modifier
                                 .width(1.dp)
                                 .height(40.dp)
-                                .background(Divider)
+                                .background(if (isDark) DarkDivider else Divider)
                         )
                         StatItem(
                             value = if (uiState.storageUsedBytes > 0) formatStorage(uiState.storageUsedBytes) else "Free",
@@ -271,13 +278,12 @@ fun ProfileScreen(
                             highlight = uiState.storageUsedBytes > 0
                         )
                     }
-                    // Account age
                     if (uiState.userCreatedAt.isNotBlank()) {
                         Spacer(modifier = Modifier.height(16.dp))
                         Text(
                             text = uiState.userCreatedAt,
                             style = MaterialTheme.typography.bodyMedium,
-                            color = CharcoalMuted,
+                            color = if (isDark) DarkOnSurfaceVariant else CharcoalMuted,
                             modifier = Modifier.fillMaxWidth(),
                             textAlign = TextAlign.Center
                         )
@@ -302,17 +308,18 @@ fun ProfileScreen(
 
 @Composable
 private fun StatItem(value: String, label: String, highlight: Boolean = false) {
+    val mutedTextColor = if (isSystemInDarkTheme()) DarkOnSurfaceVariant else CharcoalMuted
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
             text = value,
             style = MaterialTheme.typography.headlineMedium,
-            color = if (highlight) Bronze else CharcoalMuted,
+            color = if (highlight) if (isSystemInDarkTheme()) DarkBronze else Bronze else mutedTextColor,
             fontWeight = FontWeight.Bold
         )
         Text(
             text = label,
             style = MaterialTheme.typography.bodySmall,
-            color = CharcoalMuted
+            color = mutedTextColor
         )
     }
 }
@@ -322,17 +329,21 @@ private fun SettingsSection(
     title: String,
     content: @Composable ColumnScope.() -> Unit
 ) {
+    val isDark = isSystemInDarkTheme()
+    val sectionTitleColor = if (isDark) DarkOnSurfaceVariant else CharcoalMuted
+    val cardBg = if (isDark) DarkSurface else WarmWhite
+
     Column {
         Text(
             text = title,
             style = MaterialTheme.typography.labelMedium,
-            color = CharcoalMuted,
+            color = sectionTitleColor,
             fontWeight = FontWeight.SemiBold,
             modifier = Modifier.padding(start = 4.dp, bottom = 8.dp)
         )
         Card(
             shape = RoundedCornerShape(14.dp),
-            colors = CardDefaults.cardColors(containerColor = WarmWhite),
+            colors = CardDefaults.cardColors(containerColor = cardBg),
             elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
         ) {
             Column(modifier = Modifier.fillMaxWidth()) {
@@ -350,10 +361,16 @@ private fun SettingsRow(
     showChevron: Boolean = false,
     onClick: () -> Unit = {}
 ) {
+    val isDark = isSystemInDarkTheme()
+    val bgColor = if (isDark) DarkSurface else WarmWhite
+    val iconBgColor = if (isDark) DarkSurfaceVariant else Bronze.copy(alpha = 0.1f)
+    val primaryText = if (isDark) DarkOnSurface else Charcoal
+    val mutedText = if (isDark) DarkOnSurfaceVariant else CharcoalMuted
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(WarmWhite)
+            .background(bgColor)
             .padding(horizontal = 16.dp, vertical = 14.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -361,7 +378,7 @@ private fun SettingsRow(
             modifier = Modifier
                 .size(40.dp)
                 .background(
-                    color = Bronze.copy(alpha = 0.1f),
+                    color = iconBgColor,
                     shape = RoundedCornerShape(10.dp)
                 ),
             contentAlignment = Alignment.Center
@@ -380,13 +397,13 @@ private fun SettingsRow(
             Text(
                 text = label,
                 style = MaterialTheme.typography.bodyLarge,
-                color = Charcoal,
+                color = primaryText,
                 fontWeight = FontWeight.Medium
             )
             Text(
                 text = value,
                 style = MaterialTheme.typography.bodySmall,
-                color = CharcoalMuted
+                color = mutedText
             )
         }
 
@@ -394,7 +411,7 @@ private fun SettingsRow(
             Icon(
                 Icons.Default.Edit,
                 contentDescription = "Edit",
-                tint = CharcoalMuted,
+                tint = mutedText,
                 modifier = Modifier.size(18.dp)
             )
         }

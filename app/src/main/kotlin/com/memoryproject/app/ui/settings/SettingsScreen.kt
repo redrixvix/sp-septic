@@ -44,6 +44,10 @@ fun SettingsScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
+    val isDark = isSystemInDarkTheme()
+    val scaffoldBg = if (isDark) DarkBackground else Cornsilk
+    val primaryText = if (isDark) DarkOnSurface else Charcoal
+    val mutedText = if (isDark) DarkOnSurfaceVariant else CharcoalMuted
 
     // Show coming soon snackbar for profile row
     LaunchedEffect(uiState.profileMessage) {
@@ -61,7 +65,7 @@ fun SettingsScreen(
                         "Settings",
                         style = MaterialTheme.typography.headlineMedium,
                         fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
-                        color = Charcoal
+                        color = primaryText
                     )
                 },
                 navigationIcon = {
@@ -70,24 +74,24 @@ fun SettingsScreen(
                         modifier = Modifier
                             .size(44.dp)
                             .background(
-                                color = WarmWhite,
+                                color = if (isDark) DarkSurface else WarmWhite,
                                 shape = RoundedCornerShape(12.dp)
                             )
                     ) {
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back",
-                            tint = Charcoal
+                            tint = primaryText
                         )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Cornsilk
+                    containerColor = scaffoldBg
                 )
             )
         },
         snackbarHost = { SnackbarHost(snackbarHostState) },
-        containerColor = Cornsilk
+        containerColor = scaffoldBg
     ) { padding ->
         Column(
             modifier = Modifier
@@ -124,7 +128,7 @@ fun SettingsScreen(
                                 checkedThumbColor = WarmWhite,
                                 checkedTrackColor = Bronze,
                                 uncheckedThumbColor = WarmWhite,
-                                uncheckedTrackColor = Border
+                                uncheckedTrackColor = if (isDark) DarkBorder else Border
                             )
                         )
                     },
@@ -149,7 +153,7 @@ fun SettingsScreen(
                                 checkedThumbColor = WarmWhite,
                                 checkedTrackColor = Bronze,
                                 uncheckedThumbColor = WarmWhite,
-                                uncheckedTrackColor = Border
+                                uncheckedTrackColor = if (isDark) DarkBorder else Border
                             )
                         )
                     },
@@ -238,7 +242,7 @@ fun SettingsScreen(
                 Text(
                     "Your books will still be here when you come back.",
                     style = MaterialTheme.typography.bodyMedium,
-                    color = CharcoalMuted
+                    color = mutedText
                 )
             },
             confirmButton = {
@@ -254,7 +258,7 @@ fun SettingsScreen(
             },
             dismissButton = {
                 TextButton(onClick = { showLogoutDialog = false }) {
-                    Text("Cancel", color = CharcoalMuted)
+                    Text("Cancel", color = mutedText)
                 }
             },
             shape = RoundedCornerShape(20.dp)
@@ -267,17 +271,21 @@ private fun SettingsSection(
     title: String,
     content: @Composable ColumnScope.() -> Unit
 ) {
+    val isDark = isSystemInDarkTheme()
+    val sectionTitleColor = if (isDark) DarkOnSurfaceVariant else CharcoalMuted
+    val cardBg = if (isDark) DarkSurface else WarmWhite
+
     Column {
         Text(
             text = title,
             style = MaterialTheme.typography.labelMedium,
-            color = CharcoalMuted,
+            color = sectionTitleColor,
             fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold,
             modifier = Modifier.padding(start = 4.dp, bottom = 8.dp)
         )
         Card(
             shape = RoundedCornerShape(14.dp),
-            colors = CardDefaults.cardColors(containerColor = WarmWhite),
+            colors = CardDefaults.cardColors(containerColor = cardBg),
             elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
         ) {
             Column(modifier = Modifier.fillMaxWidth()) {
@@ -296,11 +304,18 @@ private fun SettingsItem(
     showDivider: Boolean = false,
     onClick: () -> Unit
 ) {
+    val isDark = isSystemInDarkTheme()
+    val bgColor = if (isDark) DarkSurface else WarmWhite
+    val iconBgColor = if (isDark) DarkSurfaceVariant else Bronze.copy(alpha = 0.1f)
+    val primaryText = if (isDark) DarkOnSurface else Charcoal
+    val mutedText = if (isDark) DarkOnSurfaceVariant else CharcoalMuted
+    val dividerColor = if (isDark) DarkDivider else Divider
+
     Column {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(WarmWhite)
+                .background(bgColor)
                 .padding(horizontal = 16.dp, vertical = 14.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -308,7 +323,7 @@ private fun SettingsItem(
                 modifier = Modifier
                     .size(40.dp)
                     .background(
-                        color = Bronze.copy(alpha = 0.1f),
+                        color = iconBgColor,
                         shape = RoundedCornerShape(10.dp)
                     ),
                 contentAlignment = Alignment.Center
@@ -327,13 +342,13 @@ private fun SettingsItem(
                 Text(
                     text = title,
                     style = MaterialTheme.typography.bodyLarge,
-                    color = Charcoal,
+                    color = primaryText,
                     fontWeight = androidx.compose.ui.text.font.FontWeight.Medium
                 )
                 Text(
                     text = subtitle,
                     style = MaterialTheme.typography.bodySmall,
-                    color = CharcoalMuted
+                    color = mutedText
                 )
             }
 
@@ -343,7 +358,7 @@ private fun SettingsItem(
                 Icon(
                     Icons.Default.ChevronRight,
                     contentDescription = null,
-                    tint = CharcoalMuted,
+                    tint = mutedText,
                     modifier = Modifier.size(20.dp)
                 )
             }
@@ -351,7 +366,7 @@ private fun SettingsItem(
         if (showDivider) {
             HorizontalDivider(
                 modifier = Modifier.padding(start = 70.dp),
-                color = Divider,
+                color = dividerColor,
                 thickness = 0.5.dp
             )
         }

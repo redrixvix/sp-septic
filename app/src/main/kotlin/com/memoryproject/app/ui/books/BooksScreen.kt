@@ -6,6 +6,7 @@ import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.*
@@ -79,22 +80,22 @@ private fun SortMenu(selected: SortOption, onSelect: (SortOption) -> Unit) {
         }
         DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
             DropdownMenuItem(
-                text = { Text("Newest first", color = if (selected == SortOption.NEWEST) Bronze else Charcoal) },
+                text = { Text("Newest first", color = if (selected == SortOption.NEWEST) if (isDark) DarkBronze else Bronze else primaryText) },
                 onClick = { onSelect(SortOption.NEWEST); expanded = false },
                 leadingIcon = { if (selected == SortOption.NEWEST) Icon(Icons.Default.Check, null, tint = Bronze, modifier = Modifier.size(16.dp)) else null }
             )
             DropdownMenuItem(
-                text = { Text("Oldest first", color = if (selected == SortOption.OLDEST) Bronze else Charcoal) },
+                text = { Text("Oldest first", color = if (selected == SortOption.OLDEST) if (isDark) DarkBronze else Bronze else primaryText) },
                 onClick = { onSelect(SortOption.OLDEST); expanded = false },
                 leadingIcon = { if (selected == SortOption.OLDEST) Icon(Icons.Default.Check, null, tint = Bronze, modifier = Modifier.size(16.dp)) else null }
             )
             DropdownMenuItem(
-                text = { Text("Alphabetical", color = if (selected == SortOption.ALPHABETICAL) Bronze else Charcoal) },
+                text = { Text("Alphabetical", color = if (selected == SortOption.ALPHABETICAL) if (isDark) DarkBronze else Bronze else primaryText) },
                 onClick = { onSelect(SortOption.ALPHABETICAL); expanded = false },
                 leadingIcon = { if (selected == SortOption.ALPHABETICAL) Icon(Icons.Default.Check, null, tint = Bronze, modifier = Modifier.size(16.dp)) else null }
             )
             DropdownMenuItem(
-                text = { Text("Most memories", color = if (selected == SortOption.MOST_MEMORIES) Bronze else Charcoal) },
+                text = { Text("Most memories", color = if (selected == SortOption.MOST_MEMORIES) if (isDark) DarkBronze else Bronze else primaryText) },
                 onClick = { onSelect(SortOption.MOST_MEMORIES); expanded = false },
                 leadingIcon = { if (selected == SortOption.MOST_MEMORIES) Icon(Icons.Default.Check, null, tint = Bronze, modifier = Modifier.size(16.dp)) else null }
             )
@@ -120,6 +121,16 @@ fun BooksScreen(
     var searchQuery by remember { mutableStateOf("") }
 
     var sortOption by remember { mutableStateOf(SortOption.NEWEST) }
+
+    val isDark = isSystemInDarkTheme()
+    val scaffoldBg = if (isDark) DarkBackground else Cornsilk
+    val topBarBg = scaffoldBg
+    val primaryText = if (isDark) DarkOnSurface else Charcoal
+    val mutedText = if (isDark) DarkOnSurfaceVariant else CharcoalMuted
+    val cardBg = if (isDark) DarkSurface else WarmWhite
+    val cardSurfaceBg = if (isDark) DarkSurfaceVariant else Papaya
+    val iconTint = if (isDark) DarkOnSurfaceVariant else CharcoalMuted
+    val buttonContentColor = if (isDark) DarkOnSurface else WarmWhite
 
     // Filter and sort books
     val filteredBooks = remember(sortOption, searchQuery, uiState.books) {
@@ -154,7 +165,7 @@ fun BooksScreen(
                                 "My Books",
                                 style = MaterialTheme.typography.headlineMedium,
                                 fontWeight = FontWeight.Bold,
-                                color = Charcoal
+                                color = primaryText
                             )
                             if (uiState.userInitial.isNotBlank()) {
                                 Box(
@@ -188,7 +199,7 @@ fun BooksScreen(
                             Text(
                                 displayCount,
                                 style = MaterialTheme.typography.bodySmall,
-                                color = CharcoalMuted
+                                color = mutedText
                             )
                             if (uiState.books.size > 1) {
                                 SortMenu(
@@ -201,23 +212,23 @@ fun BooksScreen(
                 },
                 actions = {
                     IconButton(onClick = onSettings) {
-                        Icon(Icons.Default.Settings, contentDescription = "Settings", tint = CharcoalMuted)
+                        Icon(Icons.Default.Settings, contentDescription = "Settings", tint = iconTint)
                     }
                     IconButton(onClick = onProfile) {
-                        Icon(Icons.Default.Person, contentDescription = "Profile", tint = CharcoalMuted)
+                        Icon(Icons.Default.Person, contentDescription = "Profile", tint = iconTint)
                     }
                     IconButton(onClick = { showLogoutDialog = true }) {
-                        Icon(Icons.Default.Logout, contentDescription = "Sign out", tint = CharcoalMuted)
+                        Icon(Icons.Default.Logout, contentDescription = "Sign out", tint = iconTint)
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Cornsilk)
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = topBarBg)
             )
         },
         floatingActionButton = {
             ExtendedFloatingActionButton(
                 onClick = { showCreateDialog = true },
                 containerColor = Bronze,
-                contentColor = WarmWhite,
+                contentColor = if (isDark) DarkOnSurface else WarmWhite,
                 elevation = FloatingActionButtonDefaults.elevation(defaultElevation = 6.dp, pressedElevation = 12.dp)
             ) {
                 Icon(Icons.Default.Add, contentDescription = null)
@@ -225,7 +236,7 @@ fun BooksScreen(
                 Text("New Book", style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.SemiBold)
             }
         },
-        containerColor = Cornsilk
+        containerColor = scaffoldBg
     ) { padding ->
         Box(modifier = Modifier.fillMaxSize().padding(padding)) {
             when {
@@ -239,9 +250,9 @@ fun BooksScreen(
                     Column(modifier = Modifier.align(Alignment.Center), horizontalAlignment = Alignment.CenterHorizontally) {
                         Text("😕", fontSize = 56.sp)
                         Spacer(modifier = Modifier.height(16.dp))
-                        Text("Couldn't load your books", style = MaterialTheme.typography.headlineSmall, color = Charcoal)
+                        Text("Couldn't load your books", style = MaterialTheme.typography.headlineSmall, color = primaryText)
                         Spacer(modifier = Modifier.height(8.dp))
-                        Text(uiState.error!!, style = MaterialTheme.typography.bodyMedium, color = CharcoalMuted, textAlign = TextAlign.Center)
+                        Text(uiState.error!!, style = MaterialTheme.typography.bodyMedium, color = mutedText, textAlign = TextAlign.Center)
                         Spacer(modifier = Modifier.height(20.dp))
                         OutlinedButton(
                             onClick = { viewModel.loadBooks() },
@@ -258,7 +269,7 @@ fun BooksScreen(
                         Card(
                             modifier = Modifier.size(100.dp),
                             shape = RoundedCornerShape(24.dp),
-                            colors = CardDefaults.cardColors(containerColor = Papaya),
+                            colors = CardDefaults.cardColors(containerColor = cardSurfaceBg),
                             elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
                         ) {
                             Box(
@@ -269,15 +280,15 @@ fun BooksScreen(
                             }
                         }
                         Spacer(modifier = Modifier.height(28.dp))
-                        Text("Your library is empty", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.SemiBold, color = Charcoal)
+                        Text("Your library is empty", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.SemiBold, color = primaryText)
                         Spacer(modifier = Modifier.height(10.dp))
-                        Text("Every family has stories worth keeping. Start yours here.", style = MaterialTheme.typography.bodyLarge, color = CharcoalMuted, textAlign = TextAlign.Center)
+                        Text("Every family has stories worth keeping. Start yours here.", style = MaterialTheme.typography.bodyLarge, color = mutedText, textAlign = TextAlign.Center)
                         Spacer(modifier = Modifier.height(28.dp))
                         Button(
                             onClick = { showCreateDialog = true },
                             modifier = Modifier.height(52.dp),
                             shape = RoundedCornerShape(14.dp),
-                            colors = ButtonDefaults.buttonColors(containerColor = Bronze, contentColor = WarmWhite)
+                            colors = ButtonDefaults.buttonColors(containerColor = Bronze, contentColor = buttonContentColor)
                         ) {
                             Icon(Icons.Default.Add, contentDescription = null)
                             Spacer(modifier = Modifier.width(8.dp))
@@ -310,17 +321,17 @@ fun BooksScreen(
                                     onValueChange = { searchQuery = it },
                                     modifier = Modifier.fillMaxWidth().padding(bottom = 4.dp),
                                     placeholder = { Text("Search books...") },
-                                    leadingIcon = { Icon(Icons.Default.Search, contentDescription = null, tint = CharcoalMuted) },
+                                    leadingIcon = { Icon(Icons.Default.Search, contentDescription = null, tint = iconTint) },
                                     trailingIcon = {
                                         if (searchQuery.isNotBlank()) {
                                             IconButton(onClick = { searchQuery = "" }) {
-                                                Icon(Icons.Default.Clear, contentDescription = "Clear search", tint = CharcoalMuted)
+                                                Icon(Icons.Default.Clear, contentDescription = "Clear search", tint = iconTint)
                                             }
                                         }
                                     },
                                     singleLine = true,
                                     shape = RoundedCornerShape(12.dp),
-                                    colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = Bronze, unfocusedBorderColor = Border, focusedLabelColor = Bronze)
+                                    colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = Bronze, unfocusedBorderColor = if (isDark) DarkBorder else Border, focusedLabelColor = Bronze)
                                 )
                             }
                             if (filteredBooks.isEmpty() && searchQuery.isNotBlank()) {
@@ -361,7 +372,7 @@ fun BooksScreen(
                         modifier = Modifier.fillMaxWidth(),
                         singleLine = true,
                         shape = RoundedCornerShape(12.dp),
-                        colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = Bronze, unfocusedBorderColor = Border, focusedLabelColor = Bronze)
+                        colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = Bronze, unfocusedBorderColor = if (isDark) DarkBorder else Border, focusedLabelColor = Bronze)
                     )
                     OutlinedTextField(
                         value = newDescription,
@@ -372,7 +383,7 @@ fun BooksScreen(
                         minLines = 2,
                         maxLines = 3,
                         shape = RoundedCornerShape(12.dp),
-                        colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = Bronze, unfocusedBorderColor = Border, focusedLabelColor = Bronze)
+                        colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = Bronze, unfocusedBorderColor = if (isDark) DarkBorder else Border, focusedLabelColor = Bronze)
                     )
                 }
             },
@@ -388,11 +399,11 @@ fun BooksScreen(
                     },
                     enabled = newTitle.isNotBlank() && !uiState.isLoading,
                     shape = RoundedCornerShape(12.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = Bronze, contentColor = WarmWhite)
+                    colors = ButtonDefaults.buttonColors(containerColor = Bronze, contentColor = buttonContentColor)
                 ) { Text("Create") }
             },
             dismissButton = {
-                TextButton(onClick = { showCreateDialog = false; newTitle = ""; newDescription = "" }) { Text("Cancel", color = CharcoalMuted) }
+                TextButton(onClick = { showCreateDialog = false; newTitle = ""; newDescription = "" }) { Text("Cancel", color = mutedText) }
             },
             shape = RoundedCornerShape(20.dp)
         )
@@ -402,11 +413,11 @@ fun BooksScreen(
         AlertDialog(
             onDismissRequest = { showLogoutDialog = false },
             title = { Text("Sign Out?", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.SemiBold) },
-            text = { Text("Your books will still be here when you come back.", style = MaterialTheme.typography.bodyMedium, color = CharcoalMuted) },
+            text = { Text("Your books will still be here when you come back.", style = MaterialTheme.typography.bodyMedium, color = mutedText) },
             confirmButton = {
                 TextButton(onClick = { showLogoutDialog = false; viewModel.logout(); onLogout() }) { Text("Sign Out", color = ErrorRed, fontWeight = FontWeight.SemiBold) }
             },
-            dismissButton = { TextButton(onClick = { showLogoutDialog = false }) { Text("Cancel", color = CharcoalMuted) } },
+            dismissButton = { TextButton(onClick = { showLogoutDialog = false }) { Text("Cancel", color = mutedText) } },
             shape = RoundedCornerShape(20.dp)
         )
     }
@@ -422,27 +433,32 @@ private fun BookCard(
     onShareClick: () -> Unit,
     onOpenInBrowserClick: () -> Unit
 ) {
+    val isDark = isSystemInDarkTheme()
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
     val scale by animateFloatAsState(if (isPressed) 0.98f else 1f, animationSpec = spring(), label = "bookCardScale")
+
+    val cardBg = if (isDark) DarkSurface else WarmWhite
+    val primaryText = if (isDark) DarkOnSurface else Charcoal
+    val mutedText = if (isDark) DarkOnSurfaceVariant else CharcoalMuted
 
     Card(
         onClick = onClick,
         modifier = Modifier.fillMaxWidth().scale(scale),
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = WarmWhite),
+        colors = CardDefaults.cardColors(containerColor = cardBg),
         elevation = CardDefaults.cardElevation(defaultElevation = if (isPressed) 8.dp else 3.dp)
     ) {
         Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Box(
-                    modifier = Modifier.size(52.dp).background(brush = Brush.linearGradient(colors = listOf(Bronze, BronzeLight)), shape = RoundedCornerShape(14.dp)),
+                    modifier = Modifier.size(52.dp).background(brush = Brush.linearGradient(colors = if (isDark) listOf(DarkBronze, DarkBronzeLight) else listOf(Bronze, BronzeLight)), shape = RoundedCornerShape(14.dp)),
                     contentAlignment = Alignment.Center
                 ) { Text("📖", fontSize = 24.sp) }
                 Spacer(modifier = Modifier.width(14.dp))
                 Column(modifier = Modifier.weight(1f)) {
                     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                        Text(book.title, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold, color = Charcoal, maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier.weight(1f, fill = false))
+                        Text(book.title, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold, color = primaryText, maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier.weight(1f, fill = false))
                         // Shared pill — shows when user is a collaborator, not owner
                         if (book.role != "owner") {
                             Box(
@@ -453,20 +469,20 @@ private fun BookCard(
                         }
                     }
                     if (book.description.isNotBlank()) {
-                        Text(book.description, style = MaterialTheme.typography.bodySmall, color = CharcoalMuted, maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier.padding(top = 2.dp))
+                        Text(book.description, style = MaterialTheme.typography.bodySmall, color = mutedText, maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier.padding(top = 2.dp))
                     }
                     // Show owner name for shared books
                     if (book.role != "owner" && book.owner_name.isNotBlank()) {
-                        Text("Owned by ${book.owner_name}", style = MaterialTheme.typography.labelSmall, color = CharcoalMuted, modifier = Modifier.padding(top = 3.dp))
+                        Text("Owned by ${book.owner_name}", style = MaterialTheme.typography.labelSmall, color = mutedText, modifier = Modifier.padding(top = 3.dp))
                     }
                 }
                 Box {
                     IconButton(onClick = onMenuClick, modifier = Modifier.size(32.dp)) {
-                        Icon(Icons.Default.MoreVert, contentDescription = "More options", tint = CharcoalMuted, modifier = Modifier.size(20.dp))
+                        Icon(Icons.Default.MoreVert, contentDescription = "More options", tint = mutedText, modifier = Modifier.size(20.dp))
                     }
                     DropdownMenu(expanded = showMenu, onDismissRequest = onMenuDismiss) {
-                        DropdownMenuItem(text = { Text("Share") }, onClick = { onShareClick(); onMenuDismiss() }, leadingIcon = { Icon(Icons.Default.Share, null, tint = CharcoalMuted) })
-                        DropdownMenuItem(text = { Text("Open in browser") }, onClick = { onOpenInBrowserClick(); onMenuDismiss() }, leadingIcon = { Icon(Icons.Default.OpenInNew, null, tint = CharcoalMuted) })
+                        DropdownMenuItem(text = { Text("Share") }, onClick = { onShareClick(); onMenuDismiss() }, leadingIcon = { Icon(Icons.Default.Share, null, tint = mutedText) })
+                        DropdownMenuItem(text = { Text("Open in browser") }, onClick = { onOpenInBrowserClick(); onMenuDismiss() }, leadingIcon = { Icon(Icons.Default.OpenInNew, null, tint = mutedText) })
                     }
                 }
             }
@@ -481,9 +497,10 @@ private fun BookCard(
 
 @Composable
 private fun LabelChip(text: String, icon: String) {
+    val mutedText = if (isSystemInDarkTheme()) DarkOnSurfaceVariant else CharcoalMuted
     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
         Text(icon, fontSize = 12.sp)
-        Text(text, style = MaterialTheme.typography.labelSmall, color = CharcoalMuted)
+        Text(text, style = MaterialTheme.typography.labelSmall, color = mutedText)
     }
 }
 
@@ -499,22 +516,26 @@ private fun formatDate(isoDate: String): String {
 
 @Composable
 private fun SkeletonCard() {
+    val isDark = isSystemInDarkTheme()
+    val shimmerBase = if (isDark) DarkDivider else Beige
+    val cardBg = if (isDark) DarkSurface else WarmWhite
+
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = WarmWhite)
+        colors = CardDefaults.cardColors(containerColor = cardBg)
     ) {
         Row(modifier = Modifier.fillMaxWidth().padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
-            Box(modifier = Modifier.size(52.dp).background(Beige, RoundedCornerShape(14.dp)))
+            Box(modifier = Modifier.size(52.dp).background(shimmerBase, RoundedCornerShape(14.dp)))
             Spacer(modifier = Modifier.width(14.dp))
             Column(modifier = Modifier.weight(1f)) {
-                Box(modifier = Modifier.fillMaxWidth(0.6f).height(16.dp).background(Beige, RoundedCornerShape(4.dp)))
+                Box(modifier = Modifier.fillMaxWidth(0.6f).height(16.dp).background(shimmerBase, RoundedCornerShape(4.dp)))
                 Spacer(modifier = Modifier.height(8.dp))
-                Box(modifier = Modifier.fillMaxWidth(0.4f).height(12.dp).background(Beige, RoundedCornerShape(4.dp)))
+                Box(modifier = Modifier.fillMaxWidth(0.4f).height(12.dp).background(shimmerBase, RoundedCornerShape(4.dp)))
                 Spacer(modifier = Modifier.height(12.dp))
                 Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                    Box(modifier = Modifier.width(80.dp).height(14.dp).background(Beige, RoundedCornerShape(4.dp)))
-                    Box(modifier = Modifier.width(60.dp).height(14.dp).background(Beige, RoundedCornerShape(4.dp)))
+                    Box(modifier = Modifier.width(80.dp).height(14.dp).background(shimmerBase, RoundedCornerShape(4.dp)))
+                    Box(modifier = Modifier.width(60.dp).height(14.dp).background(shimmerBase, RoundedCornerShape(4.dp)))
                 }
             }
         }
