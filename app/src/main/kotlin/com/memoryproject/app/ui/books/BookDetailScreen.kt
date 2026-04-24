@@ -22,6 +22,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.platform.LocalContext
@@ -29,6 +30,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import com.memoryproject.app.data.model.Memory
 import com.memoryproject.app.ui.theme.*
 import org.koin.androidx.compose.koinViewModel
@@ -687,9 +689,25 @@ private fun MemoryCard(
                     lineHeight = 26.sp
                 )
 
-                Spacer(modifier = Modifier.height(12.dp))
+                // Photo thumbnails
+                if (memory.photo_urls.isNotEmpty()) {
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        memory.photo_urls.take(3).forEach { url ->
+                            AsyncImage(
+                                model = url,
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .size(48.dp)
+                                    .clip(RoundedCornerShape(8.dp))
+                            )
+                        }
+                    }
+                }
 
-                // Date footer
+                Spacer(modifier = Modifier.height(12.dp))
                 Text(
                     text = formatDate(memory.created_at),
                     style = MaterialTheme.typography.bodySmall,
@@ -703,6 +721,7 @@ private fun MemoryCard(
 private fun formatDate(isoDate: String): String {
     return try {
         val parts = isoDate.substringBefore("T").split("-")
+        if (parts.size < 3) return isoDate
         val months = listOf(
             "", "January", "February", "March", "April", "May", "June",
             "July", "August", "September", "October", "November", "December"

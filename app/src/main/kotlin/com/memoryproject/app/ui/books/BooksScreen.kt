@@ -222,18 +222,29 @@ fun BooksScreen(
                             .padding(horizontal = 40.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Box(
-                            modifier = Modifier
-                                .size(100.dp)
-                                .background(
-                                    brush = Brush.radialGradient(
-                                        colors = listOf(Papaya, Beige)
-                                    ),
-                                    shape = RoundedCornerShape(24.dp)
-                                ),
-                            contentAlignment = Alignment.Center
+                        Card(
+                            modifier = Modifier.size(100.dp),
+                            shape = RoundedCornerShape(24.dp),
+                            colors = CardDefaults.cardColors(containerColor = Papaya),
+                            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
                         ) {
-                            Text(text = "📖", fontSize = 48.sp)
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .background(
+                                        brush = Brush.radialGradient(
+                                            colors = listOf(Papaya, Beige)
+                                        )
+                                    ),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    Icons.Default.MenuBook,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(48.dp),
+                                    tint = Bronze
+                                )
+                            }
                         }
                         Spacer(modifier = Modifier.height(28.dp))
                         Text(

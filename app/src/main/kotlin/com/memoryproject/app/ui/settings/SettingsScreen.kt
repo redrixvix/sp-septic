@@ -20,6 +20,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.memoryproject.app.BuildConfig
 import com.memoryproject.app.ui.theme.*
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
@@ -164,7 +165,7 @@ fun SettingsScreen(
                 SettingsItem(
                     icon = Icons.Default.Info,
                     title = "Version",
-                    subtitle = "1.0.0",
+                    subtitle = "${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})",
                     showDivider = true,
                     onClick = { }
                 )

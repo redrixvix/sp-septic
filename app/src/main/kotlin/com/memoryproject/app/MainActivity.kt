@@ -1,5 +1,7 @@
 package com.memoryproject.app
 
+import android.app.NotificationManager
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -30,6 +32,13 @@ class MainActivity : ComponentActivity() {
 
         val prefsManager = PreferencesManager(this)
         val initialDarkMode = prefsManager.darkMode
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            if (!notificationManager.areNotificationsEnabled()) {
+                // Notification permission not granted — could show a dialog here
+            }
+        }
 
         setContent {
             var darkThemeEnabled by remember { mutableStateOf(initialDarkMode) }
