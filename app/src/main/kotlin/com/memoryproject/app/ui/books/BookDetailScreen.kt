@@ -423,8 +423,8 @@ private fun MemoryDialog(
     isSaving: Boolean,
     confirmLabel: String
 ) {
-    // Shuffle suggestions so different ones appear each session
-    val suggestions = remember { PROMPT_SUGGESTIONS.shuffled().take(6) }
+    // Shuffle suggestions when dialog opens — each open shows different options
+    val suggestions = remember(title) { PROMPT_SUGGESTIONS.shuffled().take(6) }
 
     AlertDialog(
         onDismissRequest = onDismiss,
