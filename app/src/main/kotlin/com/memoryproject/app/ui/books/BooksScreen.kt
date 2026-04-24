@@ -441,7 +441,7 @@ fun BooksScreen(
                     )
                     OutlinedTextField(
                         value = newTitle,
-                        onValueChange = { newTitle = it },
+                        onValueChange = { newTitle = it.take(80) },
                         label = { Text("Book Title") },
                         placeholder = { Text("e.g. Grandma's Stories") },
                         modifier = Modifier.fillMaxWidth(),
@@ -451,7 +451,14 @@ fun BooksScreen(
                             focusedBorderColor = Bronze,
                             unfocusedBorderColor = Border,
                             focusedLabelColor = Bronze
-                        )
+                        ),
+                        supportingText = {
+                            Text(
+                                "${newTitle.length}/80",
+                                color = if (newTitle.length > 60) Bronze else CharcoalMuted,
+                                style = MaterialTheme.typography.bodySmall
+                            )
+                        }
                     )
                     OutlinedTextField(
                         value = newDescription,
@@ -465,7 +472,14 @@ fun BooksScreen(
                             focusedBorderColor = Bronze,
                             unfocusedBorderColor = Border,
                             focusedLabelColor = Bronze
-                        )
+                        ),
+                        supportingText = {
+                            Text(
+                                "Optional — describe who's book this is",
+                                color = CharcoalMuted,
+                                style = MaterialTheme.typography.bodySmall
+                            )
+                        }
                     )
                 }
             },
