@@ -48,6 +48,24 @@ fun AuthScreen(
     var password by remember { mutableStateOf("") }
     var showPassword by remember { mutableStateOf(false) }
 
+    // Real-time email format validation
+    val emailError = remember(email) {
+        when {
+            email.isEmpty() -> null
+            !email.contains("@") || !email.contains(".") -> "Please enter a valid email address"
+            else -> null
+        }
+    }
+
+    // Password strength hint (informational, not blocking)
+    val passwordHint = remember(password, uiState.isSignUp) {
+        if (!uiState.isSignUp || password.isEmpty()) null
+        else when {
+            password.length < 8 -> "At least 8 characters recommended"
+            else -> null
+        }
+    }
+
     LaunchedEffect(uiState.isLoggedIn) {
         if (uiState.isLoggedIn) onLoginSuccess()
     }
@@ -177,7 +195,7 @@ fun AuthScreen(
 
             Spacer(modifier = Modifier.height(28.dp))
 
-            // Email field
+            // Email field with inline validation
             OutlinedTextField(
                 value = email,
                 onValueChange = {
@@ -192,6 +210,10 @@ fun AuthScreen(
                         tint = CharcoalMuted
                     )
                 },
+                isError = emailError != null && email.isNotEmpty(),
+                supportingText = if (emailError != null && email.isNotEmpty()) {
+                    { Text(emailError, color = ErrorRed) }
+                } else null,
                 modifier = Modifier.fillMaxWidth(),
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Email,
@@ -207,7 +229,9 @@ fun AuthScreen(
                     unfocusedBorderColor = Border,
                     focusedLabelColor = Bronze,
                     unfocusedLabelColor = CharcoalMuted,
-                    cursorColor = Bronze
+                    cursorColor = Bronze,
+                    errorBorderColor = ErrorRed,
+                    errorLabelColor = ErrorRed
                 ),
                 typography = MaterialTheme.typography.bodyLarge
             )
@@ -255,7 +279,7 @@ fun AuthScreen(
 
             Spacer(modifier = Modifier.height(14.dp))
 
-            // Password field
+            // Password field with visibility toggle
             OutlinedTextField(
                 value = password,
                 onValueChange = {
@@ -279,6 +303,9 @@ fun AuthScreen(
                         )
                     }
                 },
+                supportingText = if (passwordHint != null) {
+                    { Text(passwordHint, color = CharcoalMuted) }
+                } else null,
                 visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
                 modifier = Modifier.fillMaxWidth(),
                 keyboardOptions = KeyboardOptions(
@@ -288,8 +315,12 @@ fun AuthScreen(
                 keyboardActions = KeyboardActions(
                     onDone = {
                         focusManager.clearFocus()
-                        if (uiState.isSignUp) viewModel.signup(email, name, password)
-                        else viewModel.login(email, password)
+                        // Only submit if no email format error
+                        val canSubmit = emailError == null && email.isNotBlank() && password.isNotBlank() && (!uiState.isSignUp || name.isNotBlank())
+                        if (canSubmit) {
+                            if (uiState.isSignUp) viewModel.signup(email, name, password)
+                            else viewModel.login(email, password)
+                        }
                     }
                 ),
                 singleLine = true,
@@ -304,7 +335,7 @@ fun AuthScreen(
                 typography = MaterialTheme.typography.bodyLarge
             )
 
-            // Error message
+            // Error message (from ViewModel — server-side errors)
             AnimatedVisibility(
                 visible = uiState.error != null,
                 enter = fadeIn() + expandVertically(),
@@ -316,7 +347,7 @@ fun AuthScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .background(
-                                color = ErrorRed.copy(alpha = 0.08),
+                                color = ErrorRed.copy(alpha = 0.08f),
                                 shape = RoundedCornerShape(10.dp)
                             )
                             .padding(horizontal = 14.dp, vertical = 10.dp),
@@ -339,6 +370,9 @@ fun AuthScreen(
             Spacer(modifier = Modifier.height(28.dp))
 
             // Primary action button — large, confident, inviting
+            val isFormValid = email.isNotBlank() && password.isNotBlank() &&
+                emailError == null && (!uiState.isSignUp || name.isNotBlank())
+
             Button(
                 onClick = {
                     focusManager.clearFocus()
@@ -348,7 +382,7 @@ fun AuthScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp),
-                enabled = !uiState.isLoading && email.isNotBlank() && password.isNotBlank() && (!uiState.isSignUp || name.isNotBlank()),
+                enabled = !uiState.isLoading && isFormValid,
                 shape = RoundedCornerShape(14.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Bronze,
