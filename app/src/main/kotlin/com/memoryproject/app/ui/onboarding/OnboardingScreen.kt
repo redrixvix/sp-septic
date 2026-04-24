@@ -210,7 +210,7 @@ fun OnboardingScreen(
                     )
                 ) {
                     Text(
-                        text = if (isLastPage) "Get Started" else "Next",
+                        text = if (isLastPage) "Begin Your Story" else "Continue",
                         style = MaterialTheme.typography.labelLarge,
                         fontWeight = FontWeight.SemiBold
                     )

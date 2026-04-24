@@ -23,6 +23,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.memoryproject.app.ui.theme.*
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -34,7 +35,9 @@ fun ProfileScreen(
     val uiState by viewModel.uiState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
     var showEditNameDialog by remember { mutableStateOf(false) }
+    var showInviteDialog by remember { mutableStateOf(false) }
     var editedName by remember { mutableStateOf("") }
+    var inviteEmail by remember { mutableStateOf("") }
 
     val isDark = isSystemInDarkTheme()
     val scaffoldBg = if (isDark) DarkBackground else Cornsilk
@@ -94,6 +97,68 @@ fun ProfileScreen(
             },
             dismissButton = {
                 TextButton(onClick = { showEditNameDialog = false }) {
+                    Text("Cancel", color = if (isDark) DarkOnSurfaceVariant else CharcoalMuted)
+                }
+            },
+            shape = RoundedCornerShape(20.dp)
+        )
+    }
+
+    // Invite dialog
+    if (showInviteDialog) {
+        AlertDialog(
+            onDismissRequest = { showInviteDialog = false },
+            title = {
+                Text(
+                    "Invite a Family Member",
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.SemiBold
+                )
+            },
+            text = {
+                Column {
+                    Text(
+                        "Enter their email to share your books with them",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = mutedText
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    OutlinedTextField(
+                        value = inviteEmail,
+                        onValueChange = { inviteEmail = it },
+                        label = { Text("Email address") },
+                        modifier = Modifier.fillMaxWidth(),
+                        singleLine = true,
+                        shape = RoundedCornerShape(12.dp),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = Bronze,
+                            unfocusedBorderColor = if (isDark) DarkBorder else Border,
+                            focusedLabelColor = Bronze
+                        )
+                    )
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        showInviteDialog = false
+                        inviteEmail = ""
+                        coroutineScope.launch {
+                            snackbarHostState.showSnackbar("Coming soon! Family sharing will be available soon.", duration = SnackbarDuration.Short)
+                        }
+                    },
+                    enabled = inviteEmail.isNotBlank(),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Bronze,
+                        contentColor = if (isDark) DarkOnSurface else WarmWhite
+                    )
+                ) {
+                    Text("Send Invite")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showInviteDialog = false }) {
                     Text("Cancel", color = if (isDark) DarkOnSurfaceVariant else CharcoalMuted)
                 }
             },
@@ -304,13 +369,12 @@ fun ProfileScreen(
                 }
             }
 
-            // Family collaboration section
             SettingsSection(title = "Family Sharing") {
                 SettingsRow(
                     icon = Icons.Default.Book,
                     label = "Invite family member",
                     value = "Share books with family members",
-                    onClick = { }
+                    onClick = { showInviteDialog = true }
                 )
             }
 

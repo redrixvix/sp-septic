@@ -303,11 +303,18 @@ fun AuthScreen(
                     )
                 },
                 trailingIcon = {
-                    IconButton(onClick = { showPassword = !showPassword }) {
+                    IconButton(
+                        onClick = { showPassword = !showPassword },
+                        modifier = Modifier.size(48.dp),
+                        colors = IconButtonDefaults.iconButtonColors(
+                            containerColor = Color.Transparent
+                        )
+                    ) {
                         Icon(
                             imageVector = if (showPassword) Icons.Default.VisibilityOff else Icons.Default.Visibility,
                             contentDescription = if (showPassword) "Hide password" else "Show password",
-                            tint = mutedText
+                            tint = mutedText,
+                            modifier = Modifier.size(22.dp)
                         )
                     }
                 },
