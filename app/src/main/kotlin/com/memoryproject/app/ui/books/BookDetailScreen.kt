@@ -422,6 +422,9 @@ private fun MemoryDialog(
     isSaving: Boolean,
     confirmLabel: String
 ) {
+    // Shuffle suggestions so different ones appear each session
+    val suggestions = remember { PROMPT_SUGGESTIONS.shuffled().take(6) }
+
     AlertDialog(
         onDismissRequest = onDismiss,
         title = {
@@ -432,7 +435,7 @@ private fun MemoryDialog(
             )
         },
         text = {
-            Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
+            Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
                 OutlinedTextField(
                     value = promptInput,
                     onValueChange = onPromptChange,
@@ -448,37 +451,43 @@ private fun MemoryDialog(
                     )
                 )
 
-                // Prompt suggestions
-                Text(
-                    "Or choose a prompt:",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = CharcoalMuted
-                )
-                FlowRow(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(6.dp),
-                    verticalArrangement = Arrangement.spacedBy(6.dp)
-                ) {
-                    PROMPT_SUGGESTIONS.take(5).forEach { prompt ->
-                        SuggestionChip(
-                            onClick = { onPromptChange(prompt) },
-                            label = {
+                // Prompt picker — warm, inviting, visually distinct from form fields
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text(
+                        "Or choose a prompt to get started:",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = CharcoalMuted,
+                        fontWeight = FontWeight.Medium
+                    )
+                    FlowRow(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        suggestions.forEach { prompt ->
+                            Box(
+                                modifier = Modifier
+                                    .background(
+                                        color = if (promptInput == prompt) Bronze.copy(alpha = 0.15f) else Papaya,
+                                        shape = RoundedCornerShape(20.dp)
+                                    )
+                                    .then(
+                                        if (promptInput != prompt) {
+                                            Modifier.clickable { onPromptChange(prompt) }
+                                        } else Modifier
+                                    )
+                                    .padding(horizontal = 14.dp, vertical = 9.dp)
+                            ) {
                                 Text(
-                                    prompt,
-                                    style = MaterialTheme.typography.labelSmall,
+                                    text = prompt,
+                                    style = MaterialTheme.typography.labelMedium,
+                                    color = if (promptInput == prompt) BronzeDark else Charcoal,
+                                    fontWeight = if (promptInput == prompt) FontWeight.SemiBold else FontWeight.Normal,
                                     maxLines = 1,
                                     overflow = TextOverflow.Ellipsis
                                 )
-                            },
-                            colors = SuggestionChipDefaults.suggestionChipColors(
-                                containerColor = Papaya,
-                                labelColor = Charcoal
-                            ),
-                            border = SuggestionChipDefaults.suggestionChipBorder(
-                                enabled = true,
-                                borderColor = Border
-                            )
-                        )
+                            }
+                        }
                     }
                 }
 
@@ -486,7 +495,7 @@ private fun MemoryDialog(
                     value = answerInput,
                     onValueChange = onAnswerChange,
                     label = { Text("Your story") },
-                    placeholder = { Text("Write freely — this is yours") },
+                    placeholder = { Text("Write freely — this is yours.") },
                     modifier = Modifier
                         .fillMaxWidth()
                         .heightIn(min = 120.dp),
