@@ -229,7 +229,7 @@ fun BookDetailScreen(
                         )
                         Spacer(modifier = Modifier.height(10.dp))
                         Text(
-                            "Add your first memory and watch your story come to life.",
+                            "Capture a moment, preserve a story. Your memories begin here.",
                             style = MaterialTheme.typography.bodyLarge,
                             color = CharcoalMuted,
                             textAlign = androidx.compose.ui.text.style.TextAlign.Center

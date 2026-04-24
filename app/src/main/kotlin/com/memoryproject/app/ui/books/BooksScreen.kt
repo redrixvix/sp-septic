@@ -272,7 +272,7 @@ fun BooksScreen(
                             color = CharcoalMuted,
                             textAlign = TextAlign.Center
                         )
-                        Spacer(modifier = Modifier.height(32.dp))
+                        Spacer(modifier = Modifier.height(28.dp))
                         Button(
                             onClick = { showCreateDialog = true },
                             modifier = Modifier.height(52.dp),
