@@ -424,8 +424,10 @@ private fun MemoryDialog(
     confirmLabel: String
 ) {
     // Shuffle suggestions each time the dialog opens — fresh variety keeps exploration fun
-    val suggestions = remember(title) { 
-        PROMPT_SUGGESTIONS.shuffled(java.util.Random(System.currentTimeMillis() / 10000)).take(6) 
+    // rememberSaveable survives process death, shuffled on each dialog open
+    var suggestions by rememberSaveable { mutableStateOf(emptyList<String>()) }
+    LaunchedEffect(title) {
+        suggestions = PROMPT_SUGGESTIONS.shuffled(java.util.Random(System.currentTimeMillis() / 10000)).take(6)
     }
 
     AlertDialog(
