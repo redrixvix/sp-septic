@@ -154,7 +154,7 @@ fun SettingsScreen(
                 SettingsItem(
                     icon = Icons.Default.Info,
                     title = "Version",
-                    subtitle = "${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})",
+                    subtitle = "Build ${BuildConfig.VERSION_CODE}",
                     showDivider = true,
                     onClick = { }
                 )
