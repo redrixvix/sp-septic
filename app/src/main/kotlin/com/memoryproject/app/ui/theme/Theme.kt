@@ -154,7 +154,10 @@ fun MemoryProjectTheme(
         SideEffect {
             val window = (view.context as Activity).window
             window.statusBarColor = if (darkTheme) DarkBackground.toArgb() else Cornsilk.toArgb()
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !darkTheme
+            window.navigationBarColor = if (darkTheme) DarkBackground.toArgb() else Cornsilk.toArgb()
+            val controller = WindowCompat.getInsetsController(window, view)
+            controller.isAppearanceLightStatusBars = !darkTheme
+            controller.isAppearanceLightNavigationBars = !darkTheme
         }
     }
 

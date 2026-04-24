@@ -1560,7 +1560,7 @@ private fun MemoryCard(
                                         color = extraPhotoBg,
                                         shape = RoundedCornerShape(10.dp)
                                     )
-                                    .clickable { onPhotoClick(url) },
+                                    .clickable { memory.photo_urls.getOrNull(3)?.let { onPhotoClick(it) } },
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(
