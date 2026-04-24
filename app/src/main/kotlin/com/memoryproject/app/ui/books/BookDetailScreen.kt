@@ -387,7 +387,14 @@ fun BookDetailScreen(
 
                 .padding(padding)
 
+                .pullRefresh(pullRefreshState)
+
         ) {
+
+            val pullRefreshState = rememberPullRefreshState(
+                refreshing = uiState.isLoading,
+                onRefresh = { viewModel.loadBook() }
+            )
 
             when {
 
@@ -580,7 +587,6 @@ fun BookDetailScreen(
                 }
 
 
-
                 else -> {
 
                     val context = LocalContext.current
@@ -593,7 +599,9 @@ fun BookDetailScreen(
 
                             putExtra(Intent.EXTRA_SUBJECT, memory.prompt_question)
 
-                            putExtra(Intent.EXTRA_TEXT, "${memory.prompt_question}\n\n${memory.answer_text}")
+                            putExtra(Intent.EXTRA_TEXT, "${memory.prompt_question}
+
+${memory.answer_text}")
 
                         }
 
@@ -601,115 +609,119 @@ fun BookDetailScreen(
 
                     }
 
-                    val pullRefreshState = rememberPullRefreshState(
+                    LazyColumn(
 
-                        refreshing = uiState.isLoading,
+                        contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 96.dp),
 
-                        onRefresh = { viewModel.loadBook() }
-
-                    )
-
-                    Box(
-
-                        modifier = Modifier
-
-                            .fillMaxSize()
-
-                            .pullRefresh(pullRefreshState)
+                        verticalArrangement = Arrangement.spacedBy(14.dp)
 
                     ) {
 
-                        LazyColumn(
+                        // Memory count header
 
-                            contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 96.dp),
+                        item {
 
-                            verticalArrangement = Arrangement.spacedBy(14.dp)
+                            Text(
 
-                        ) {
+                                "${uiState.memories.size} ${if (uiState.memories.size == 1) "memory" else "memories"}",
 
-                            // Memory count header
+                                style = MaterialTheme.typography.bodyMedium,
 
-                            item {
+                                color = if (isDark) DarkOnSurfaceVariant else CharcoalMuted,
 
-                                Text(
+                                modifier = Modifier.padding(bottom = 4.dp)
 
-                                    "${uiState.memories.size} ${if (uiState.memories.size == 1) "memory" else "memories"}",
-
-                                    style = MaterialTheme.typography.bodyMedium,
-
-                                    color = if (isDark) DarkOnSurfaceVariant else CharcoalMuted,
-
-                                    modifier = Modifier.padding(bottom = 4.dp)
-
-                                )
-
-                            }
-
-                            items(
-
-                                items = uiState.memories,
-
-                                key = { it.id }
-
-                            ) { memory ->
-
-                                var visible by remember { mutableStateOf(false) }
-                                val scale by animateFloatAsState(
-                                    targetValue = if (visible) 1f else 0.95f,
-                                    animationSpec = spring(
-                                        dampingRatio = androidx.compose.animation.core.Spring.DampingRatioMediumBouncy,
-                                        stiffness = androidx.compose.animation.core.Spring.StiffnessLow
-                                    ),
-                                    label = "cardScale"
-                                )
-                                val alpha by animateFloatAsState(
-                                    targetValue = if (visible) 1f else 0f,
-                                    animationSpec = tween(durationMillis = 300),
-                                    label = "cardAlpha"
-                                )
-
-                                LaunchedEffect(memory.id) {
-                                    delay(50L * uiState.memories.indexOf(memory).coerceAtMost(5))
-                                    visible = true
-                                }
-
-                                MemoryCard(
-                                    memory = memory,
-                                    onEdit = { viewModel.showEditMemory(memory) },
-                                    onDelete = { viewModel.showDeleteConfirm(memory) },
-                                    onShareClick = { onShareMemory(memory) },
-                                    onPhotoClick = { photoUrl -> showPhotoViewer = photoUrl },
-                                    accentIndex = uiState.memories.indexOf(memory),
-                                    modifier = Modifier.graphicsLayer {
-                                        scaleX = scale
-                                        scaleY = scale
-                                        this.alpha = alpha
-                                    }
-                                )
-
-                            }
+                            )
 
                         }
 
-                        PullRefreshIndicator(
+                        items(
 
-                            refreshing = uiState.isLoading,
+                            items = uiState.memories,
 
-                            state = pullRefreshState,
+                            key = { it.id }
 
-                            modifier = Modifier.align(Alignment.TopCenter),
+                        ) { memory ->
 
-                            contentColor = Bronze,
+                            var visible by remember { mutableStateOf(false) }
 
-                            backgroundColor = if (isDark) DarkSurfaceVariant else Papaya
+                            val scale by animateFloatAsState(
 
-                        )
+                                targetValue = if (visible) 1f else 0.95f,
+
+                                animationSpec = spring(
+
+                                    dampingRatio = androidx.compose.animation.core.Spring.DampingRatioMediumBouncy,
+
+                                    stiffness = androidx.compose.animation.core.Spring.StiffnessLow
+
+                                ),
+
+                                label = "cardScale"
+
+                            )
+
+                            val alpha by animateFloatAsState(
+
+                                targetValue = if (visible) 1f else 0f,
+
+                                animationSpec = tween(durationMillis = 300),
+
+                                label = "cardAlpha"
+
+                            )
+
+                            LaunchedEffect(memory.id) {
+
+                                delay(50L * uiState.memories.indexOf(memory).coerceAtMost(5))
+
+                                visible = true
+
+                            }
+
+                            MemoryCard(
+
+                                memory = memory,
+
+                                onEdit = { viewModel.showEditMemory(memory) },
+
+                                onDelete = { viewModel.showDeleteConfirm(memory) },
+
+                                onShareClick = { onShareMemory(memory) },
+
+                                onPhotoClick = { photoUrl -> showPhotoViewer = photoUrl },
+
+                                accentIndex = uiState.memories.indexOf(memory),
+
+                                modifier = Modifier.graphicsLayer {
+
+                                    scaleX = scale
+
+                                    scaleY = scale
+
+                                    this.alpha = alpha
+
+                                }
+
+                            )
+
+                        }
 
                     }
 
                 }
 
+
+
             }
+
+                PullRefreshIndicator(
+                    refreshing = uiState.isLoading,
+                    state = pullRefreshState,
+                    modifier = Modifier.align(Alignment.TopCenter),
+                    contentColor = Bronze,
+                    backgroundColor = if (isDark) DarkSurfaceVariant else Papaya
+                )
 
         }
 
