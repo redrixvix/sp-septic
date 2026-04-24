@@ -10,7 +10,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.ChevronRight
-import androidx.compose.material.icons.filled.Cloud
 import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Notifications
