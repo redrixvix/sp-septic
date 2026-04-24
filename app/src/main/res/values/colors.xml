@@ -2,4 +2,5 @@
 <resources>
     <color name="cornsilk">#FEFAE0</color>
     <color name="dark_background">#1A1814</color>
+    <color name="dark_splash">#1A1814</color>
 </resources>

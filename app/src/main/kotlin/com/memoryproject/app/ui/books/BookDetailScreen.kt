@@ -739,7 +739,7 @@ private fun MemoryCard(
                 if (memory.photo_urls.isNotEmpty()) {
                     Spacer(modifier = Modifier.height(12.dp))
                     Row(
-                        horizontalArrangement = if (memory.photo_urls.size <= 1 && extraCount <= 0) Arrangement.Start else Arrangement.spacedBy(8.dp)
+                        horizontalArrangement = if (memory.photo_urls.size <= 1) Arrangement.Start else Arrangement.spacedBy(8.dp)
                     ) {
                         memory.photo_urls.take(3).forEach { url ->
                             AsyncImage(
@@ -771,24 +771,6 @@ private fun MemoryCard(
                                     fontWeight = FontWeight.SemiBold
                                 )
                             }
-                        }
-                        // Edit button at end
-                        Box(
-                            modifier = Modifier
-                                .size(56.dp)
-                                .background(
-                                    color = Papaya,
-                                    shape = RoundedCornerShape(10.dp)
-                                )
-                                .clickable { onEdit() },
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(
-                                Icons.Default.Edit,
-                                contentDescription = "Edit memory",
-                                tint = Bronze,
-                                modifier = Modifier.size(22.dp)
-                            )
                         }
                     }
                 }
