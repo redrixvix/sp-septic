@@ -1,6 +1,7 @@
 package com.memoryproject.app
 
 import android.app.NotificationManager
+import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -9,9 +10,12 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -26,28 +30,26 @@ import com.memoryproject.app.ui.screens.ProfileScreen
 import com.memoryproject.app.ui.settings.SettingsScreen
 import com.memoryproject.app.ui.theme.MemoryProjectTheme
 
+val LocalDarkMode = staticCompositionLocalOf { false }
+
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
         val prefsManager = PreferencesManager(this)
-        val initialDarkMode = prefsManager.darkMode
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            if (!notificationManager.areNotificationsEnabled()) {
-                // Notification permission not granted — could show a dialog here
-            }
-        }
 
         setContent {
-            var darkThemeEnabled by remember { mutableStateOf(initialDarkMode) }
-            MemoryProjectTheme(darkTheme = darkThemeEnabled) {
+            val initialDark = prefsManager.darkMode
+            MemoryProjectTheme(darkTheme = initialDark) {
                 MemoryNavHost(
                     modifier = Modifier.fillMaxSize(),
-                    darkThemeEnabled = darkThemeEnabled,
-                    onDarkThemeToggle = { darkThemeEnabled = !darkThemeEnabled }
+                    darkThemeEnabled = initialDark,
+                    onDarkThemeToggle = {
+                        // Toggle and persist immediately — no recomposition flash
+                        val newValue = !prefsManager.darkMode
+                        prefsManager.darkMode = newValue
+                    }
                 )
             }
         }

@@ -20,13 +20,14 @@ class PreferencesManager(context: Context) {
         set(value) = prefs.edit().putString(KEY_DISPLAY_NAME, value).apply()
 
     fun clearAll() {
-        // Clear auth tokens/session data but preserve user preferences
+        // Clear auth tokens/session data and user-specific preferences on logout.
+        // Dark mode and notification preferences are intentionally preserved so
+        // the user's settings survive re-login (their preferences should persist).
         prefs.edit()
+            .remove(KEY_DISPLAY_NAME)
             .remove(KEY_SESSION_COOKIE)
             .remove(KEY_AUTH_TOKEN)
             .apply()
-        // Note: darkMode and notificationsEnabled are preserved intentionally
-        // so the user's appearance/notification preferences survive logout
     }
 
     companion object {
