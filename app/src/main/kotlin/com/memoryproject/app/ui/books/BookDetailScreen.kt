@@ -6,16 +6,19 @@ import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Share
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.*
@@ -25,12 +28,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import coil.compose.AsyncImage
 import com.memoryproject.app.data.model.Memory
 import com.memoryproject.app.ui.theme.*
@@ -60,6 +69,7 @@ fun BookDetailScreen(
     val uiState by viewModel.uiState.collectAsState()
     var promptInput by remember { mutableStateOf("") }
     var answerInput by remember { mutableStateOf("") }
+    var showPhotoViewer by remember { mutableStateOf<String?>(null) }
     val snackbarHostState = remember { SnackbarHostState() }
 
     // Clear form when dialogs close
@@ -233,7 +243,7 @@ fun BookDetailScreen(
                             "Capture a moment, preserve a story. Your memories begin here.",
                             style = MaterialTheme.typography.bodyLarge,
                             color = CharcoalMuted,
-                            textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                            textAlign = TextAlign.Center
                         )
                         Spacer(modifier = Modifier.height(32.dp))
                         Button(
@@ -297,6 +307,7 @@ fun BookDetailScreen(
                                     onEdit = { viewModel.showEditMemory(memory) },
                                     onDelete = { viewModel.showDeleteConfirm(memory) },
                                     onShareClick = { onShareMemory(memory) },
+                                    onPhotoClick = { photoUrl -> showPhotoViewer = photoUrl },
                                     accentIndex = uiState.memories.indexOf(memory)
                                 )
                             }
@@ -409,6 +420,70 @@ fun BookDetailScreen(
             shape = RoundedCornerShape(20.dp)
         )
     }
+
+    // Photo viewer — full-screen lightbox
+    showPhotoViewer?.let { photoUrl ->
+        PhotoViewer(
+            photoUrl = photoUrl,
+            onDismiss = { showPhotoViewer = null }
+        )
+    }
+}
+
+@Composable
+private fun PhotoViewer(
+    photoUrl: String,
+    onDismiss: () -> Unit
+) {
+    Dialog(
+        onDismissRequest = onDismiss,
+        properties = DialogProperties(
+            usePlatformDefaultWidth = false,
+            dismissOnBackPress = true,
+            dismissOnClickOutside = true
+        )
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black.copy(alpha = 0.92f))
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null,
+                    onClick = onDismiss
+                ),
+            contentAlignment = Alignment.Center
+        ) {
+            AsyncImage(
+                model = photoUrl,
+                contentDescription = "Full size photo",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(24.dp)
+                    .clip(RoundedCornerShape(16.dp)),
+                contentScale = ContentScale.Fit
+            )
+
+            // Close button
+            IconButton(
+                onClick = onDismiss,
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(24.dp)
+                    .size(44.dp)
+                    .background(
+                        color = Color.Black.copy(alpha = 0.5f),
+                        shape = CircleShape
+                    )
+            ) {
+                Icon(
+                    Icons.Default.Close,
+                    contentDescription = "Close",
+                    tint = Color.White
+                )
+            }
+        }
+    }
 }
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -424,8 +499,7 @@ private fun MemoryDialog(
     isSaving: Boolean,
     confirmLabel: String
 ) {
-    // Shuffle suggestions each time the dialog opens — fresh variety keeps exploration fun
-    // rememberSaveable survives process death, shuffled on each dialog open
+    // Shuffle suggestions each time the dialog opens
     var suggestions by rememberSaveable { mutableStateOf(emptyList<String>()) }
     LaunchedEffect(title) {
         suggestions = PROMPT_SUGGESTIONS.shuffled(java.util.Random(System.currentTimeMillis() / 10000)).take(6)
@@ -445,7 +519,7 @@ private fun MemoryDialog(
                 OutlinedTextField(
                     value = promptInput,
                     onValueChange = onPromptChange,
-                    label = { Text("What moment is this about?") },
+                    label = { Text("What's this memory about?") },
                     placeholder = { Text("e.g. Tell me about your first job") },
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(12.dp),
@@ -460,7 +534,7 @@ private fun MemoryDialog(
                     } else null
                 )
 
-                // Prompt picker — warm, inviting, visually distinct from form fields
+                // Prompt picker — warm, inviting
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     Text(
                         "Or choose a prompt to get started:",
@@ -480,11 +554,7 @@ private fun MemoryDialog(
                                         color = if (promptInput == prompt) Bronze.copy(alpha = 0.15f) else Papaya,
                                         shape = RoundedCornerShape(20.dp)
                                     )
-                                    .then(
-                                        if (promptInput != prompt) {
-                                            Modifier.clickable { onPromptChange(prompt) }
-                                        } else Modifier
-                                    )
+                                    .clickable { onPromptChange(prompt) }
                                     .padding(horizontal = 14.dp, vertical = 9.dp)
                             ) {
                                 Text(
@@ -575,7 +645,6 @@ private fun MemorySkeletonCard() {
         }
     }
 
-
     val shimmerBrush = remember(shimmerAlpha.value) {
         Brush.linearGradient(
             colors = listOf(
@@ -585,7 +654,6 @@ private fun MemorySkeletonCard() {
             )
         )
     }
-
 
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -638,17 +706,18 @@ private fun MemoryCard(
     onEdit: () -> Unit,
     onDelete: () -> Unit,
     onShareClick: () -> Unit = {},
+    onPhotoClick: (String) -> Unit = {},
     accentIndex: Int = 0
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
     val elevation by animateDpAsState(
         targetValue = if (isPressed) 6.dp else 2.dp,
-        animationSpec = androidx.compose.animation.core.spring(),
+        animationSpec = spring(),
         label = "memCardElevation"
     )
 
-    // Rotate through accent colors based on index
+    // Rotate through accent colors
     val accentColors = listOf(CardAccentBronze, CardAccentTea, CardAccentPapaya)
     val accentColor = accentColors[accentIndex % accentColors.size]
 
@@ -666,7 +735,7 @@ private fun MemoryCard(
         elevation = CardDefaults.cardElevation(defaultElevation = elevation)
     ) {
         Row(modifier = Modifier.fillMaxWidth()) {
-            // Left color accent strip — subtle vertical bar, varies by index
+            // Left color accent strip
             Box(
                 modifier = Modifier
                     .width(4.dp)
@@ -687,7 +756,6 @@ private fun MemoryCard(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    // Prompt badge — premium feel with softer background
                     Box(
                         modifier = Modifier
                             .background(
@@ -746,7 +814,7 @@ private fun MemoryCard(
 
                 Spacer(modifier = Modifier.height(12.dp))
 
-                // Answer text — the actual memory content with improved line height
+                // Answer text — improved line height
                 Text(
                     text = memory.answer_text,
                     style = MaterialTheme.typography.bodyLarge,
@@ -754,7 +822,7 @@ private fun MemoryCard(
                     lineHeight = 26.sp
                 )
 
-                // Photo thumbnails with count overlay
+                // Photo thumbnails — tappable to view full size
                 if (memory.photo_urls.isNotEmpty()) {
                     Spacer(modifier = Modifier.height(12.dp))
                     Row(
@@ -763,14 +831,14 @@ private fun MemoryCard(
                         memory.photo_urls.take(3).forEach { url ->
                             AsyncImage(
                                 model = url,
-                                contentDescription = null,
+                                contentDescription = "Memory photo",
                                 modifier = Modifier
                                     .size(56.dp)
-                                    .clip(RoundedCornerShape(10.dp)),
-                                onError = { /* Silently handle failed image loads */ }
+                                    .clip(RoundedCornerShape(10.dp))
+                                    .clickable { onPhotoClick(url) },
+                                onError = { }
                             )
                         }
-                        // Show count if more than 3 photos
                         val extraCount = memory.photo_urls.size - 3
                         if (extraCount > 0) {
                             Box(
