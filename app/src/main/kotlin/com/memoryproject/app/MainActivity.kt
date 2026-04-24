@@ -131,7 +131,10 @@ fun MemoryNavHost(
                         popUpTo("books") { inclusive = true }
                     }
                 },
-                onToggleDarkMode = onDarkThemeToggle
+                onToggleDarkMode = onDarkThemeToggle,
+                onProfileClick = {
+                    navController.navigate("profile")
+                }
             )
         }
 
