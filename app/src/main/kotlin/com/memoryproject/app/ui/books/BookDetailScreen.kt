@@ -18,7 +18,6 @@ import androidx.compose.material.icons.automirrored.filled.Share
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -673,6 +672,7 @@ private fun MemoryCard(
                                 color = Papaya.copy(alpha = 0.8f),
                                 shape = RoundedCornerShape(10.dp)
                             )
+                            .clickable { onEdit() }
                             .padding(horizontal = 12.dp, vertical = 7.dp)
                     ) {
                         Text(
@@ -691,19 +691,8 @@ private fun MemoryCard(
                             modifier = Modifier.size(36.dp)
                         ) {
                             Icon(
-                                Icons.Default.Share,
+                                Icons.AutoMirrored.Filled.Share,
                                 contentDescription = "Share",
-                                tint = CharcoalMuted,
-                                modifier = Modifier.size(18.dp)
-                            )
-                        }
-                        IconButton(
-                            onClick = onEdit,
-                            modifier = Modifier.size(36.dp)
-                        ) {
-                            Icon(
-                                Icons.Default.Edit,
-                                contentDescription = "Edit",
                                 tint = CharcoalMuted,
                                 modifier = Modifier.size(18.dp)
                             )
@@ -732,20 +721,61 @@ private fun MemoryCard(
                     lineHeight = 26.sp
                 )
 
-                // Photo thumbnails
+                // Photo thumbnails with count overlay
                 if (memory.photo_urls.isNotEmpty()) {
                     Spacer(modifier = Modifier.height(12.dp))
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         memory.photo_urls.take(3).forEach { url ->
-                            AsyncImage(
-                                model = url,
-                                contentDescription = null,
+                            Box {
+                                AsyncImage(
+                                    model = url,
+                                    contentDescription = null,
+                                    modifier = Modifier
+                                        .size(56.dp)
+                                        .clip(RoundedCornerShape(10.dp)),
+                                    onError = { /* Silently handle failed image loads */ }
+                                )
+                            }
+                        }
+                        // Show count if more than 3 photos
+                        val extraCount = memory.photo_urls.size - 3
+                        if (extraCount > 0) {
+                            Box(
                                 modifier = Modifier
-                                    .size(48.dp)
-                                    .clip(RoundedCornerShape(8.dp)),
-                                onError = { /* Silently handle failed image loads */ }
+                                    .size(56.dp)
+                                    .background(
+                                        color = Bronze.copy(alpha = 0.15f),
+                                        shape = RoundedCornerShape(10.dp)
+                                    )
+                                    .clickable { onEdit() },
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = "+$extraCount",
+                                    style = MaterialTheme.typography.labelLarge,
+                                    color = Bronze,
+                                    fontWeight = FontWeight.SemiBold
+                                )
+                            }
+                        }
+                        // Edit button at end
+                        Box(
+                            modifier = Modifier
+                                .size(56.dp)
+                                .background(
+                                    color = Papaya,
+                                    shape = RoundedCornerShape(10.dp)
+                                )
+                                .clickable { onEdit() },
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                Icons.Default.Edit,
+                                contentDescription = "Edit memory",
+                                tint = Bronze,
+                                modifier = Modifier.size(22.dp)
                             )
                         }
                     }
