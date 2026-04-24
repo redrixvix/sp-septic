@@ -67,7 +67,7 @@ fun BooksScreen(
         uiState.books.filter { it.title.contains(searchQuery, ignoreCase = true) }
     }
 
-    // Time-aware greeting
+    // Time-aware greeting — personalized but not publicly visible (avoids name leak on shared screens)
     val greeting = if (uiState.userName.isNotBlank()) {
         val hour = java.util.Calendar.getInstance().get(java.util.Calendar.HOUR_OF_DAY)
         val timeGreeting = when {
@@ -75,7 +75,7 @@ fun BooksScreen(
             hour < 17 -> "Good afternoon"
             else -> "Good evening"
         }
-        "$timeGreeting, ${uiState.userName.split(" ").first()}"
+        "$timeGreeting"
     } else {
         "My Books"
     }
