@@ -31,6 +31,7 @@ fun SettingsScreen(
     onBack: () -> Unit,
     onLogout: () -> Unit,
     onToggleDarkMode: () -> Unit = {},
+    onProfileClick: () -> Unit = {},
     viewModel: SettingsViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -95,7 +96,7 @@ fun SettingsScreen(
                     icon = Icons.Default.Person,
                     title = "Profile",
                     subtitle = uiState.userEmail.ifBlank { "Loading..." },
-                    onClick = { viewModel.showProfileComingSoon() }
+                    onClick = onProfileClick
                 )
             }
 
@@ -146,17 +147,6 @@ fun SettingsScreen(
                         )
                     },
                     onClick = { viewModel.toggleNotifications() }
-                )
-            }
-
-            // Storage section
-            SettingsSection(title = "Storage") {
-                SettingsItem(
-                    icon = Icons.Default.Cloud,
-                    title = "Text Memories",
-                    subtitle = "Unlimited on Free plan",
-                    showDivider = true,
-                    onClick = { }
                 )
             }
 

@@ -22,8 +22,11 @@ import com.memoryproject.app.data.preferences.PreferencesManager
 import com.memoryproject.app.ui.auth.AuthScreen
 import com.memoryproject.app.ui.books.BookDetailScreen
 import com.memoryproject.app.ui.books.BooksScreen
+import com.memoryproject.app.ui.screens.ProfileScreen
 import com.memoryproject.app.ui.settings.SettingsScreen
 import com.memoryproject.app.ui.theme.MemoryProjectTheme
+import com.memoryproject.app.ui.books.BooksViewModel
+import com.memoryproject.app.ui.screens.ProfileViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -96,6 +99,9 @@ fun MemoryNavHost(
                 },
                 onSettings = {
                     navController.navigate("settings")
+                },
+                onProfile = {
+                    navController.navigate("profile")
                 }
             )
         }
@@ -126,6 +132,16 @@ fun MemoryNavHost(
                     }
                 },
                 onToggleDarkMode = onDarkThemeToggle
+            )
+        }
+
+        composable(
+            "profile",
+            enterTransition = { fadeIn(animationSpec = tween(300)) },
+            exitTransition = { fadeOut(animationSpec = tween(300)) }
+        ) {
+            ProfileScreen(
+                onBack = { navController.popBackStack() }
             )
         }
 

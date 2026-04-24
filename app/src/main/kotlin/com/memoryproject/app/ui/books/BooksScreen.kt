@@ -21,6 +21,7 @@ import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material.icons.filled.MenuBook
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.OpenInNew
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Share
@@ -50,6 +51,7 @@ fun BooksScreen(
     onBookClick: (Int) -> Unit,
     onLogout: () -> Unit,
     onSettings: () -> Unit,
+    onProfile: () -> Unit,
     viewModel: BooksViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -125,20 +127,29 @@ fun BooksScreen(
                 },
                 actions = {
                     IconButton(
-                        onClick = { showLogoutDialog = true }
-                    ) {
-                        Icon(
-                            Icons.Default.Logout,
-                            contentDescription = "Sign out",
-                            tint = CharcoalMuted
-                        )
-                    }
-                    IconButton(
                         onClick = onSettings
                     ) {
                         Icon(
                             Icons.Default.Settings,
                             contentDescription = "Settings",
+                            tint = CharcoalMuted
+                        )
+                    }
+                    IconButton(
+                        onClick = onProfile
+                    ) {
+                        Icon(
+                            Icons.Default.Person,
+                            contentDescription = "Profile",
+                            tint = CharcoalMuted
+                        )
+                    }
+                    IconButton(
+                        onClick = { showLogoutDialog = true }
+                    ) {
+                        Icon(
+                            Icons.Default.Logout,
+                            contentDescription = "Sign out",
                             tint = CharcoalMuted
                         )
                     }
