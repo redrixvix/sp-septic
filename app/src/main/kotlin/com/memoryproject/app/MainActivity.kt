@@ -296,6 +296,7 @@ fun MemoryNavHost(
                 val token = backStackEntry.arguments?.getString("token") ?: return@composable
                 InviteScreen(
                     token = token,
+                    darkTheme = darkThemeEnabled,
                     onAccepted = { bookId ->
                         navController.navigate("book/$bookId") {
                             popUpTo("invite/{token}") { inclusive = true }

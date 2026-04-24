@@ -40,6 +40,7 @@ sealed class InviteUiState {
 @Composable
 fun InviteScreen(
     token: String,
+    darkTheme: Boolean,
     onAccepted: (Int) -> Unit,
     onLoginRequired: () -> Unit,
     repository: MemoryRepository = koinInject()
