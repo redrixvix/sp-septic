@@ -180,26 +180,24 @@ fun SettingsScreen(
                 SettingsItem(
                     icon = Icons.Default.Info,
                     title = "Version",
-                    subtitle = "Build ${BuildConfig.VERSION_CODE}",
-                    trailing = if (BuildConfig.VERSION_CODE >= 3) {
-                        { ->
-                            Box(
-                                modifier = Modifier
-                                    .background(
-                                        color = if (isDark) DarkBronze.copy(alpha = 0.2f) else Bronze.copy(alpha = 0.12f),
-                                        shape = RoundedCornerShape(6.dp)
-                                    )
-                                    .padding(horizontal = 8.dp, vertical = 4.dp)
-                            ) {
-                                Text(
-                                    text = "✓ Latest",
-                                    style = MaterialTheme.typography.labelSmall,
-                                    color = if (isDark) DarkBronze else BronzeDark,
-                                    fontWeight = FontWeight.SemiBold
+                    subtitle = "Version ${BuildConfig.VERSION_NAME}",
+                    trailing = { ->
+                        Box(
+                            modifier = Modifier
+                                .background(
+                                    color = if (isDark) DarkBronze.copy(alpha = 0.2f) else Bronze.copy(alpha = 0.12f),
+                                    shape = RoundedCornerShape(6.dp)
                                 )
-                            }
+                                .padding(horizontal = 8.dp, vertical = 4.dp)
+                        ) {
+                            Text(
+                                text = "✓ Up to date",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = if (isDark) DarkBronze else BronzeDark,
+                                fontWeight = FontWeight.SemiBold
+                            )
                         }
-                    } else null,
+                    },
                     showDivider = true,
                     onClick = { }
                 )

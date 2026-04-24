@@ -10,7 +10,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -68,18 +67,20 @@ class MainActivity : ComponentActivity() {
         val startDestination = if (!prefsManager.onboardingCompleted) "onboarding" else "auth"
 
         setContent {
-            val initialDark = prefsManager.darkMode
-            MemoryProjectTheme(darkTheme = initialDark) {
+            var darkThemeEnabled by remember { mutableStateOf(prefsManager.darkMode) }
+
+            MemoryProjectTheme(darkTheme = darkThemeEnabled) {
                 MemoryNavHost(
                     modifier = Modifier.fillMaxSize(),
                     startDestination = startDestination,
                     onOnboardingComplete = {
                         prefsManager.onboardingCompleted = true
                     },
-                    darkThemeEnabled = initialDark,
+                    darkThemeEnabled = darkThemeEnabled,
                     onDarkThemeToggle = {
                         val newValue = !prefsManager.darkMode
                         prefsManager.darkMode = newValue
+                        darkThemeEnabled = newValue
                     }
                 )
             }
@@ -104,7 +105,7 @@ fun MemoryNavHost(
     // Determine if we should show bottom nav (hide on auth, settings, book detail, onboarding)
     val showBottomNav = currentDestination?.route in listOf("home", "books", "profile")
 
-    val isDark = isSystemInDarkTheme()
+    val isDark = darkThemeEnabled
     val scaffoldBg = if (isDark) DarkBackground else Cornsilk
     val navBg = if (isDark) DarkSurface else WarmWhite
     val selectedColor = if (isDark) DarkBronze else Bronze
