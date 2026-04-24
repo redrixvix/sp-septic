@@ -212,6 +212,15 @@ fun SettingsScreen(
                     }
                 )
                 SettingsItem(
+                    icon = Icons.Default.Info,
+                    title = "Terms of Service",
+                    subtitle = "How we operate",
+                    onClick = {
+                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://web-redrixvixs-projects.vercel.app/terms"))
+                        context.startActivity(intent)
+                    }
+                )
+                SettingsItem(
                     icon = Icons.Default.Star,
                     title = "Rate This App",
                     subtitle = "Share your experience",
