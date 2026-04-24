@@ -191,7 +191,8 @@ fun MemoryNavHost(
                         navController.navigate("home") {
                             popUpTo("auth") { inclusive = true }
                         }
-                    }
+                    },
+                    darkTheme = darkThemeEnabled
                 )
             }
 

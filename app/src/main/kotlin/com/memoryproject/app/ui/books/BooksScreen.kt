@@ -37,6 +37,7 @@ fun BooksScreen(
     onLogout: () -> Unit,
     onSettings: () -> Unit,
     onProfile: () -> Unit,
+    darkTheme: Boolean,
     viewModel: BooksViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -46,11 +47,10 @@ fun BooksScreen(
     var newBookTitle by remember { mutableStateOf("") }
     var newBookDescription by remember { mutableStateOf("") }
 
-    val isDark = isSystemInDarkTheme()
-    val scaffoldBg = if (isDark) DarkBackground else Cornsilk
-    val cardBg = if (isDark) DarkSurface else WarmWhite
-    val primaryText = if (isDark) DarkOnSurface else Charcoal
-    val mutedText = if (isDark) DarkOnSurfaceVariant else CharcoalMuted
+    val scaffoldBg = if (darkTheme) DarkBackground else Cornsilk
+    val cardBg = if (darkTheme) DarkSurface else WarmWhite
+    val primaryText = if (darkTheme) DarkOnSurface else Charcoal
+    val mutedText = if (darkTheme) DarkOnSurfaceVariant else CharcoalMuted
 
     val pullRefreshState = rememberPullRefreshState(
         refreshing = uiState.isLoading,
@@ -131,7 +131,7 @@ fun BooksScreen(
                                         visible = visible,
                                         enter = fadeIn(animationSpec = tween(300, delayMillis = index * 80))
                                     ) {
-                                        BooksSkeletonCard(isDark = isDark)
+                                        BooksSkeletonCard(darkTheme = darkTheme)
                                     }
                                 }
                             }
@@ -160,7 +160,7 @@ fun BooksScreen(
                             }
                             Spacer(modifier = Modifier.height(20.dp))
                             Text(
-                                "Couldn't load your books",
+                                "Something went wrong",
                                 style = MaterialTheme.typography.headlineSmall,
                                 fontWeight = FontWeight.SemiBold,
                                 color = primaryText
@@ -199,7 +199,7 @@ fun BooksScreen(
                                     .size(96.dp)
                                     .background(
                                         brush = Brush.radialGradient(
-                                            colors = if (isDark) listOf(DarkSurfaceVariant, DarkSurface) else listOf(Papaya, Beige)
+                                            colors = if (darkTheme) listOf(DarkSurfaceVariant, DarkSurface) else listOf(Papaya, Beige)
                                         ),
                                         shape = RoundedCornerShape(24.dp)
                                     ),
@@ -209,14 +209,14 @@ fun BooksScreen(
                             }
                             Spacer(modifier = Modifier.height(28.dp))
                             Text(
-                                "Your library is empty",
+                                "Your story is waiting",
                                 style = MaterialTheme.typography.headlineSmall,
                                 fontWeight = FontWeight.SemiBold,
                                 color = primaryText
                             )
                             Spacer(modifier = Modifier.height(10.dp))
                             Text(
-                                "Create your first book and start preserving your family's stories.",
+                                "Start a book for your family — every story deserves to be remembered.",
                                 style = MaterialTheme.typography.bodyLarge,
                                 color = mutedText,
                                 lineHeight = 24.sp
@@ -252,7 +252,7 @@ fun BooksScreen(
                                     BookCard(
                                         book = book,
                                         onClick = { onBookClick(book.id) },
-                                        isDark = isDark,
+                                        darkTheme = darkTheme,
                                         cardBg = cardBg,
                                         primaryText = primaryText,
                                         mutedText = mutedText
@@ -268,7 +268,7 @@ fun BooksScreen(
                     state = pullRefreshState,
                     modifier = Modifier.align(Alignment.TopCenter),
                     contentColor = Bronze,
-                    backgroundColor = if (isDark) DarkSurfaceVariant else Papaya
+                    backgroundColor = if (darkTheme) DarkSurfaceVariant else Papaya
                 )
             }
         }
@@ -284,7 +284,7 @@ fun BooksScreen(
                 contentColor = WarmWhite,
                 elevation = FloatingActionButtonDefaults.elevation(defaultElevation = 6.dp, pressedElevation = 12.dp)
             ) {
-                Icon(Icons.Default.Add, contentDescription = null)
+                Icon(Icons.Default.Add, contentDescription = "Create new book")
                 Spacer(modifier = Modifier.width(8.dp))
                 Text("New Book", style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.SemiBold)
             }
@@ -339,7 +339,7 @@ fun BooksScreen(
                         shape = RoundedCornerShape(12.dp),
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedBorderColor = Bronze,
-                            unfocusedBorderColor = if (isDark) DarkBorder else Border,
+                            unfocusedBorderColor = if (darkTheme) DarkBorder else Border,
                             focusedLabelColor = Bronze
                         )
                     )
@@ -353,7 +353,7 @@ fun BooksScreen(
                         shape = RoundedCornerShape(12.dp),
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedBorderColor = Bronze,
-                            unfocusedBorderColor = if (isDark) DarkBorder else Border,
+                            unfocusedBorderColor = if (darkTheme) DarkBorder else Border,
                             focusedLabelColor = Bronze
                         )
                     )
@@ -402,7 +402,7 @@ fun BooksScreen(
             icon = {
                 Icon(
                     Icons.AutoMirrored.Filled.Logout,
-                    contentDescription = null,
+                    contentDescription = "Sign out",
                     tint = CharcoalMuted,
                     modifier = Modifier.size(24.dp)
                 )
@@ -451,7 +451,7 @@ fun BooksScreen(
 private fun BookCard(
     book: Book,
     onClick: () -> Unit,
-    isDark: Boolean,
+    darkTheme: Boolean,
     cardBg: Color,
     primaryText: Color,
     mutedText: Color
@@ -490,7 +490,7 @@ private fun BookCard(
                     .size(52.dp)
                     .background(
                         brush = Brush.linearGradient(
-                            colors = if (isDark) listOf(DarkBronze.copy(alpha = 0.25f), DarkSurfaceVariant) else listOf(Bronze.copy(alpha = 0.15f), Papaya)
+                            colors = if (darkTheme) listOf(DarkBronze.copy(alpha = 0.25f), DarkSurfaceVariant) else listOf(Bronze.copy(alpha = 0.15f), Papaya)
                         ),
                         shape = RoundedCornerShape(14.dp)
                     ),
@@ -517,7 +517,7 @@ private fun BookCard(
                         Box(
                             modifier = Modifier
                                 .background(
-                                    color = if (isDark) TeaGreen.copy(alpha = 0.2f) else TeaGreen.copy(alpha = 0.15f),
+                                    color = if (darkTheme) TeaGreen.copy(alpha = 0.2f) else TeaGreen.copy(alpha = 0.15f),
                                     shape = RoundedCornerShape(6.dp)
                                 )
                                 .padding(horizontal = 8.dp, vertical = 3.dp)
@@ -525,7 +525,7 @@ private fun BookCard(
                             Text(
                                 text = "Shared",
                                 style = MaterialTheme.typography.labelSmall,
-                                color = if (isDark) TeaGreen else Color(0xFF4A7A4A),
+                                color = if (darkTheme) TeaGreen else Color(0xFF4A7A4A),
                                 fontWeight = FontWeight.Medium
                             )
                         }
@@ -585,24 +585,21 @@ private fun BookCard(
 }
 
 @Composable
-private fun BooksSkeletonCard(isDark: Boolean) {
-    val shimmerBase = if (isDark) DarkDivider else Divider
-    val shimmerHighlight = if (isDark) DarkOnSurface.copy(alpha = 0.06f) else Divider.copy(alpha = 0.5f)
+private fun BooksSkeletonCard(darkTheme: Boolean) {
+    val shimmerBase = if (darkTheme) DarkDivider else Divider
+    val shimmerHighlight = if (darkTheme) DarkOnSurface.copy(alpha = 0.06f) else Divider.copy(alpha = 0.5f)
 
     var shimmerAlpha by remember { mutableFloatStateOf(0.3f) }
     LaunchedEffect(Unit) {
-        repeat(3) {
-            shimmerAlpha = 0.7f
-            delay(800)
-            shimmerAlpha = 0.3f
-            delay(800)
-        }
+        shimmerAlpha = 0.7f
+        delay(800)
+        shimmerAlpha = 0.3f
     }
     val shimmerBrush = remember(shimmerAlpha, shimmerBase, shimmerHighlight) {
         Brush.linearGradient(listOf(shimmerBase, shimmerHighlight.copy(alpha = shimmerAlpha), shimmerBase))
     }
 
-    val cardBg = if (isDark) DarkSurface else WarmWhite
+    val cardBg = if (darkTheme) DarkSurface else WarmWhite
 
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -636,8 +633,9 @@ private fun formatDate(isoDate: String): String {
         val months = listOf("", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
         val month = parts[1].toInt()
         val day = parts[2].toInt()
+        val year = parts[0].toInt()
         if (month < 1 || month > 12) return isoDate
-        "${months[month]} $day"
+        "${months[month]} $day, $year"
     } catch (e: Exception) { isoDate }
 }
 
@@ -671,7 +669,7 @@ private fun ShimmerCreateBookButton(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
             ) {
-                Icon(Icons.Default.Add, contentDescription = null)
+                Icon(Icons.Default.Add, contentDescription = "Create Your First Book")
                 Spacer(modifier = Modifier.width(8.dp))
                 Text("Create Your First Book", fontWeight = FontWeight.SemiBold)
             }

@@ -36,9 +36,10 @@ fun MemoryCard(
     onShareClick: () -> Unit = {},
     onPhotoClick: (String) -> Unit = {},
     accentIndex: Int = 0,
+    darkTheme: Boolean = false,
     modifier: Modifier = Modifier
 ) {
-    val isDark = androidx.compose.foundation.isSystemInDarkTheme()
+    val isDark = darkTheme
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
 

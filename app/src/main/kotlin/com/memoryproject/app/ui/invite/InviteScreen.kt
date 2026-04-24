@@ -14,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -62,7 +63,7 @@ fun InviteScreen(
             }
     }
 
-    val isDark = isSystemInDarkTheme()
+    val isDark = darkTheme
     val scaffoldBg = if (isDark) DarkBackground else Cornsilk
     val cardBg = if (isDark) DarkSurface else WarmWhite
     val primaryText = if (isDark) DarkOnSurface else Charcoal

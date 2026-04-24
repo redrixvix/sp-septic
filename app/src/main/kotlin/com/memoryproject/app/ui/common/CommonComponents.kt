@@ -38,9 +38,14 @@ fun PremiumButton(
     isPrimary: Boolean = true,
     icon: @Composable (() -> Unit)? = null
 ) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val isPressed by interactionSource.collectIsPressedAsState()
     val scale by animateFloatAsState(
-        targetValue = if (isPrimary) 1f else 1f,
-        animationSpec = spring(stiffness = Spring.StiffnessHigh),
+        targetValue = if (isPressed) 0.97f else 1f,
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioMediumBouncy,
+            stiffness = Spring.StiffnessMedium
+        ),
         label = "btnScale"
     )
 
@@ -49,7 +54,12 @@ fun PremiumButton(
         modifier = modifier
             .height(52.dp)
             .fillMaxWidth()
-            .graphicsLayer { scaleX = scale; scaleY = scale },
+            .graphicsLayer { scaleX = scale; scaleY = scale }
+            .clickable(
+                interactionSource = interactionSource,
+                indication = null,
+                onClick = onClick
+            ),
         enabled = enabled && !isLoading,
         shape = RoundedCornerShape(14.dp),
         colors = ButtonDefaults.buttonColors(
@@ -156,6 +166,7 @@ fun PremiumCard(
 fun ShimmerBox(
     modifier: Modifier = Modifier,
     widthFraction: Float = 1f,
+    height: androidx.compose.ui.unit.Dp = 14.dp,
     cornerRadius: androidx.compose.ui.unit.Dp = 6.dp,
     baseColor: Color = Divider,
     highlightColor: Color = Divider.copy(alpha = 0.5f)
@@ -173,14 +184,13 @@ fun ShimmerBox(
     Box(
         modifier = modifier
             .fillMaxWidth(widthFraction)
-            .height(modifier != Modifier ? 14.dp : 14.dp)
+            .height(height)
             .background(shimmerBrush, RoundedCornerShape(cornerRadius))
     )
 }
 
 @Composable
-fun SkeletonCard(modifier: Modifier = Modifier) {
-    val isDark = isSystemInDarkTheme()
+fun SkeletonCard(modifier: Modifier = Modifier, isDark: Boolean = false) {
     val cardBg = if (isDark) DarkSurface else WarmWhite
     val base = if (isDark) DarkDivider else Divider
     val highlight = if (isDark) DarkOnSurface.copy(alpha = 0.05f) else Divider.copy(alpha = 0.5f)
@@ -283,9 +293,9 @@ fun EmptyState(
 fun ErrorState(
     message: String,
     onRetry: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isDark: Boolean = false
 ) {
-    val isDark = isSystemInDarkTheme()
     Column(
         modifier = modifier.padding(horizontal = 32.dp),
         horizontalAlignment = Alignment.CenterHorizontally

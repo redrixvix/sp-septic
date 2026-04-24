@@ -57,7 +57,6 @@ import com.memoryproject.app.ui.theme.TeaGreen
 import com.memoryproject.app.ui.theme.WarmWhite
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
-import androidx.compose.foundation.isSystemInDarkTheme
 
 private data class OnboardingPage(
     val emoji: String,
@@ -76,7 +75,7 @@ private val PAGES = listOf(
     OnboardingPage(
         emoji = "✨",
         title = "Write freely,\nat your own pace",
-        subtitle = "Answer thoughtful prompts or simply start writing. No pressure, no structure — just your story.",
+        subtitle = "Answer thoughtful prompts or follow your own thread. No pressure, no structure — just your story, in your own time.",
         accentColor = TeaGreen
     ),
     OnboardingPage(
@@ -204,7 +203,7 @@ fun OnboardingScreen(
                     shape = RoundedCornerShape(16.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = if (isLastPage) Bronze else cardBg,
-                        contentColor = if (isDark) DarkOnSurface else WarmWhite
+                        contentColor = if (isLastPage) WarmWhite else if (isDark) DarkOnSurface else Bronze
                     ),
                     elevation = ButtonDefaults.buttonElevation(
                         defaultElevation = if (isLastPage) 6.dp else 2.dp

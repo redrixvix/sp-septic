@@ -46,7 +46,6 @@ fun HomeScreen(
     onNavigateToBooks: () -> Unit,
     onNavigateToBook: (Int) -> Unit,
     onNavigateToProfile: () -> Unit,
-    onNavigateToAddMemory: () -> Unit,
     darkTheme: Boolean,
     viewModel: HomeViewModel = koinViewModel()
 ) {
@@ -367,7 +366,7 @@ private fun WelcomeHeader(
                             Spacer(modifier = Modifier.height(6.dp))
                             Text(
                                 text = if (userName.isNotBlank()) {
-                                    "Every moment matters"
+                                    "Let's capture something great today"
                                 } else {
                                     "Welcome to Memory Project"
                                 },
@@ -743,7 +742,7 @@ private fun EmptyHomeCard(
                     ),
                     elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp, pressedElevation = 8.dp)
                 ) {
-                    Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.size(20.dp))
+                    Icon(Icons.Default.Add, contentDescription = "Add your first memory", modifier = Modifier.size(20.dp))
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
                         text = "Add Your First Memory",
@@ -938,10 +937,9 @@ private fun HomeSkeletonCard(darkTheme: Boolean) {
 
     val shimmerAlpha = remember { Animatable(0.3f) }
     LaunchedEffect(Unit) {
-        while (true) {
-            shimmerAlpha.animateTo(0.7f, animationSpec = tween(800, easing = FastOutSlowInEasing))
-            shimmerAlpha.animateTo(0.3f, animationSpec = tween(800, easing = FastOutSlowInEasing))
-        }
+        shimmerAlpha.animateTo(0.7f, animationSpec = tween(800, easing = FastOutSlowInEasing))
+        delay(800)
+        shimmerAlpha.animateTo(0.3f, animationSpec = tween(800, easing = FastOutSlowInEasing))
     }
     val shimmerBrush = remember(shimmerAlpha.value, shimmerBase, shimmerHighlight) {
         Brush.linearGradient(listOf(shimmerBase, shimmerHighlight.copy(alpha = shimmerAlpha.value), shimmerBase))
@@ -1002,13 +1000,13 @@ private fun MemoryPromptsSection(
 
     Column(modifier = modifier.fillMaxWidth()) {
         Text(
-            text = "Writing prompts",
+            text = "Need inspiration?",
             style = MaterialTheme.typography.titleMedium,
             color = primaryText,
             fontWeight = FontWeight.SemiBold
         )
         Text(
-            text = "Tap a prompt to start writing",
+            text = "Tap any prompt to start writing",
             style = MaterialTheme.typography.bodySmall,
             color = mutedText,
             modifier = Modifier.padding(bottom = 10.dp)
@@ -1054,7 +1052,8 @@ private fun formatDate(isoDate: String): String {
         val months = listOf("", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
         val month = parts[1].toInt()
         val day = parts[2].toInt()
+        val year = parts[0].toInt()
         if (month < 1 || month > 12) return isoDate
-        "${months[month]} $day"
+        "${months[month]} $day, $year"
     } catch (e: Exception) { isoDate }
 }

@@ -2,7 +2,6 @@ package com.memoryproject.app.ui.auth
 
 import androidx.compose.animation.*
 import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
@@ -39,12 +38,13 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun AuthScreen(
     onLoginSuccess: () -> Unit,
+    darkTheme: Boolean = false,
     viewModel: AuthViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val focusManager = LocalFocusManager.current
 
-    val isDark = isSystemInDarkTheme()
+    val isDark = darkTheme
     val backgroundGradient = if (isDark) listOf(DarkBackground, DarkSurfaceVariant) else listOf(Cornsilk, Papaya.copy(alpha = 0.5f))
     val cardBg = if (isDark) DarkSurface else WarmWhite
     val cardBgBrush = if (isDark) Brush.linearGradient(listOf(DarkSurface, DarkSurfaceVariant)) else null
@@ -94,7 +94,7 @@ fun AuthScreen(
                 .padding(horizontal = 32.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = Modifier.height(64.dp))
+            Spacer(modifier = Modifier.height(80.dp))
 
             // Brand mark — subtle, premium
             Box(
@@ -220,7 +220,7 @@ fun AuthScreen(
                 },
                 isError = emailError != null && email.isNotEmpty(),
                 supportingText = if (emailError != null && email.isNotEmpty()) {
-                    { Text(emailError, color = ErrorRed) }
+                    Text(emailError, color = ErrorRed)
                 } else null,
                 modifier = Modifier.fillMaxWidth(),
                 keyboardOptions = KeyboardOptions(
@@ -241,7 +241,7 @@ fun AuthScreen(
                     errorBorderColor = ErrorRed,
                     errorLabelColor = ErrorRed
                 ),
-                typography = MaterialTheme.typography.bodyLarge
+                textStyle = MaterialTheme.typography.bodyLarge
             )
 
             // Name field (sign up only)
@@ -280,7 +280,7 @@ fun AuthScreen(
                             unfocusedLabelColor = mutedText,
                             cursorColor = Bronze
                         ),
-                        typography = MaterialTheme.typography.bodyLarge
+                        textStyle = MaterialTheme.typography.bodyLarge
                     )
                 }
             }
@@ -319,7 +319,7 @@ fun AuthScreen(
                     }
                 },
                 supportingText = if (passwordHint != null) {
-                    { Text(passwordHint, color = mutedText) }
+                    Text(passwordHint, color = mutedText)
                 } else null,
                 visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
                 modifier = Modifier.fillMaxWidth(),
@@ -347,7 +347,7 @@ fun AuthScreen(
                     unfocusedLabelColor = mutedText,
                     cursorColor = Bronze
                 ),
-                typography = MaterialTheme.typography.bodyLarge
+                textStyle = MaterialTheme.typography.bodyLarge
             )
 
             // Error message (from ViewModel — server-side errors)
