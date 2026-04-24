@@ -1,6 +1,7 @@
 package com.memoryproject.app.ui.auth
 
 import androidx.compose.animation.*
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -23,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -30,6 +32,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.memoryproject.app.ui.theme.*
@@ -47,7 +50,6 @@ fun AuthScreen(
     val isDark = darkTheme
     val backgroundGradient = if (isDark) listOf(DarkBackground, DarkSurfaceVariant) else listOf(Cornsilk, Papaya.copy(alpha = 0.5f))
     val cardBg = if (isDark) DarkSurface else WarmWhite
-    val cardBgBrush = if (isDark) Brush.linearGradient(listOf(DarkSurface, DarkSurfaceVariant)) else null
     val primaryText = if (isDark) DarkOnSurface else Charcoal
     val mutedText = if (isDark) DarkOnSurfaceVariant else CharcoalMuted
 
@@ -136,72 +138,125 @@ fun AuthScreen(
 
             Spacer(modifier = Modifier.height(48.dp))
 
-            // Mode toggle — clean, minimal (tabs actually switch modes)
-            Row(
+            // Mode toggle — animated pill switch
+            val isSignUp = uiState.isSignUp
+            val indicatorOffset by animateFloatAsState(
+                targetValue = if (isSignUp) 1f else 0f,
+                animationSpec = spring(dampingRatio = 0.7f, stiffness = Spring.StiffnessMedium),
+                label = "pillPosition"
+            )
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .height(48.dp)
                     .background(
                         color = cardBg,
                         shape = RoundedCornerShape(12.dp)
                     )
                     .padding(4.dp)
-                    .clickable(
-                        interactionSource = remember { MutableInteractionSource() },
-                        indication = null,
-                        onClick = {
-                            focusManager.clearFocus()
-                            viewModel.toggleMode()
-                            email = ""
-                            password = ""
-                        }),
-                horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                listOf(
-                    "Sign In" to !uiState.isSignUp,
-                    "Create Account" to uiState.isSignUp
-                ).forEach { (label, isActive) ->
-                    Box(
-                        modifier = Modifier
-                            .weight(1f)
-                            .background(
-                                color = if (isActive) Bronze else Color.Transparent,
-                                shape = RoundedCornerShape(8.dp)
-                            )
-                            .padding(vertical = 12.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = label,
-                            style = MaterialTheme.typography.labelLarge,
-                            color = if (isActive) WarmWhite else mutedText,
-                            fontWeight = if (isActive) FontWeight.SemiBold else FontWeight.Normal
+                // Animated pill indicator — slides smoothly between positions
+                Box(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .fillMaxWidth(0.5f)
+                        .padding(vertical = 2.dp)
+                        .graphicsLayer {
+                            val totalWidth = this.size.width
+                            val pillWidth = totalWidth / 2f
+                            translationX = indicatorOffset * (totalWidth - pillWidth)
+                        }
+                        .background(
+                            color = Bronze,
+                            shape = RoundedCornerShape(8.dp)
                         )
+                )
+                Row(
+                    modifier = Modifier.fillMaxSize(),
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    listOf(
+                        "Sign In" to !isSignUp,
+                        "Create Account" to isSignUp
+                    ).forEach { (label, isActive) ->
+                        Box(
+                            modifier = Modifier
+                                .weight(1f)
+                                .fillMaxHeight()
+                                .clickable(
+                                    interactionSource = remember { MutableInteractionSource() },
+                                    indication = null,
+                                    onClick = {
+                                        focusManager.clearFocus()
+                                        viewModel.toggleMode()
+                                        email = ""
+                                        password = ""
+                                    }
+                                ),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = label,
+                                style = MaterialTheme.typography.labelLarge,
+                                color = if (isActive) WarmWhite else mutedText,
+                                fontWeight = if (isActive) FontWeight.SemiBold else FontWeight.Normal
+                            )
+                        }
                     }
                 }
             }
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            // Auth mode header
-            Text(
-                text = if (uiState.isSignUp) "Create your account" else "Welcome back",
-                style = MaterialTheme.typography.headlineMedium,
-                color = primaryText,
-                fontWeight = FontWeight.SemiBold
-            )
-
-            Spacer(modifier = Modifier.height(6.dp))
-
-            Text(
-                text = if (uiState.isSignUp)
-                    "Start capturing your memories today"
-                else
-                    "Sign in to continue your story",
-                style = MaterialTheme.typography.bodyMedium,
-                color = mutedText
-            )
+            // Auth mode header — animated transition between Sign In and Create Account
+            AnimatedContent(
+                targetState = uiState.isSignUp,
+                transitionSpec = {
+                    (slideInHorizontally(animationSpec = tween(300)) { it / 2 } + fadeIn(animationSpec = tween(300)))
+                        .togetherWith(slideOutHorizontally(animationSpec = tween(300)) { -it / 2 } + fadeOut(animationSpec = tween(300)))
+                },
+                label = "authHeaderTransition"
+            ) { isSignUpNow ->
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(
+                        text = if (isSignUpNow) "Create your account" else "Welcome back",
+                        style = MaterialTheme.typography.headlineMedium,
+                        color = primaryText,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                    Spacer(modifier = Modifier.height(6.dp))
+                    Text(
+                        text = if (isSignUpNow)
+                            "Start capturing your memories today"
+                        else
+                            "Sign in to continue your story",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = mutedText
+                    )
+                }
+            }
 
             Spacer(modifier = Modifier.height(28.dp))
+
+            val emailBorderColor by animateColorAsState(
+                targetValue = when {
+                    emailError != null && email.isNotEmpty() -> ErrorRed
+                    email.isNotEmpty() && email.contains("@") && email.contains(".") -> SuccessGreen
+                    else -> if (isDark) DarkBorder else Border
+                },
+                animationSpec = tween(300),
+                label = "emailBorder"
+            )
+            val nameBorderColor by animateColorAsState(
+                targetValue = if (isDark) DarkBorder else Border,
+                animationSpec = tween(300),
+                label = "nameBorder"
+            )
+            val passwordBorderColor by animateColorAsState(
+                targetValue = if (isDark) DarkBorder else Border,
+                animationSpec = tween(300),
+                label = "passwordBorder"
+            )
 
             // Email field with inline validation
             OutlinedTextField(
@@ -236,7 +291,7 @@ fun AuthScreen(
                 shape = RoundedCornerShape(14.dp),
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = Bronze,
-                    unfocusedBorderColor = if (isDark) DarkBorder else Border,
+                    unfocusedBorderColor = emailBorderColor,
                     focusedLabelColor = Bronze,
                     unfocusedLabelColor = mutedText,
                     cursorColor = Bronze,
@@ -277,7 +332,7 @@ fun AuthScreen(
                         shape = RoundedCornerShape(14.dp),
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedBorderColor = Bronze,
-                            unfocusedBorderColor = if (isDark) DarkBorder else Border,
+                            unfocusedBorderColor = nameBorderColor,
                             focusedLabelColor = Bronze,
                             unfocusedLabelColor = mutedText,
                             cursorColor = Bronze
@@ -334,7 +389,6 @@ fun AuthScreen(
                 keyboardActions = KeyboardActions(
                     onDone = {
                         focusManager.clearFocus()
-                        // Only submit if no email format error
                         val canSubmit = emailError == null && email.isNotBlank() && password.isNotBlank() && (!uiState.isSignUp || name.isNotBlank())
                         if (canSubmit) {
                             if (uiState.isSignUp) viewModel.signup(email, name, password)
@@ -346,7 +400,7 @@ fun AuthScreen(
                 shape = RoundedCornerShape(14.dp),
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = Bronze,
-                    unfocusedBorderColor = if (isDark) DarkBorder else Border,
+                    unfocusedBorderColor = passwordBorderColor,
                     focusedLabelColor = Bronze,
                     unfocusedLabelColor = mutedText,
                     cursorColor = Bronze
@@ -415,8 +469,21 @@ fun AuthScreen(
                 )
             ) {
                 if (uiState.isLoading) {
+                    // Pulsing spinner — premium loading indicator
+                    val infiniteTransition = rememberInfiniteTransition(label = "spinnerPulse")
+                    val spinnerScale by infiniteTransition.animateFloat(
+                        initialValue = 0.85f,
+                        targetValue = 1.1f,
+                        animationSpec = infiniteRepeatable(
+                            animation = tween(600, easing = FastOutSlowInEasing),
+                            repeatMode = RepeatMode.Reverse
+                        ),
+                        label = "spinnerScale"
+                    )
                     CircularProgressIndicator(
-                        modifier = Modifier.size(22.dp),
+                        modifier = Modifier
+                            .size(22.dp)
+                            .scale(spinnerScale),
                         color = WarmWhite,
                         strokeWidth = 2.5.dp
                     )

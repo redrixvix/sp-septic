@@ -143,69 +143,76 @@ fun InviteScreen(
 
                         Spacer(modifier = Modifier.height(32.dp))
 
-                        // Book info card
-                        Card(
-                            modifier = Modifier.fillMaxWidth(),
-                            shape = RoundedCornerShape(20.dp),
-                            colors = CardDefaults.cardColors(containerColor = cardBg),
-                            elevation = CardDefaults.cardElevation(defaultElevation = 3.dp)
+                        // Book info card — slide-up entrance
+                        var cardVisible by remember { mutableStateOf(false) }
+                        LaunchedEffect(Unit) { cardVisible = true }
+                        AnimatedVisibility(
+                            visible = cardVisible,
+                            enter = slideInVertically(animationSpec = tween(350, delayMillis = 100), initialOffsetY = { it / 6 }) + fadeIn(animationSpec = tween(350, delayMillis = 100))
                         ) {
-                            Column(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(24.dp),
-                                horizontalAlignment = Alignment.CenterHorizontally
+                            Card(
+                                modifier = Modifier.fillMaxWidth(),
+                                shape = RoundedCornerShape(20.dp),
+                                colors = CardDefaults.cardColors(containerColor = cardBg),
+                                elevation = CardDefaults.cardElevation(defaultElevation = 3.dp)
                             ) {
-                                Box(
+                                Column(
                                     modifier = Modifier
-                                        .size(56.dp)
-                                        .background(
-                                            brush = Brush.linearGradient(
-                                                colors = if (isDark) listOf(DarkBronze.copy(alpha = 0.3f), DarkSurfaceVariant) else listOf(Bronze.copy(alpha = 0.15f), Papaya)
-                                            ),
-                                            shape = RoundedCornerShape(16.dp)
-                                        ),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Text("📚", fontSize = 28.sp)
-                                }
-
-                                Spacer(modifier = Modifier.height(16.dp))
-
-                                Text(
-                                    state.bookTitle,
-                                    style = MaterialTheme.typography.titleLarge,
-                                    color = primaryText,
-                                    fontWeight = FontWeight.SemiBold,
-                                    textAlign = TextAlign.Center
-                                )
-
-                                Spacer(modifier = Modifier.height(8.dp))
-
-                                Row(
-                                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                                    verticalAlignment = Alignment.CenterVertically
+                                        .fillMaxWidth()
+                                        .padding(24.dp),
+                                    horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
                                     Box(
                                         modifier = Modifier
+                                            .size(56.dp)
                                             .background(
-                                                color = if (isDark) TeaGreen.copy(alpha = 0.2f) else TeaGreen.copy(alpha = 0.15f),
-                                                shape = RoundedCornerShape(8.dp)
-                                            )
-                                            .padding(horizontal = 12.dp, vertical = 6.dp)
+                                                brush = Brush.linearGradient(
+                                                    colors = if (isDark) listOf(DarkBronze.copy(alpha = 0.3f), DarkSurfaceVariant) else listOf(Bronze.copy(alpha = 0.15f), Papaya)
+                                                ),
+                                                shape = RoundedCornerShape(16.dp)
+                                            ),
+                                        contentAlignment = Alignment.Center
                                     ) {
+                                        Text("📚", fontSize = 28.sp)
+                                    }
+
+                                    Spacer(modifier = Modifier.height(16.dp))
+
+                                    Text(
+                                        state.bookTitle,
+                                        style = MaterialTheme.typography.titleLarge,
+                                        color = primaryText,
+                                        fontWeight = FontWeight.SemiBold,
+                                        textAlign = TextAlign.Center
+                                    )
+
+                                    Spacer(modifier = Modifier.height(8.dp))
+
+                                    Row(
+                                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Box(
+                                            modifier = Modifier
+                                                .background(
+                                                    color = if (isDark) TeaGreen.copy(alpha = 0.2f) else TeaGreen.copy(alpha = 0.15f),
+                                                    shape = RoundedCornerShape(8.dp)
+                                                )
+                                                .padding(horizontal = 12.dp, vertical = 6.dp)
+                                        ) {
+                                            Text(
+                                                state.role.replaceFirstChar { it.uppercase() },
+                                                style = MaterialTheme.typography.labelMedium,
+                                                color = if (isDark) TeaGreen else Color(0xFF4A7A4A),
+                                                fontWeight = FontWeight.Medium
+                                            )
+                                        }
                                         Text(
-                                            state.role.replaceFirstChar { it.uppercase() },
-                                            style = MaterialTheme.typography.labelMedium,
-                                            color = if (isDark) TeaGreen else Color(0xFF4A7A4A),
-                                            fontWeight = FontWeight.Medium
+                                            "access",
+                                            style = MaterialTheme.typography.bodySmall,
+                                            color = mutedText
                                         )
                                     }
-                                    Text(
-                                        "access",
-                                        style = MaterialTheme.typography.bodySmall,
-                                        color = mutedText
-                                    )
                                 }
                             }
                         }

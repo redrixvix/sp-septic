@@ -1,11 +1,14 @@
 package com.memoryproject.app.ui.home
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
-import androidx.compose.material.pullrefresh.pullRefresh
-import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material3.pullrefresh.PullRefreshState
+import androidx.compose.material3.pullrefresh.rememberPullRefreshState
+import androidx.compose.material3.pullrefresh.pullRefresh
+import androidx.compose.material3.pullrefresh.PullRefreshIndicator
 
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -19,9 +22,9 @@ import kotlinx.coroutines.delay
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -152,8 +155,8 @@ fun HomeScreen(
             if (uiState.recentMemories.isNotEmpty()) {
                 item(key = "recent_header") {
                     SectionHeader(
-                        title = "Recent Memories",
-                        subtitle = "Stories from your collection",
+                        title = "Recent Stories",
+                        subtitle = "Moments worth remembering",
                         darkTheme = darkTheme,
                         mutedText = mutedText,
                         modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
@@ -194,7 +197,7 @@ fun HomeScreen(
                                 .padding(vertical = 8.dp)
                         ) {
                             Text(
-                                "View all memories →",
+                                "View all stories →",
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = if (darkTheme) DarkBronze else Bronze,
                                 fontWeight = FontWeight.Medium
@@ -337,6 +340,7 @@ private fun WelcomeHeader(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Column(modifier = Modifier.weight(1f)) {
+                        // Simple 2-line skeleton — avatar shows immediately
                         if (isLoading && userName.isBlank()) {
                             Box(
                                 modifier = Modifier
@@ -347,7 +351,6 @@ private fun WelcomeHeader(
                                         shape = RoundedCornerShape(8.dp)
                                     )
                             )
-                            Spacer(modifier = Modifier.height(10.dp))
                             Box(
                                 modifier = Modifier
                                     .width(200.dp)
@@ -380,35 +383,28 @@ private fun WelcomeHeader(
 
                     Spacer(modifier = Modifier.width(16.dp))
 
-                    // Avatar — animated entrance
-                    var avatarVisible by remember { mutableStateOf(false) }
-                    LaunchedEffect(userInitial) { avatarVisible = true }
-                    AnimatedVisibility(
-                        visible = avatarVisible,
-                        enter = scaleIn(animationSpec = spring(stiffness = Spring.StiffnessLow, dampingRatio = 0.7f), initialScale = 0.6f) + fadeIn()
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .size(56.dp)
-                                .background(
-                                    brush = Brush.linearGradient(
-                                        colors = if (userInitial.isNotBlank()) {
-                                            listOf(Bronze, BronzeLight)
-                                        } else {
-                                            listOf(if (darkTheme) DarkBorder else Border, if (darkTheme) DarkDivider else Divider)
-                                        }
-                                    ),
-                                    shape = CircleShape
+                    // Avatar — shown immediately, no skeleton
+                    Box(
+                        modifier = Modifier
+                            .size(56.dp)
+                            .background(
+                                brush = Brush.linearGradient(
+                                    colors = if (userInitial.isNotBlank()) {
+                                        listOf(Bronze, BronzeLight)
+                                    } else {
+                                        listOf(if (darkTheme) DarkBorder else Border, if (darkTheme) DarkDivider else Divider)
+                                    }
                                 ),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = userInitial.ifBlank { "?" },
-                                style = MaterialTheme.typography.titleLarge,
-                                color = if (darkTheme) DarkOnSurface else WarmWhite,
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
+                                shape = CircleShape
+                            ),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = userInitial.ifBlank { "?" },
+                            style = MaterialTheme.typography.titleLarge,
+                            color = if (darkTheme) DarkOnSurface else WarmWhite,
+                            fontWeight = FontWeight.Bold
+                        )
                     }
                 }
             }
@@ -479,16 +475,11 @@ private fun StatCard(
     mutedText: Color,
     modifier: Modifier = Modifier
 ) {
-    val shimmerInfiniteTransition = rememberInfiniteTransition(label = "shimmer")
-    val shimmerOffset by shimmerInfiniteTransition.animateFloat(
-        initialValue = -60f,
-        targetValue = 120f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 1400, easing = LinearEasing),
-            repeatMode = RepeatMode.Restart
-        ),
-        label = "shimmerOffset"
-    )
+    // Single-pass shimmer — plays once on load then settles
+    val shimmerAlpha = remember { Animatable(0.2f) }
+    LaunchedEffect(Unit) {
+        shimmerAlpha.animateTo(0.55f, animationSpec = tween(durationMillis = 1400, easing = FastOutSlowInEasing))
+    }
     Card(
         modifier = modifier,
         shape = RoundedCornerShape(16.dp),
@@ -522,7 +513,7 @@ private fun StatCard(
                             shape = RoundedCornerShape(12.dp)
                         )
                 )
-                // Shimmer overlay
+                // Shimmer overlay — single pass
                 Box(
                     modifier = Modifier
                         .matchParentSize()
@@ -530,11 +521,9 @@ private fun StatCard(
                             brush = Brush.linearGradient(
                                 colors = listOf(
                                     Color.Transparent,
-                                    Color.White.copy(alpha = 0.35f),
+                                    Color.White.copy(alpha = shimmerAlpha.value),
                                     Color.Transparent
-                                ),
-                                start = androidx.compose.ui.geometry.Offset(shimmerOffset - 30f, 0f),
-                                end = androidx.compose.ui.geometry.Offset(shimmerOffset + 30f, 0f)
+                                )
                             )
                         ),
                     contentAlignment = Alignment.Center
@@ -937,11 +926,10 @@ private fun HomeSkeletonCard(darkTheme: Boolean) {
     val shimmerBase = if (darkTheme) DarkDivider else Divider
     val shimmerHighlight = if (darkTheme) DarkOnSurface.copy(alpha = 0.06f) else Divider.copy(alpha = 0.5f)
 
+    // Single-pass shimmer — plays once on load then settles
     val shimmerAlpha = remember { Animatable(0.3f) }
     LaunchedEffect(Unit) {
-        shimmerAlpha.animateTo(0.7f, animationSpec = tween(800, easing = FastOutSlowInEasing))
-        delay(800)
-        shimmerAlpha.animateTo(0.3f, animationSpec = tween(800, easing = FastOutSlowInEasing))
+        shimmerAlpha.animateTo(0.65f, animationSpec = tween(durationMillis = 1200, easing = FastOutSlowInEasing))
     }
     val shimmerBrush = remember(shimmerAlpha.value, shimmerBase, shimmerHighlight) {
         Brush.linearGradient(listOf(shimmerBase, shimmerHighlight.copy(alpha = shimmerAlpha.value), shimmerBase))
@@ -998,51 +986,138 @@ private fun MemoryPromptsSection(
     val prompts = remember {
         HOME_PROMPTS.shuffled().take(3)
     }
-    val promptBg = if (darkTheme) DarkSurfaceVariant else Papaya.copy(alpha = 0.5f)
+    // Distinctive card background — warm Papaya card that stands out from the page
+    val cardBg = if (darkTheme) DarkSurfaceVariant else Papaya
+    val accentColor = if (darkTheme) DarkBronze else Bronze
+    val promptItemBg = if (darkTheme) DarkSurface else WarmWhite
 
-    Column(modifier = modifier.fillMaxWidth()) {
-        Text(
-            text = "Need inspiration?",
-            style = MaterialTheme.typography.titleMedium,
-            color = primaryText,
-            fontWeight = FontWeight.SemiBold
-        )
-        Text(
-            text = "Tap any prompt to start writing",
-            style = MaterialTheme.typography.bodySmall,
-            color = mutedText,
-            modifier = Modifier.padding(bottom = 10.dp)
-        )
-        prompts.forEach { prompt ->
-            Card(
-                onClick = { onPromptSelect(prompt) },
+    Card(
+        modifier = modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(18.dp),
+        colors = CardDefaults.cardColors(containerColor = cardBg),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+    ) {
+        Row(modifier = Modifier.fillMaxWidth()) {
+            // Left accent strip — bronze brand marker
+            Box(
+                modifier = Modifier
+                    .width(4.dp)
+                    .fillMaxHeight()
+                    .background(
+                        color = accentColor.copy(alpha = 0.4f),
+                        shape = RoundedCornerShape(topStart = 18.dp, bottomStart = 18.dp)
+                    )
+            )
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 4.dp),
-                shape = RoundedCornerShape(12.dp),
-                colors = CardDefaults.cardColors(containerColor = promptBg),
-                elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+                    .padding(16.dp)
             ) {
+                // Section label
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(14.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(bottom = 8.dp)
                 ) {
-                    Text("💬", fontSize = 16.sp)
-                    Spacer(modifier = Modifier.width(12.dp))
+                    Text("✨", fontSize = 14.sp)
+                    Spacer(modifier = Modifier.width(6.dp))
                     Text(
-                        text = prompt,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = primaryText,
-                        modifier = Modifier.weight(1f)
-                    )
-                    Text(
-                        "→",
-                        color = mutedText
+                        text = "Inspiration",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = if (darkTheme) DarkOnSurfaceVariant else BronzeDark,
+                        fontWeight = FontWeight.SemiBold
                     )
                 }
+                Text(
+                    text = "Need inspiration?",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = primaryText,
+                    fontWeight = FontWeight.SemiBold
+                )
+                Text(
+                    text = "Tap any prompt to start writing",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = mutedText,
+                    modifier = Modifier.padding(bottom = 12.dp)
+                )
+                prompts.forEachIndexed { index, prompt ->
+                    var visible by remember { mutableStateOf(false) }
+                    LaunchedEffect(prompt) { visible = true }
+                    AnimatedVisibility(
+                        visible = visible,
+                        enter = fadeIn(animationSpec = tween(350, delayMillis = index * 60)) +
+                                slideInHorizontally(animationSpec = tween(350, delayMillis = index * 60), initialOffsetX = { it / 4 })
+                    ) {
+                        PromptCard(
+                            prompt = prompt,
+                            onClick = { onPromptSelect(prompt) },
+                            darkTheme = darkTheme,
+                            cardBg = promptItemBg,
+                            primaryText = primaryText,
+                            mutedText = mutedText
+                        )
+                    }
+                }
             }
+        }
+    }
+}
+
+@Composable
+private fun PromptCard(
+    prompt: String,
+    onClick: () -> Unit,
+    darkTheme: Boolean,
+    cardBg: Color,
+    primaryText: Color,
+    mutedText: Color
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val isPressed by interactionSource.collectIsPressedAsState()
+    val scale by animateFloatAsState(
+        targetValue = if (isPressed) 0.97f else 1f,
+        animationSpec = spring(dampingRatio = 0.7f, stiffness = Spring.StiffnessLow),
+        label = "promptScale"
+    )
+
+    Card(
+        onClick = onClick,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp)
+            .scale(scale),
+        shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.cardColors(containerColor = cardBg),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(14.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            // Subtle accent icon
+            Box(
+                modifier = Modifier
+                    .size(32.dp)
+                    .background(
+                        color = if (darkTheme) DarkBronze.copy(alpha = 0.2f) else Bronze.copy(alpha = 0.12f),
+                        shape = RoundedCornerShape(8.dp)
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                Text("💡", fontSize = 14.sp)
+            }
+            Spacer(modifier = Modifier.width(12.dp))
+            Text(
+                text = prompt,
+                style = MaterialTheme.typography.bodyMedium,
+                color = primaryText,
+                modifier = Modifier.weight(1f)
+            )
+            Text(
+                "→",
+                color = mutedText
+            )
         }
     }
 }

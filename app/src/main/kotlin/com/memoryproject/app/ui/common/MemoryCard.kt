@@ -1,9 +1,5 @@
 package com.memoryproject.app.ui.common
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.*
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.scaleIn
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -12,7 +8,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -20,6 +15,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -84,22 +81,42 @@ fun MemoryCard(
         elevation = CardDefaults.cardElevation(defaultElevation = elevation)
     ) {
         Row(modifier = Modifier.fillMaxWidth()) {
-            // Left color accent strip
+            // Left color accent strip with warm gradient overlay
             Box(
                 modifier = Modifier
                     .width(4.dp)
                     .fillMaxHeight()
-                    .background(
-                        color = accentColor.copy(alpha = 0.3f),
-                        shape = RoundedCornerShape(topStart = 14.dp, bottomStart = 14.dp)
-                    )
-            )
+            ) {
+                // Base accent color
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(
+                            color = accentColor.copy(alpha = 0.35f),
+                            shape = RoundedCornerShape(topStart = 14.dp, bottomStart = 14.dp)
+                        )
+                )
+                // Warm gradient overlay
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth(0.6f)
+                        .fillMaxHeight()
+                        .background(
+                            brush = Brush.linearGradient(
+                                colors = listOf(
+                                    accentColor.copy(alpha = 0.25f),
+                                    Color.Transparent
+                                )
+                            )
+                        )
+                )
+            }
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(18.dp)
             ) {
-                // Header row: prompt + actions
+                // Header row: prompt label + share/delete actions
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -108,7 +125,13 @@ fun MemoryCard(
                     Box(
                         modifier = Modifier
                             .background(
-                                color = promptLabelBg,
+                                brush = Brush.linearGradient(
+                                    colors = if (isDark) {
+                                        listOf(DarkBronze.copy(alpha = 0.25f), DarkSurfaceVariant)
+                                    } else {
+                                        listOf(Bronze.copy(alpha = 0.12f), Papaya.copy(alpha = 0.75f))
+                                    }
+                                ),
                                 shape = RoundedCornerShape(10.dp)
                             )
                             .padding(horizontal = 12.dp, vertical = 7.dp)
@@ -123,57 +146,64 @@ fun MemoryCard(
                             modifier = Modifier.widthIn(max = 200.dp)
                         )
                     }
-                    var visible by remember { mutableStateOf(true) }
-                    AnimatedVisibility(
-                        visible = visible,
-                        enter = fadeIn(animationSpec = tween(300))
-                    ) {
-                        Row {
-                            IconButton(
-                                onClick = onShareClick,
-                                modifier = Modifier.size(36.dp)
-                            ) {
-                                Icon(
-                                    Icons.Default.Share,
-                                    contentDescription = "Share",
-                                    tint = mutedText,
-                                    modifier = Modifier.size(18.dp)
-                                )
-                            }
-                            IconButton(
-                                onClick = onEdit,
-                                modifier = Modifier.size(36.dp)
-                            ) {
-                                Icon(
-                                    Icons.Default.Edit,
-                                    contentDescription = "Edit",
-                                    tint = mutedText,
-                                    modifier = Modifier.size(18.dp)
-                                )
-                            }
-                            IconButton(
-                                onClick = onDelete,
-                                modifier = Modifier.size(36.dp)
-                            ) {
-                                Icon(
-                                    Icons.Default.Delete,
-                                    contentDescription = "Delete",
-                                    tint = mutedText,
-                                    modifier = Modifier.size(18.dp)
-                                )
-                            }
+                    // Share + Delete icon buttons only (no Edit — answer text is tappable for editing)
+                    Row {
+                        val shareInteraction = remember { MutableInteractionSource() }
+                        val sharePressed by shareInteraction.collectIsPressedAsState()
+                        val shareScale by animateFloatAsState(
+                            targetValue = if (sharePressed) 1.15f else 1f,
+                            animationSpec = spring(dampingRatio = 0.6f, stiffness = Spring.StiffnessMedium),
+                            label = "shareScale"
+                        )
+                        IconButton(
+                            onClick = onShareClick,
+                            modifier = Modifier
+                                .size(36.dp)
+                                .graphicsLayer { scaleX = shareScale; scaleY = shareScale },
+                            interactionSource = shareInteraction
+                        ) {
+                            Icon(
+                                Icons.Default.Share,
+                                contentDescription = "Share",
+                                tint = if (sharePressed) (if (isDark) DarkBronze else Bronze) else mutedText,
+                                modifier = Modifier.size(18.dp)
+                            )
+                        }
+                        val deleteInteraction = remember { MutableInteractionSource() }
+                        val deletePressed by deleteInteraction.collectIsPressedAsState()
+                        val deleteScale by animateFloatAsState(
+                            targetValue = if (deletePressed) 1.15f else 1f,
+                            animationSpec = spring(dampingRatio = 0.6f, stiffness = Spring.StiffnessMedium),
+                            label = "deleteScale"
+                        )
+                        IconButton(
+                            onClick = onDelete,
+                            modifier = Modifier
+                                .size(36.dp)
+                                .graphicsLayer { scaleX = deleteScale; scaleY = deleteScale },
+                            interactionSource = deleteInteraction
+                        ) {
+                            Icon(
+                                Icons.Default.Delete,
+                                contentDescription = "Delete",
+                                tint = if (deletePressed) ErrorRed else mutedText,
+                                modifier = Modifier.size(18.dp)
+                            )
                         }
                     }
                 }
 
                 Spacer(modifier = Modifier.height(12.dp))
 
-                // Answer text
+                // Answer text — tappable to trigger edit
                 Text(
                     text = memory.answer_text,
                     style = MaterialTheme.typography.bodyLarge,
                     color = bodyText,
-                    lineHeight = 26.sp
+                    lineHeight = 26.sp,
+                    modifier = Modifier
+                        .clickable(onClick = onEdit)
+                        .padding(vertical = 2.dp)
                 )
 
                 // Photo thumbnails

@@ -173,10 +173,11 @@ fun ShimmerBox(
 ) {
     val shimmerAlpha = remember { Animatable(0.3f) }
     LaunchedEffect(Unit) {
-        while (true) {
+        repeat(2) {
             shimmerAlpha.animateTo(0.7f, animationSpec = tween(900, easing = FastOutSlowInEasing))
             shimmerAlpha.animateTo(0.3f, animationSpec = tween(900, easing = FastOutSlowInEasing))
         }
+        shimmerAlpha.animateTo(0.3f)
     }
     val shimmerBrush = remember(shimmerAlpha.value, baseColor, highlightColor) {
         Brush.linearGradient(listOf(baseColor, highlightColor.copy(alpha = shimmerAlpha.value), baseColor))
@@ -197,10 +198,11 @@ fun SkeletonCard(modifier: Modifier = Modifier, isDark: Boolean = false) {
 
     val shimmerAlpha = remember { Animatable(0.3f) }
     LaunchedEffect(Unit) {
-        while (true) {
+        repeat(2) {
             shimmerAlpha.animateTo(0.7f, animationSpec = tween(800, easing = FastOutSlowInEasing))
             shimmerAlpha.animateTo(0.3f, animationSpec = tween(800, easing = FastOutSlowInEasing))
         }
+        shimmerAlpha.animateTo(0.3f)
     }
     val shimmerBrush = remember(shimmerAlpha.value, base, highlight) {
         Brush.linearGradient(listOf(base, highlight.copy(alpha = shimmerAlpha.value), base))
@@ -240,8 +242,11 @@ fun EmptyState(
     subtitle: String,
     actionLabel: String? = null,
     onAction: (() -> Unit)? = null,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isDark: Boolean = false
 ) {
+    val titleColor = if (isDark) DarkOnSurface else Charcoal
+    val subtitleColor = if (isDark) DarkOnSurfaceVariant else CharcoalMuted
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -253,7 +258,11 @@ fun EmptyState(
                 .size(96.dp)
                 .background(
                     brush = Brush.radialGradient(
-                        colors = listOf(Papaya.copy(alpha = 0.4f), Beige.copy(alpha = 0.3f))
+                        colors = if (isDark) {
+                            listOf(DarkBronze.copy(alpha = 0.3f), DarkSurface.copy(alpha = 0.3f))
+                        } else {
+                            listOf(Papaya.copy(alpha = 0.4f), Beige.copy(alpha = 0.3f))
+                        }
                     ),
                     shape = RoundedCornerShape(24.dp)
                 ),
@@ -266,14 +275,14 @@ fun EmptyState(
             text = title,
             style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.SemiBold,
-            color = Charcoal,
+            color = titleColor,
             textAlign = TextAlign.Center
         )
         Spacer(modifier = Modifier.height(10.dp))
         Text(
             text = subtitle,
             style = MaterialTheme.typography.bodyLarge,
-            color = CharcoalMuted,
+            color = subtitleColor,
             textAlign = TextAlign.Center
         )
         if (actionLabel != null && onAction != null) {

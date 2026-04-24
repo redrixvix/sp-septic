@@ -215,11 +215,11 @@ fun ProfileScreen(
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
             // Profile avatar + name card — warm, inviting, premium
-            val cardBg = if (isDark) DarkSurface else WarmWhite
+            val profileCardBg = if (isDark) DarkSurface else WarmWhite
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(20.dp),
-                colors = CardDefaults.cardColors(containerColor = cardBg),
+                colors = CardDefaults.cardColors(containerColor = profileCardBg),
                 elevation = CardDefaults.cardElevation(defaultElevation = 3.dp)
             ) {
                 Box(

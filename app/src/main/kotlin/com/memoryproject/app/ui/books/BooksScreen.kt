@@ -2,9 +2,10 @@ package com.memoryproject.app.ui.books
 import androidx.compose.foundation.lazy.itemsIndexed
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
-import androidx.compose.material.pullrefresh.pullRefresh
-import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material3.pullrefresh.PullRefreshState
+import androidx.compose.material3.pullrefresh.rememberPullRefreshState
+import androidx.compose.material3.pullrefresh.pullRefresh
+import androidx.compose.material3.pullrefresh.PullRefreshIndicator
 
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
@@ -128,8 +129,8 @@ fun BooksScreen(
                             contentPadding = PaddingValues(16.dp),
                             verticalArrangement = Arrangement.spacedBy(14.dp)
                         ) {
-                            items(4) { index ->
-                                BooksSkeletonCard(darkTheme = darkTheme, index = index)
+                            items(4) { _ ->
+                                BooksSkeletonCard(darkTheme = darkTheme)
                             }
                         }
                     }
@@ -182,7 +183,7 @@ fun BooksScreen(
                     }
 
                     uiState.books.isEmpty() && !uiState.isLoading -> {
-                        // Empty state
+                        // Empty state — warm, inviting
                         Column(
                             modifier = Modifier
                                 .fillMaxSize()
@@ -205,25 +206,48 @@ fun BooksScreen(
                             }
                             Spacer(modifier = Modifier.height(28.dp))
                             Text(
-                                "Ready to begin?",
+                                "Your memories begin here",
                                 style = MaterialTheme.typography.headlineSmall,
                                 fontWeight = FontWeight.SemiBold,
-                                color = primaryText
+                                color = primaryText,
+                                textAlign = TextAlign.Center
                             )
                             Spacer(modifier = Modifier.height(10.dp))
                             Text(
-                                "Start your first book and capture the moments worth remembering — before they slip away.",
+                                "Create your first book to start preserving the moments that matter.",
                                 style = MaterialTheme.typography.bodyLarge,
                                 color = mutedText,
+                                textAlign = TextAlign.Center,
                                 lineHeight = 24.sp
                             )
                             Spacer(modifier = Modifier.height(32.dp))
-                            ShimmerCreateBookButton(
+                            Button(
                                 onClick = { showCreateDialog = true },
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .height(52.dp)
-                            )
+                                    .height(52.dp),
+                                shape = RoundedCornerShape(14.dp),
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = Bronze,
+                                    contentColor = WarmWhite
+                                ),
+                                elevation = ButtonDefaults.buttonElevation(
+                                    defaultElevation = 4.dp,
+                                    pressedElevation = 8.dp
+                                )
+                            ) {
+                                Icon(
+                                    Icons.Default.Add,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(20.dp)
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                    "Create Your First Book",
+                                    style = MaterialTheme.typography.labelLarge,
+                                    fontWeight = FontWeight.SemiBold
+                                )
+                            }
                         }
                     }
 
@@ -267,10 +291,8 @@ fun BooksScreen(
                 contentColor = WarmWhite,
                 elevation = FloatingActionButtonDefaults.elevation(defaultElevation = 6.dp, pressedElevation = 12.dp)
             ) {
-                Icon(Icons.Default.Add, contentDescription = "Create new book")
+                Icon(Icons.Default.Add, contentDescription = null)
                 Spacer(modifier = Modifier.width(8.dp))
-                Text("✨", fontSize = 16.sp)
-                Spacer(modifier = Modifier.width(4.dp))
                 Text("New Book", style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.SemiBold)
             }
         }

@@ -3,6 +3,7 @@ package com.memoryproject.app.ui.settings
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.animation.*
+import androidx.compose.animation.core.tween
 import com.memoryproject.app.BuildConfig
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -46,7 +47,6 @@ fun SettingsScreen(
     val uiState by viewModel.uiState.collectAsState()
     var showLogoutDialog by remember { mutableStateOf(false) }
     val snackbarHostState = remember { SnackbarHostState() }
-    val scope = rememberCoroutineScope()
     val context = LocalContext.current
     val isDark = darkTheme
     val scaffoldBg = if (isDark) DarkBackground else Cornsilk
@@ -161,6 +161,11 @@ fun SettingsScreen(
                                 darkModeActivePill()
                                 Spacer(modifier = Modifier.width(8.dp))
                             }
+                            val darkModeTrackColor by animateColorAsState(
+                                targetValue = if (uiState.isDarkMode) Bronze else if (isDark) DarkBorder else Border,
+                                animationSpec = tween(durationMillis = 300),
+                                label = "darkModeTrack"
+                            )
                             Switch(
                                 checked = uiState.isDarkMode,
                                 onCheckedChange = {
@@ -169,9 +174,9 @@ fun SettingsScreen(
                                 },
                                 colors = SwitchDefaults.colors(
                                     checkedThumbColor = WarmWhite,
-                                    checkedTrackColor = Bronze,
+                                    checkedTrackColor = darkModeTrackColor,
                                     uncheckedThumbColor = WarmWhite,
-                                    uncheckedTrackColor = if (isDark) DarkBorder else Border
+                                    uncheckedTrackColor = darkModeTrackColor
                                 )
                             )
                         }
@@ -192,14 +197,19 @@ fun SettingsScreen(
                     title = "Reminders",
                     subtitle = "Get gentle reminders to add memories",
                     trailing = {
+                        val notifTrackColor by animateColorAsState(
+                            targetValue = if (uiState.notificationsEnabled) Bronze else if (isDark) DarkBorder else Border,
+                            animationSpec = tween(durationMillis = 300),
+                            label = "notifTrack"
+                        )
                         Switch(
                             checked = uiState.notificationsEnabled,
                             onCheckedChange = { viewModel.toggleNotifications() },
                             colors = SwitchDefaults.colors(
                                 checkedThumbColor = WarmWhite,
-                                checkedTrackColor = Bronze,
+                                checkedTrackColor = notifTrackColor,
                                 uncheckedThumbColor = WarmWhite,
-                                uncheckedTrackColor = if (isDark) DarkBorder else Border
+                                uncheckedTrackColor = notifTrackColor
                             )
                         )
                     },
@@ -353,6 +363,17 @@ private fun SettingsSection(
             fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold,
             modifier = Modifier.padding(start = 4.dp, bottom = 8.dp)
         )
+        // Subtle warm divider above each section card
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(1.dp)
+                .padding(horizontal = 4.dp)
+                .background(
+                    color = if (isDark) DarkDivider.copy(alpha = 0.5f) else Border.copy(alpha = 0.5f)
+                )
+        )
+        Spacer(modifier = Modifier.height(6.dp))
         Card(
             shape = RoundedCornerShape(14.dp),
             colors = CardDefaults.cardColors(containerColor = cardBg),
@@ -379,7 +400,6 @@ private fun SettingsItem(
     val iconBgColor = if (isDark) DarkSurfaceVariant else Bronze.copy(alpha = 0.1f)
     val primaryText = if (isDark) DarkOnSurface else Charcoal
     val mutedText = if (isDark) DarkOnSurfaceVariant else CharcoalMuted
-    val cardBg = if (isDark) DarkSurface else WarmWhite
     val dividerColor = if (isDark) DarkDivider else Divider
 
     Column {
