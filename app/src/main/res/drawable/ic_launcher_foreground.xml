@@ -4,16 +4,63 @@
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
+    <!-- Background: warm cream -->
     <path
         android:fillColor="#FEFAE0"
         android:pathData="M0,0h108v108h-108z"/>
+    <!-- Book spine shadow — deep warm bronze -->
+    <path
+        android:fillColor="#B8815A"
+        android:pathData="M54,28 L58,30 L58,80 L54,82 Z"/>
+    <!-- Book back cover — medium bronze -->
     <path
         android:fillColor="#D4A373"
-        android:pathData="M54,30 L74,50 L74,78 L34,78 L34,50 Z"/>
+        android:pathData="M34,30 L54,28 L54,82 L34,80 Z"/>
+    <!-- Book front cover — lighter bronze/gold -->
+    <path
+        android:fillColor="#E8C19A"
+        android:pathData="M54,28 L78,30 L78,80 L54,82 Z"/>
+    <!-- Book page stack — warm beige -->
     <path
         android:fillColor="#E9EDC9"
-        android:pathData="M42,55 L66,55 L66,78 L42,78 Z"/>
+        android:pathData="M37,33 L54,31 L54,79 L37,77 Z"/>
+    <!-- Book page stack right — slightly darker for depth -->
+    <path
+        android:fillColor="#D8E0B4"
+        android:pathData="M54,31 L75,33 L75,77 L54,79 Z"/>
+    <!-- Open page area — cornsilk/white -->
     <path
         android:fillColor="#FEFAE0"
-        android:pathData="M46,60 L62,60 L62,73 L46,73 Z"/>
+        android:pathData="M41,36 L54,34 L54,76 L41,74 Z"/>
+    <!-- Open page area right -->
+    <path
+        android:fillColor="#F8F5E8"
+        android:pathData="M54,34 L71,36 L71,74 L54,76 Z"/>
+    <!-- Left page lines — subtle tea green for memory text suggestion -->
+    <path
+        android:fillColor="#CCD5AE"
+        android:pathData="M44,42 L51,41 L51,43 L44,44 Z"/>
+    <path
+        android:fillColor="#CCD5AE"
+        android:pathData="M44,47 L51,46 L51,48 L44,49 Z"/>
+    <path
+        android:fillColor="#CCD5AE"
+        android:pathData="M44,52 L51,51 L51,53 L44,54 Z"/>
+    <!-- Right page lines -->
+    <path
+        android:fillColor="#C8D4A8"
+        android:pathData="M57,41 L68,42 L68,44 L57,43 Z"/>
+    <path
+        android:fillColor="#C8D4A8"
+        android:pathData="M57,46 L68,47 L68,49 L57,48 Z"/>
+    <path
+        android:fillColor="#C8D4A8"
+        android:pathData="M57,51 L68,52 L68,54 L57,53 Z"/>
+    <!-- Bookmark ribbon — papaya/bronze, peeking out top -->
+    <path
+        android:fillColor="#FAEDCD"
+        android:pathData="M64,24 L70,24 L70,38 L67,35 L64,38 Z"/>
+    <path
+        android:fillColor="#E8C19A"
+        android:pathData="M67,24 L70,24 L70,38 L67,35 Z"/>
 </vector>
