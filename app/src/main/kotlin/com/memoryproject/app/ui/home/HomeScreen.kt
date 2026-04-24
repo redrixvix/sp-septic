@@ -646,7 +646,7 @@ private fun QuickActionButton(
                 containerColor = Color.Transparent,
                 contentColor = Bronze
             ),
-            border = CardDefaults.outlinedCardBorder().copy(width = 1.5.dp, brush = SolidColor(if (darkTheme) DarkBronze else Bronze))
+            border = CardDefaults.outlinedCardBorder().copy(width = 1.5.dp, brush = if (darkTheme) DarkBronze else Bronze)
         ) {
             Row(
                 modifier = Modifier
