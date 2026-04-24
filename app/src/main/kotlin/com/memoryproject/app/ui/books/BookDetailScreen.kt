@@ -59,6 +59,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 
 import androidx.compose.ui.input.pointer.pointerInput
 
@@ -608,20 +609,38 @@ fun BookDetailScreen(
 
                             ) { memory ->
 
+                                var visible by remember { mutableStateOf(false) }
+                                val scale by animateFloatAsState(
+                                    targetValue = if (visible) 1f else 0.95f,
+                                    animationSpec = spring(
+                                        dampingRatio = androidx.compose.animation.core.Spring.DampingRatioMediumBouncy,
+                                        stiffness = androidx.compose.animation.core.Spring.StiffnessLow
+                                    ),
+                                    label = "cardScale"
+                                )
+                                val alpha by animateFloatAsState(
+                                    targetValue = if (visible) 1f else 0f,
+                                    animationSpec = tween(durationMillis = 300),
+                                    label = "cardAlpha"
+                                )
+
+                                LaunchedEffect(memory.id) {
+                                    delay(50L * uiState.memories.indexOf(memory).coerceAtMost(5))
+                                    visible = true
+                                }
+
                                 MemoryCard(
-
                                     memory = memory,
-
                                     onEdit = { viewModel.showEditMemory(memory) },
-
                                     onDelete = { viewModel.showDeleteConfirm(memory) },
-
                                     onShareClick = { onShareMemory(memory) },
-
                                     onPhotoClick = { photoUrl -> showPhotoViewer = photoUrl },
-
-                                    accentIndex = uiState.memories.indexOf(memory)
-
+                                    accentIndex = uiState.memories.indexOf(memory),
+                                    modifier = Modifier.graphicsLayer {
+                                        scaleX = scale
+                                        scaleY = scale
+                                        this.alpha = alpha
+                                    }
                                 )
 
                             }
@@ -1411,7 +1430,8 @@ private fun MemoryCard(
     onDelete: () -> Unit,
     onShareClick: () -> Unit = {},
     onPhotoClick: (String) -> Unit = {},
-    accentIndex: Int = 0
+    accentIndex: Int = 0,
+    modifier: Modifier = Modifier
 ) {
     val isDark = isSystemInDarkTheme()
     val interactionSource = remember { MutableInteractionSource() }
@@ -1434,7 +1454,7 @@ private fun MemoryCard(
     val extraPhotoBg = if (isDark) DarkBronze.copy(alpha = 0.2f) else Bronze.copy(alpha = 0.15f)
 
     Card(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .scale(if (isPressed) 0.99f else 1f)
             .clickable(

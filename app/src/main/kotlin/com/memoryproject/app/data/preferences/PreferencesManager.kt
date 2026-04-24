@@ -19,6 +19,10 @@ class PreferencesManager(context: Context) {
         get() = prefs.getString(KEY_DISPLAY_NAME, "") ?: ""
         set(value) = prefs.edit().putString(KEY_DISPLAY_NAME, value).apply()
 
+    var onboardingCompleted: Boolean
+        get() = prefs.getBoolean(KEY_ONBOARDING_COMPLETED, false)
+        set(value) = prefs.edit().putBoolean(KEY_ONBOARDING_COMPLETED, value).apply()
+
     fun clearAll() {
         // Clear auth tokens/session data and user-specific preferences on logout.
         // Dark mode and notification preferences are intentionally preserved so
@@ -38,5 +42,6 @@ class PreferencesManager(context: Context) {
         // Auth keys — stored in SharedPreferences (not currently used; session is in-memory)
         private const val KEY_SESSION_COOKIE = "session_cookie"
         private const val KEY_AUTH_TOKEN = "auth_token"
+        private const val KEY_ONBOARDING_COMPLETED = "onboarding_completed"
     }
 }
