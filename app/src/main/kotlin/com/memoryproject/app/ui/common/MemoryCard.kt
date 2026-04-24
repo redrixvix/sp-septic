@@ -13,6 +13,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Share
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -68,6 +69,35 @@ fun MemoryCard(
     val mutedText = if (isDark) DarkOnSurfaceVariant else CharcoalMuted
     val extraPhotoBg = if (isDark) DarkBronze.copy(alpha = 0.2f) else Bronze.copy(alpha = 0.15f)
 
+    // Photo viewer state — scoped to this card
+    var photoIndexToShow by remember { mutableStateOf<String?>(null) }
+    val photosToShow = memory.photo_urls.take(3)
+    val extraCount = (memory.photo_urls.size - 3).coerceAtLeast(0)
+    val showExtraCount = extraCount > 0
+
+    // Photo viewer dialog — triggered when a photo thumbnail is tapped
+    photoIndexToShow?.let { photoUrl ->
+        AlertDialog(
+            onDismissRequest = { photoIndexToShow = null },
+            confirmButton = {
+                TextButton(onClick = { photoIndexToShow = null }) {
+                    Text("Close", color = if (isDark) DarkOnSurfaceVariant else CharcoalMuted)
+                }
+            },
+            title = null,
+            text = {
+                AsyncImage(
+                    model = photoUrl,
+                    contentDescription = "Full-size photo",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(12.dp))
+                )
+            },
+            shape = RoundedCornerShape(20.dp)
+        )
+    }
+
     Card(
         modifier = modifier
             .fillMaxWidth()
@@ -97,7 +127,7 @@ fun MemoryCard(
                     .fillMaxWidth()
                     .padding(18.dp)
             ) {
-                // Header row: prompt + actions
+                // Header row: prompt label + actions
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -118,16 +148,29 @@ fun MemoryCard(
                             fontWeight = FontWeight.Medium,
                             maxLines = 2,
                             overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.widthIn(max = 200.dp)
+                            modifier = Modifier.widthIn(max = 200.dp)
                         )
                     }
                     AnimatedVisibility(
-                        enter = fadeIn(animationSpec = tween(300, delayMillis = 100)) + scaleIn(
-                            initialScale = 0.5f,
-                            animationSpec = tween(300, delayMillis = 100)
-                        )
+                        visible = true,
+                        enter = fadeIn(animationSpec = tween(300, delayMillis = 100)) +
+                            scaleIn(
+                                initialScale = 0.5f,
+                                animationSpec = tween(300, delayMillis = 100)
+                            )
                     ) {
                         Row {
+                            IconButton(
+                                onClick = onEdit,
+                                modifier = Modifier.size(36.dp)
+                            ) {
+                                Icon(
+                                    Icons.Default.Edit,
+                                    contentDescription = "Edit",
+                                    tint = mutedText,
+                                    modifier = Modifier.size(18.dp)
+                                )
+                            }
                             IconButton(
                                 onClick = onShareClick,
                                 modifier = Modifier.size(36.dp)
@@ -164,25 +207,27 @@ fun MemoryCard(
                     lineHeight = 26.sp
                 )
 
-                // Photo thumbnails
-                if (memory.photo_urls.isNotEmpty()) {
+                // Photo thumbnails with lightbox on tap
+                if (photosToShow.isNotEmpty()) {
                     Spacer(modifier = Modifier.height(12.dp))
                     Row(
-                        horizontalArrangement = if (memory.photo_urls.size <= 1) Arrangement.Start else Arrangement.spacedBy(8.dp)
+                        horizontalArrangement = if (photosToShow.size <= 1) Arrangement.Start else Arrangement.spacedBy(8.dp)
                     ) {
-                        memory.photo_urls.take(3).forEach { url ->
+                        photosToShow.forEach { url ->
                             AsyncImage(
                                 model = url,
                                 contentDescription = "Memory photo",
                                 modifier = Modifier
                                     .size(56.dp)
                                     .clip(RoundedCornerShape(10.dp))
-                                    .clickable { onPhotoClick(url) },
+                                    .clickable {
+                                        val index = memory.photo_urls.indexOf(url)
+                                        if (index >= 0) photoIndexToShow = url
+                                    },
                                 onError = { }
                             )
                         }
-                        val extraCount = memory.photo_urls.size - 3
-                        if (extraCount > 0) {
+                        if (showExtraCount) {
                             Box(
                                 modifier = Modifier
                                     .size(56.dp)
@@ -190,7 +235,12 @@ fun MemoryCard(
                                         color = extraPhotoBg,
                                         shape = RoundedCornerShape(10.dp)
                                     )
-                                    .clickable { memory.photo_urls.getOrNull(3)?.let { onPhotoClick(it) } },
+                                    .clickable {
+                                        memory.photo_urls.getOrNull(3)?.let { url ->
+                                            val index = memory.photo_urls.indexOf(url)
+                                            if (index >= 0) photoIndexToShow = url
+                                        }
+                                    },
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(
@@ -204,6 +254,8 @@ fun MemoryCard(
                 }
 
                 Spacer(modifier = Modifier.height(12.dp))
+
+                // Date footer
                 Text(
                     text = formatMemoryDate(memory.created_at),
                     style = MaterialTheme.typography.bodySmall,
