@@ -349,7 +349,7 @@ private fun WelcomeHeader(
                             Spacer(modifier = Modifier.height(10.dp))
                             Box(
                                 modifier = Modifier
-                                    .width(90.dp)
+                                    .width(200.dp)
                                     .height(16.dp)
                                     .background(
                                         color = if (darkTheme) DarkDivider else Divider,
@@ -644,7 +644,7 @@ private fun QuickActionButton(
                 containerColor = Color.Transparent,
                 contentColor = Bronze
             ),
-            border = CardDefaults.outlinedCardBorder().copy(width = 1.5.dp, brush = if (darkTheme) DarkBronze else Bronze)
+            border = CardDefaults.outlinedCardBorder().copy(width = 1.5.dp, brush = SolidColor(if (darkTheme) DarkBronze else Bronze))
         ) {
             Row(
                 modifier = Modifier

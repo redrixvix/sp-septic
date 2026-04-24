@@ -76,21 +76,3 @@ data class InviteRequest(val email: String)
 data class MemberResponse(val members: List<BookMember>)
 @Serializable
 data class BookMember(val user_id: Int, val role: String, val name: String = "", val email: String = "", val joined_at: String? = null, val invite_email: String? = null)
-
-// Magic link auth
-@Serializable
-data class MagicLinkRequest(val email: String)
-@Serializable
-data class MagicVerifyRequest(val email: String, val code: String)
-@Serializable
-data class MagicSendResponse(val success: Boolean)
-@Serializable
-data class MagicVerifyResponse(val user: User)
-
-// Google OAuth for mobile
-@Serializable
-data class MobileAuthUrlResponse(val url: String)
-@Serializable
-data class MobileLoginRequest(val session: String)
-@Serializable
-data class MobileLoginResponse(val user: User)

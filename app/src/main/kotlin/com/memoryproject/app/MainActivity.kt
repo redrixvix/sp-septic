@@ -31,17 +31,11 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import androidx.navigation.animation.AnimatedNavHost
-import androidx.navigation.animation.slideInHorizontally
-import androidx.navigation.animation.slideOutHorizontally
-import androidx.navigation.animation.slideInVertically
-import androidx.navigation.animation.slideOutVertically
-import androidx.navigation.animation.fadeIn
-import androidx.navigation.animation.fadeOut
 import com.memoryproject.app.data.preferences.PreferencesManager
 import com.memoryproject.app.ui.auth.AuthScreen
 import com.memoryproject.app.ui.books.BookDetailScreen
@@ -166,7 +160,7 @@ fun MemoryNavHost(
             }
         }
     ) { padding ->
-        AnimatedNavHost(
+        NavHost(
             navController = navController,
             startDestination = startDestination,
             modifier = Modifier.padding(padding)
@@ -204,9 +198,7 @@ fun MemoryNavHost(
             composable(
                 "home",
                 enterTransition = { fadeIn(animationSpec = tween(300)) },
-                exitTransition = { fadeOut(animationSpec = tween(300)) },
-                popEnterTransition = { fadeIn(animationSpec = tween(300)) },
-                popExitTransition = { fadeOut(animationSpec = tween(300)) }
+                exitTransition = { fadeOut(animationSpec = tween(300)) }
             ) {
                 HomeScreen(
                     onNavigateToBooks = {
@@ -229,9 +221,7 @@ fun MemoryNavHost(
             composable(
                 "books",
                 enterTransition = { fadeIn(animationSpec = tween(300)) },
-                exitTransition = { fadeOut(animationSpec = tween(300)) },
-                popEnterTransition = { fadeIn(animationSpec = tween(300)) },
-                popExitTransition = { fadeOut(animationSpec = tween(300)) }
+                exitTransition = { fadeOut(animationSpec = tween(300)) }
             ) {
                 BooksScreen(
                     onBookClick = { bookId ->
@@ -254,22 +244,8 @@ fun MemoryNavHost(
             composable(
                 route = "book/{bookId}",
                 arguments = listOf(navArgument("bookId") { type = NavType.IntType }),
-                enterTransition = {
-                    slideInHorizontally(initialOffsetX = { it }, animationSpec = tween(300)) +
-                        fadeIn(animationSpec = tween(300))
-                },
-                exitTransition = {
-                    slideOutHorizontally(targetOffsetX = { -it / 3 }, animationSpec = tween(300)) +
-                        fadeOut(animationSpec = tween(300))
-                },
-                popEnterTransition = {
-                    slideInHorizontally(initialOffsetX = { -it / 3 }, animationSpec = tween(300)) +
-                        fadeIn(animationSpec = tween(300))
-                },
-                popExitTransition = {
-                    slideOutHorizontally(targetOffsetX = { it }, animationSpec = tween(300)) +
-                        fadeOut(animationSpec = tween(300))
-                }
+                enterTransition = { fadeIn(animationSpec = tween(300)) },
+                exitTransition = { fadeOut(animationSpec = tween(300)) }
             ) { backStackEntry ->
                 val bookId = backStackEntry.arguments?.getInt("bookId") ?: return@composable
                 BookDetailScreen(
@@ -280,22 +256,8 @@ fun MemoryNavHost(
 
             composable(
                 "settings",
-                enterTransition = {
-                    slideInVertically(initialOffsetY = { it }, animationSpec = tween(300)) +
-                        fadeIn(animationSpec = tween(300))
-                },
-                exitTransition = {
-                    slideOutVertically(targetOffsetY = { it }, animationSpec = tween(300)) +
-                        fadeOut(animationSpec = tween(300))
-                },
-                popEnterTransition = {
-                    slideInVertically(initialOffsetY = { -it / 3 }, animationSpec = tween(300)) +
-                        fadeIn(animationSpec = tween(300))
-                },
-                popExitTransition = {
-                    slideOutVertically(targetOffsetY = { it / 3 }, animationSpec = tween(300)) +
-                        fadeOut(animationSpec = tween(300))
-                }
+                enterTransition = { fadeIn(animationSpec = tween(300)) },
+                exitTransition = { fadeOut(animationSpec = tween(300)) }
             ) {
                 SettingsScreen(
                     onBack = { navController.popBackStack() },
@@ -314,9 +276,7 @@ fun MemoryNavHost(
             composable(
                 "profile",
                 enterTransition = { fadeIn(animationSpec = tween(300)) },
-                exitTransition = { fadeOut(animationSpec = tween(300)) },
-                popEnterTransition = { fadeIn(animationSpec = tween(300)) },
-                popExitTransition = { fadeOut(animationSpec = tween(300)) }
+                exitTransition = { fadeOut(animationSpec = tween(300)) }
             ) {
                 ProfileScreen(
                     onBack = { navController.popBackStack() }
@@ -327,9 +287,7 @@ fun MemoryNavHost(
                 "invite/{token}",
                 arguments = listOf(navArgument("token") { type = NavType.StringType }),
                 enterTransition = { fadeIn(animationSpec = tween(300)) },
-                exitTransition = { fadeOut(animationSpec = tween(300)) },
-                popEnterTransition = { fadeIn(animationSpec = tween(300)) },
-                popExitTransition = { fadeOut(animationSpec = tween(300)) }
+                exitTransition = { fadeOut(animationSpec = tween(300)) }
             ) { backStackEntry ->
                 val token = backStackEntry.arguments?.getString("token") ?: return@composable
                 InviteScreen(

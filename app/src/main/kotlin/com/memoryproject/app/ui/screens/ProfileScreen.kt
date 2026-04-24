@@ -25,7 +25,6 @@ import androidx.compose.ui.unit.sp
 import com.memoryproject.app.ui.theme.*
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
-import androidx.compose.runtime.rememberCoroutineScope
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -35,7 +34,6 @@ fun ProfileScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
-    val scope = rememberCoroutineScope()
     var showEditNameDialog by remember { mutableStateOf(false) }
     var showInviteDialog by remember { mutableStateOf(false) }
     var editedName by remember { mutableStateOf("") }
@@ -143,11 +141,9 @@ fun ProfileScreen(
             confirmButton = {
                 Button(
                     onClick = {
-                        val email = inviteEmail
                         showInviteDialog = false
                         inviteEmail = ""
-                        viewModel.clearMessage()
-                        scope.launch {
+                        coroutineScope.launch {
                             snackbarHostState.showSnackbar("Coming soon! Family sharing will be available soon.", duration = SnackbarDuration.Short)
                         }
                     },

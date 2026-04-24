@@ -4,6 +4,8 @@ package com.memoryproject.app.ui.books
 
 import android.content.Intent
 
+import android.net.Uri
+
 import androidx.compose.animation.*
 
 import androidx.compose.animation.core.*
@@ -156,11 +158,6 @@ fun BookDetailScreen(
     val scaffoldBg = if (isDark) DarkBackground else Cornsilk
     val topBarTitleColor = if (isDark) DarkOnSurface else Charcoal
     val topBarSubtitleColor = if (isDark) DarkOnSurfaceVariant else CharcoalMuted
-
-    val pullRefreshState = rememberPullRefreshState(
-        refreshing = uiState.isLoading,
-        onRefresh = { viewModel.loadBook() }
-    )
 
     // Clear form when dialogs close
 
@@ -390,8 +387,6 @@ fun BookDetailScreen(
 
                 .padding(padding)
 
-                .pullRefresh(pullRefreshState)
-
         ) {
 
             when {
@@ -498,9 +493,9 @@ fun BookDetailScreen(
 
                                 .background(
 
-                                    brush = Brush.verticalGradient(
+                                    brush = Brush.radialGradient(
 
-                                        colors = if (isDark) listOf(DarkSurfaceVariant, DarkSurface) else listOf(Papaya, Beige)
+                                        colors = if (isDark) listOf(DarkSurfaceVariant, DarkSurfaceVariant) else listOf(Papaya, Beige)
 
                                     ),
 
@@ -512,19 +507,6 @@ fun BookDetailScreen(
 
                         ) {
 
-                            Box(
-                                modifier = Modifier
-                                    .size(80.dp)
-                                    .background(
-                                        brush = Brush.radialGradient(
-                                            colors = listOf(
-                                                Bronze.copy(alpha = 0.2f),
-                                                Color.Transparent
-                                            )
-                                        ),
-                                        shape = CircleShape
-                                    )
-                            )
                             Text("✨", fontSize = 48.sp)
 
                         }
@@ -539,7 +521,7 @@ fun BookDetailScreen(
 
                             fontWeight = FontWeight.SemiBold,
 
-                            color = if (isDark) DarkOnSurface else Charcoal
+                            color = Charcoal
 
                         )
 
@@ -598,6 +580,7 @@ fun BookDetailScreen(
                 }
 
 
+
                 else -> {
 
                     val context = LocalContext.current
@@ -610,9 +593,7 @@ fun BookDetailScreen(
 
                             putExtra(Intent.EXTRA_SUBJECT, memory.prompt_question)
 
-                            putExtra(Intent.EXTRA_TEXT, "${memory.prompt_question}
-
-${memory.answer_text}")
+                            putExtra(Intent.EXTRA_TEXT, "${memory.prompt_question}\n\n${memory.answer_text}")
 
                         }
 
@@ -620,119 +601,115 @@ ${memory.answer_text}")
 
                     }
 
-                    LazyColumn(
+                    val pullRefreshState = rememberPullRefreshState(
 
-                        contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 96.dp),
+                        refreshing = uiState.isLoading,
 
-                        verticalArrangement = Arrangement.spacedBy(14.dp)
+                        onRefresh = { viewModel.loadBook() }
+
+                    )
+
+                    Box(
+
+                        modifier = Modifier
+
+                            .fillMaxSize()
+
+                            .pullRefresh(pullRefreshState)
 
                     ) {
 
-                        // Memory count header
+                        LazyColumn(
 
-                        item {
+                            contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 96.dp),
 
-                            Text(
+                            verticalArrangement = Arrangement.spacedBy(14.dp)
 
-                                "${uiState.memories.size} ${if (uiState.memories.size == 1) "memory" else "memories"}",
+                        ) {
 
-                                style = MaterialTheme.typography.bodyMedium,
+                            // Memory count header
 
-                                color = if (isDark) DarkOnSurfaceVariant else CharcoalMuted,
+                            item {
 
-                                modifier = Modifier.padding(bottom = 4.dp)
+                                Text(
 
-                            )
+                                    "${uiState.memories.size} ${if (uiState.memories.size == 1) "memory" else "memories"}",
 
-                        }
+                                    style = MaterialTheme.typography.bodyMedium,
 
-                        items(
+                                    color = if (isDark) DarkOnSurfaceVariant else CharcoalMuted,
 
-                            items = uiState.memories,
+                                    modifier = Modifier.padding(bottom = 4.dp)
 
-                            key = { it.id }
-
-                        ) { memory ->
-
-                            var visible by remember { mutableStateOf(false) }
-
-                            val scale by animateFloatAsState(
-
-                                targetValue = if (visible) 1f else 0.95f,
-
-                                animationSpec = spring(
-
-                                    dampingRatio = androidx.compose.animation.core.Spring.DampingRatioMediumBouncy,
-
-                                    stiffness = androidx.compose.animation.core.Spring.StiffnessLow
-
-                                ),
-
-                                label = "cardScale"
-
-                            )
-
-                            val alpha by animateFloatAsState(
-
-                                targetValue = if (visible) 1f else 0f,
-
-                                animationSpec = tween(durationMillis = 300),
-
-                                label = "cardAlpha"
-
-                            )
-
-                            LaunchedEffect(memory.id) {
-
-                                delay(50L * uiState.memories.indexOf(memory).coerceAtMost(5))
-
-                                visible = true
+                                )
 
                             }
 
-                            MemoryCard(
+                            items(
 
-                                memory = memory,
+                                items = uiState.memories,
 
-                                onEdit = { viewModel.showEditMemory(memory) },
+                                key = { it.id }
 
-                                onDelete = { viewModel.showDeleteConfirm(memory) },
+                            ) { memory ->
 
-                                onShareClick = { onShareMemory(memory) },
+                                var visible by remember { mutableStateOf(false) }
+                                val scale by animateFloatAsState(
+                                    targetValue = if (visible) 1f else 0.95f,
+                                    animationSpec = spring(
+                                        dampingRatio = androidx.compose.animation.core.Spring.DampingRatioMediumBouncy,
+                                        stiffness = androidx.compose.animation.core.Spring.StiffnessLow
+                                    ),
+                                    label = "cardScale"
+                                )
+                                val alpha by animateFloatAsState(
+                                    targetValue = if (visible) 1f else 0f,
+                                    animationSpec = tween(durationMillis = 300),
+                                    label = "cardAlpha"
+                                )
 
-                                onPhotoClick = { photoUrl -> showPhotoViewer = photoUrl },
-
-                                accentIndex = uiState.memories.indexOf(memory),
-
-                                modifier = Modifier.graphicsLayer {
-
-                                    scaleX = scale
-
-                                    scaleY = scale
-
-                                    this.alpha = alpha
-
+                                LaunchedEffect(memory.id) {
+                                    delay(50L * uiState.memories.indexOf(memory).coerceAtMost(5))
+                                    visible = true
                                 }
 
-                            )
+                                MemoryCard(
+                                    memory = memory,
+                                    onEdit = { viewModel.showEditMemory(memory) },
+                                    onDelete = { viewModel.showDeleteConfirm(memory) },
+                                    onShareClick = { onShareMemory(memory) },
+                                    onPhotoClick = { photoUrl -> showPhotoViewer = photoUrl },
+                                    accentIndex = uiState.memories.indexOf(memory),
+                                    modifier = Modifier.graphicsLayer {
+                                        scaleX = scale
+                                        scaleY = scale
+                                        this.alpha = alpha
+                                    }
+                                )
+
+                            }
 
                         }
+
+                        PullRefreshIndicator(
+
+                            refreshing = uiState.isLoading,
+
+                            state = pullRefreshState,
+
+                            modifier = Modifier.align(Alignment.TopCenter),
+
+                            contentColor = Bronze,
+
+                            backgroundColor = if (isDark) DarkSurfaceVariant else Papaya
+
+                        )
 
                     }
 
                 }
 
-
-
             }
-
-                PullRefreshIndicator(
-                    refreshing = uiState.isLoading,
-                    state = pullRefreshState,
-                    modifier = Modifier.align(Alignment.TopCenter),
-                    contentColor = Bronze,
-                    backgroundColor = if (isDark) DarkSurfaceVariant else Papaya
-                )
 
         }
 
@@ -933,14 +910,16 @@ ${memory.answer_text}")
 
 
     // Photo viewer — full-screen lightbox
-    showPhotoViewer?.let { photoUrl ->
-        PhotoViewer(
-            photoUrl = photoUrl,
-            onDismiss = { showPhotoViewer = null }
-        )
-    }
 
-    // Members sheet
+    showPhotoViewer?.let { photoUrl ->
+
+        PhotoViewer(
+
+            photoUrl = photoUrl,
+
+            onDismiss = { showPhotoViewer = null }
+
+
     if (showMembersSheet) {
         MembersBottomSheet(
             bookId = bookId,
@@ -949,6 +928,10 @@ ${memory.answer_text}")
             snackbarHostState = snackbarHostState
         )
     }
+        )
+
+    }
+
 }
 
 
@@ -1613,7 +1596,7 @@ private fun MembersBottomSheet(
                     modifier = Modifier.height(56.dp),
                     shape = RoundedCornerShape(14.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = Bronze, contentColor = WarmWhite),
-                    elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp, pressedElevation = 8.dp)
+                    elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp)
                 ) {
                     if (isInviting) {
                         CircularProgressIndicator(modifier = Modifier.size(20.dp), color = WarmWhite, strokeWidth = 2.dp)

@@ -38,6 +38,8 @@ class ApiClient {
         val status = resp.status
         val body: String = resp.bodyAsText()
 
+        // Check if response is HTML (not JSON) - Ktor follows redirects
+        // Ktor follows redirects — a failed auth redirect returns HTML instead of JSON
         if (body.startsWith("<!DOCTYPE") || body.startsWith("<html")) {
             throw ApiException("Authentication required. Please sign in again.")
         }
@@ -79,6 +81,7 @@ class ApiClient {
             url { takeFrom(fullUrl) }
             if (sessionCookie != null) header(HttpHeaders.Cookie, sessionCookie)
         }
+        // Capture cookie from login response before handleResponse runs
         sessionCookie = sessionCookie ?: resp.headers[HttpHeaders.SetCookie]?.split(";")?.firstOrNull()
         return handleResponse(resp) { text ->
             try {
@@ -167,18 +170,6 @@ class ApiClient {
     suspend fun removeMember(bookId: Int, userId: Int): Result<Unit> =
         deleteRequest("/api/books/$bookId/members/$userId")
 
-    suspend fun sendMagicLink(email: String): Result<Unit> =
-        postRequest<MagicSendResponse>("/api/auth/magic", MagicLinkRequest(email)).map { }
-
-    suspend fun verifyMagicCode(email: String, code: String): Result<User> =
-        postRequest<MagicVerifyResponse>("/api/auth/verify", MagicVerifyRequest(email, code)).map { it.user }
-
-    suspend fun getMobileAuthUrl(): Result<String> =
-        getRequest<MobileAuthUrlResponse>("/api/auth/mobile-auth-url").map { it.url }
-
-    suspend fun mobileLogin(session: String): Result<User> =
-        postRequest<MobileLoginResponse>("/api/auth/mobile-login", MobileLoginRequest(session)).map { it.user }
-
     fun isLoggedIn(): Boolean = sessionCookie != null
 
     companion object {
@@ -186,6 +177,7 @@ class ApiClient {
     }
 }
 
+// Response wrappers
 @kotlinx.serialization.Serializable
 private data class LoginResponse(val user: User)
 

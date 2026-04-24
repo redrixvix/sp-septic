@@ -1,6 +1,8 @@
 package com.memoryproject.app.data.repository
 
 import com.memoryproject.app.data.api.ApiClient
+import com.memoryproject.app.data.api.ApiException
+import com.memoryproject.app.data.api.UnauthorizedException
 import com.memoryproject.app.data.model.Book
 import com.memoryproject.app.data.model.Memory
 import com.memoryproject.app.data.model.User
@@ -40,14 +42,6 @@ class MemoryRepository(private val api: ApiClient) {
     suspend fun inviteMember(bookId: Int, email: String): Result<InviteResponse> = api.inviteMember(bookId, email)
 
     suspend fun removeMember(bookId: Int, userId: Int): Result<Unit> = api.removeMember(bookId, userId)
-
-    suspend fun sendMagicLink(email: String): Result<Unit> = api.sendMagicLink(email)
-
-    suspend fun verifyMagicCode(email: String, code: String): Result<User> = api.verifyMagicCode(email, code)
-
-    suspend fun getMobileAuthUrl(): Result<String> = api.getMobileAuthUrl()
-
-    suspend fun mobileLogin(session: String): Result<User> = api.mobileLogin(session)
 
     fun isLoggedIn(): Boolean = api.isLoggedIn()
 }
