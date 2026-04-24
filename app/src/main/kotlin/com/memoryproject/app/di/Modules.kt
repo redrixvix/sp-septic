@@ -17,7 +17,7 @@ val appModule = module {
     viewModel { BooksViewModel(get(), get()) }
     viewModel { (bookId: Int) -> BookDetailViewModel(get(), bookId) }
     viewModel { SettingsViewModel(get(), get()) }
-    viewModel { ProfileViewModel(get()) }
+    viewModel { ProfileViewModel(get(), get()) }
 }
 
 val dataModule = module {
