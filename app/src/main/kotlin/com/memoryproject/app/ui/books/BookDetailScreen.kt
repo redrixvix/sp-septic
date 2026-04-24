@@ -726,8 +726,11 @@ private fun formatDate(isoDate: String): String {
             "", "January", "February", "March", "April", "May", "June",
             "July", "August", "September", "October", "November", "December"
         )
-        "${months[parts[1].toInt()]} ${parts[2].toInt()}, ${parts[0].toInt()}"
+        val month = parts[1].toInt()
+        val day = parts[2].toInt()
+        if (month < 1 || month > 12) return isoDate
+        "${months[month]} ${day}, ${parts[0].toInt()}"
     } catch (e: Exception) {
-        isoDate.substringBefore("T")
+        isoDate
     }
 }
