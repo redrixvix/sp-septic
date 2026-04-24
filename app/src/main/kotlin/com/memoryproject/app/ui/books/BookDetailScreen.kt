@@ -87,6 +87,8 @@ import coil.compose.AsyncImage
 
 import com.memoryproject.app.data.model.Memory
 
+import com.memoryproject.app.ui.common.MemoryCard
+
 import com.memoryproject.app.ui.theme.*
 
 import org.koin.androidx.compose.koinViewModel
@@ -471,7 +473,7 @@ fun BookDetailScreen(
 
                         Text(
 
-                            "Start your collection",
+                            "Add your first memory",
 
                             style = MaterialTheme.typography.headlineSmall,
 
@@ -485,7 +487,7 @@ fun BookDetailScreen(
 
                         Text(
 
-                            "Capture a moment, preserve a story. Your memories begin here.",
+                            "Capture a moment, preserve a story — your memories begin here.",
 
                             style = MaterialTheme.typography.bodyLarge,
 
@@ -1206,19 +1208,20 @@ private fun MemoryDialog(
                     ),
 
                     supportingText = {
-
-                        val words = answerInput.split("\\s+".toRegex()).filter { it.isNotBlank() }.size
-
-                        Text(
-
-                            "${answerInput.length} characters · $words ${if (words == 1) "word" else "words"}",
-
-                            color = if (isDark) DarkOnSurfaceVariant else CharcoalMuted,
-
-                            style = MaterialTheme.typography.bodySmall
-
-                        )
-
+                        if (answerInput.isBlank()) {
+                            Text(
+                                "Share what matters",
+                                color = if (isDark) DarkOnSurfaceVariant else CharcoalMuted,
+                                style = MaterialTheme.typography.bodySmall
+                            )
+                        } else {
+                            val words = answerInput.split("\\s+".toRegex()).filter { it.isNotBlank() }.size
+                            Text(
+                                "${answerInput.length} characters · $words ${if (words == 1) "word" else "words"}",
+                                color = if (isDark) DarkOnSurfaceVariant else CharcoalMuted,
+                                style = MaterialTheme.typography.bodySmall
+                            )
+                        }
                     }
 
                 )
@@ -1416,223 +1419,6 @@ private fun MemorySkeletonCard() {
             }
 
         }
-
-    }
-
-}
-
-
-
-@Composable
-private fun MemoryCard(
-    memory: Memory,
-    onEdit: () -> Unit,
-    onDelete: () -> Unit,
-    onShareClick: () -> Unit = {},
-    onPhotoClick: (String) -> Unit = {},
-    accentIndex: Int = 0,
-    modifier: Modifier = Modifier
-) {
-    val isDark = isSystemInDarkTheme()
-    val interactionSource = remember { MutableInteractionSource() }
-    val isPressed by interactionSource.collectIsPressedAsState()
-    val elevation by animateDpAsState(
-        targetValue = if (isPressed) 6.dp else 2.dp,
-        animationSpec = spring(),
-        label = "memCardElevation"
-    )
-
-    // Rotate through accent colors
-    val accentColors = listOf(CardAccentBronze, CardAccentTea, CardAccentPapaya)
-    val accentColor = accentColors[accentIndex % accentColors.size]
-
-    val cardBg = if (isDark) DarkSurface else WarmWhite
-    val promptLabelBg = if (isDark) DarkSurfaceVariant else Papaya.copy(alpha = 0.8f)
-    val promptLabelText = if (isDark) DarkOnSurface else BronzeDark
-    val bodyText = if (isDark) DarkOnSurface else Charcoal
-    val mutedText = if (isDark) DarkOnSurfaceVariant else CharcoalMuted
-    val extraPhotoBg = if (isDark) DarkBronze.copy(alpha = 0.2f) else Bronze.copy(alpha = 0.15f)
-
-    Card(
-        modifier = modifier
-            .fillMaxWidth()
-            .scale(if (isPressed) 0.99f else 1f)
-            .clickable(
-                interactionSource = interactionSource,
-                indication = null,
-                onClick = { }
-            ),
-        shape = RoundedCornerShape(14.dp),
-        colors = CardDefaults.cardColors(containerColor = cardBg),
-        elevation = CardDefaults.cardElevation(defaultElevation = elevation)
-    ) {
-        Row(modifier = Modifier.fillMaxWidth()) {
-            // Left color accent strip
-            Box(
-                modifier = Modifier
-                    .width(4.dp)
-                    .fillMaxHeight()
-                    .background(
-                        color = accentColor.copy(alpha = 0.3f),
-                        shape = RoundedCornerShape(topStart = 14.dp, bottomStart = 14.dp)
-                    )
-            )
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(18.dp)
-            ) {
-                // Header row: prompt + actions
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .background(
-                                color = promptLabelBg,
-                                shape = RoundedCornerShape(10.dp)
-                            )
-                            .clickable { onEdit() }
-                            .padding(horizontal = 12.dp, vertical = 7.dp)
-                    ) {
-                        Text(
-                            text = memory.prompt_question,
-                            style = MaterialTheme.typography.labelMedium,
-                            color = promptLabelText,
-                            fontWeight = FontWeight.Medium,
-                            maxLines = 2,
-                            overflow = TextOverflow.Ellipsis,
-                            modifier = Modifier.weight(1f, fill = false)
-                        )
-                    }
-                    Row {
-                        IconButton(
-                            onClick = onEdit,
-                            modifier = Modifier.size(36.dp)
-                        ) {
-                            Icon(
-                                Icons.Default.Edit,
-                                contentDescription = "Edit",
-                                tint = mutedText,
-                                modifier = Modifier.size(18.dp)
-                            )
-                        }
-                        IconButton(
-                            onClick = onShareClick,
-                            modifier = Modifier.size(36.dp)
-                        ) {
-                            Icon(
-                                Icons.AutoMirrored.Filled.Share,
-                                contentDescription = "Share",
-                                tint = mutedText,
-                                modifier = Modifier.size(18.dp)
-                            )
-                        }
-                        IconButton(
-                            onClick = onDelete,
-                            modifier = Modifier.size(36.dp)
-                        ) {
-                            Icon(
-                                Icons.Default.Delete,
-                                contentDescription = "Delete",
-                                tint = mutedText,
-                                modifier = Modifier.size(18.dp)
-                            )
-                        }
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(12.dp))
-
-                // Answer text
-                Text(
-                    text = memory.answer_text,
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = bodyText,
-                    lineHeight = 26.sp
-                )
-
-                // Photo thumbnails
-                if (memory.photo_urls.isNotEmpty()) {
-                    Spacer(modifier = Modifier.height(12.dp))
-                    Row(
-                        horizontalArrangement = if (memory.photo_urls.size <= 1) Arrangement.Start else Arrangement.spacedBy(8.dp)
-                    ) {
-                        memory.photo_urls.take(3).forEach { url ->
-                            AsyncImage(
-                                model = url,
-                                contentDescription = "Memory photo",
-                                modifier = Modifier
-                                    .size(56.dp)
-                                    .clip(RoundedCornerShape(10.dp))
-                                    .clickable { onPhotoClick(url) },
-                                onError = { }
-                            )
-                        }
-                        val extraCount = memory.photo_urls.size - 3
-                        if (extraCount > 0) {
-                            Box(
-                                modifier = Modifier
-                                    .size(56.dp)
-                                    .background(
-                                        color = extraPhotoBg,
-                                        shape = RoundedCornerShape(10.dp)
-                                    )
-                                    .clickable { memory.photo_urls.getOrNull(3)?.let { onPhotoClick(it) } },
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text(
-                                    "+$extraCount",
-                                    style = MaterialTheme.typography.labelSmall,
-                                    color = if (isDark) DarkOnSurface else BronzeDark
-                                )
-                            }
-                        }
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(12.dp))
-                Text(
-                    text = formatDate(memory.created_at),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = mutedText
-                )
-            }
-        }
-    }
-}
-
-
-
-private fun formatDate(isoDate: String): String {
-
-    return try {
-
-        val parts = isoDate.substringBefore("T").split("-")
-
-        if (parts.size < 3) return isoDate
-
-        val months = listOf(
-
-            "", "January", "February", "March", "April", "May", "June",
-
-            "July", "August", "September", "October", "November", "December"
-
-        )
-
-        val month = parts[1].toInt()
-
-        val day = parts[2].toInt()
-
-        if (month < 1 || month > 12) return isoDate
-
-        "${months[month]} ${day}, ${parts[0].toInt()}"
-
-    } catch (e: Exception) {
-
-        isoDate
 
     }
 

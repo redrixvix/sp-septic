@@ -20,6 +20,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -221,22 +222,12 @@ fun BooksScreen(
                                 lineHeight = 24.sp
                             )
                             Spacer(modifier = Modifier.height(32.dp))
-                            Button(
+                            ShimmerCreateBookButton(
                                 onClick = { showCreateDialog = true },
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .height(52.dp),
-                                shape = RoundedCornerShape(14.dp),
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = Bronze,
-                                    contentColor = WarmWhite
-                                ),
-                                elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp)
-                            ) {
-                                Icon(Icons.Default.Add, contentDescription = null)
-                                Spacer(modifier = Modifier.width(8.dp))
-                                Text("Create Your First Book", fontWeight = FontWeight.SemiBold)
-                            }
+                                    .height(52.dp)
+                            )
                         }
                     }
 
@@ -472,10 +463,17 @@ private fun BookCard(
         animationSpec = spring(stiffness = Spring.StiffnessMedium),
         label = "bookCardElevation"
     )
+    val cardScale by animateFloatAsState(
+        targetValue = if (isPressed) 0.98f else 1f,
+        animationSpec = spring(stiffness = Spring.StiffnessMedium),
+        label = "bookCardScale"
+    )
 
     Card(
         onClick = onClick,
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .scale(cardScale),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = cardBg),
         elevation = CardDefaults.cardElevation(defaultElevation = elevation)
@@ -591,15 +589,17 @@ private fun BooksSkeletonCard(isDark: Boolean) {
     val shimmerBase = if (isDark) DarkDivider else Divider
     val shimmerHighlight = if (isDark) DarkOnSurface.copy(alpha = 0.06f) else Divider.copy(alpha = 0.5f)
 
-    val shimmerAlpha = remember { Animatable(0.3f) }
+    var shimmerAlpha by remember { mutableFloatStateOf(0.3f) }
     LaunchedEffect(Unit) {
-        while (true) {
-            shimmerAlpha.animateTo(0.7f, animationSpec = tween(800, easing = FastOutSlowInEasing))
-            shimmerAlpha.animateTo(0.3f, animationSpec = tween(800, easing = FastOutSlowInEasing))
+        repeat(3) {
+            shimmerAlpha = 0.7f
+            delay(800)
+            shimmerAlpha = 0.3f
+            delay(800)
         }
     }
-    val shimmerBrush = remember(shimmerAlpha.value, shimmerBase, shimmerHighlight) {
-        Brush.linearGradient(listOf(shimmerBase, shimmerHighlight.copy(alpha = shimmerAlpha.value), shimmerBase))
+    val shimmerBrush = remember(shimmerAlpha, shimmerBase, shimmerHighlight) {
+        Brush.linearGradient(listOf(shimmerBase, shimmerHighlight.copy(alpha = shimmerAlpha), shimmerBase))
     }
 
     val cardBg = if (isDark) DarkSurface else WarmWhite
@@ -639,4 +639,49 @@ private fun formatDate(isoDate: String): String {
         if (month < 1 || month > 12) return isoDate
         "${months[month]} $day"
     } catch (e: Exception) { isoDate }
+}
+
+@Composable
+private fun ShimmerCreateBookButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val shimmerAlpha = remember { Animatable(0.1f) }
+    LaunchedEffect(Unit) {
+        while (true) {
+            shimmerAlpha.animateTo(0.2f, animationSpec = tween(1000, easing = FastOutSlowInEasing))
+            shimmerAlpha.animateTo(0.1f, animationSpec = tween(1000, easing = FastOutSlowInEasing))
+        }
+    }
+    val shimmerColor = Bronze.copy(alpha = shimmerAlpha.value)
+    
+    Button(
+        onClick = onClick,
+        modifier = modifier,
+        shape = RoundedCornerShape(14.dp),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = Bronze,
+            contentColor = WarmWhite
+        ),
+        elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp)
+    ) {
+        Box(modifier = Modifier.fillMaxWidth()) {
+            Row(
+                modifier = Modifier.align(Alignment.Center),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Icon(Icons.Default.Add, contentDescription = null)
+                Spacer(modifier = Modifier.width(8.dp))
+                Text("Create Your First Book", fontWeight = FontWeight.SemiBold)
+            }
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(52.dp)
+                    .background(shimmerColor)
+                    .align(Alignment.Center)
+            )
+        }
+    }
 }

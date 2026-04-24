@@ -128,7 +128,7 @@ fun AuthScreen(
 
             // Tagline — warm, inviting
             Text(
-                text = "Your family's stories, preserved forever",
+                text = "Preserve the moments that matter most.",
                 style = MaterialTheme.typography.bodyLarge,
                 color = mutedText,
                 textAlign = TextAlign.Center

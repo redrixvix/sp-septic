@@ -13,6 +13,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.DarkMode
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
@@ -107,6 +108,19 @@ fun SettingsScreen(
                     icon = Icons.Default.Person,
                     title = "Profile",
                     subtitle = uiState.userEmail.ifBlank { "Loading..." },
+                    trailing = {
+                        IconButton(
+                            onClick = onProfileClick,
+                            modifier = Modifier.size(32.dp)
+                        ) {
+                            Icon(
+                                Icons.Default.Edit,
+                                contentDescription = "Edit profile",
+                                tint = if (isDark) DarkBronze else Bronze,
+                                modifier = Modifier.size(16.dp)
+                            )
+                        }
+                    },
                     onClick = onProfileClick
                 )
             }
@@ -116,7 +130,7 @@ fun SettingsScreen(
                 SettingsItem(
                     icon = Icons.Default.DarkMode,
                     title = "Dark Mode",
-                    subtitle = if (uiState.isDarkMode) "On" else "Off",
+                    subtitle = if (uiState.isDarkMode) "🌙 Dark" else "☀️ Light",
                     trailing = {
                         Switch(
                             checked = uiState.isDarkMode,
@@ -165,8 +179,27 @@ fun SettingsScreen(
             SettingsSection(title = "About") {
                 SettingsItem(
                     icon = Icons.Default.Info,
-                    title = "Version"
+                    title = "Version",
                     subtitle = "Build ${BuildConfig.VERSION_CODE}",
+                    trailing = if (BuildConfig.VERSION_CODE >= 3) {
+                        { ->
+                            Box(
+                                modifier = Modifier
+                                    .background(
+                                        color = if (isDark) DarkBronze.copy(alpha = 0.2f) else Bronze.copy(alpha = 0.12f),
+                                        shape = RoundedCornerShape(6.dp)
+                                    )
+                                    .padding(horizontal = 8.dp, vertical = 4.dp)
+                            ) {
+                                Text(
+                                    text = "✓ Latest",
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = if (isDark) DarkBronze else BronzeDark,
+                                    fontWeight = FontWeight.SemiBold
+                                )
+                            }
+                        }
+                    } else null,
                     showDivider = true,
                     onClick = { }
                 )

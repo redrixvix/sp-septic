@@ -38,7 +38,9 @@ fun ProfileScreen(
 
     val isDark = isSystemInDarkTheme()
     val scaffoldBg = if (isDark) DarkBackground else Cornsilk
+    val cardBg = if (isDark) DarkSurface else WarmWhite
     val primaryText = if (isDark) DarkOnSurface else Charcoal
+    val mutedText = if (isDark) DarkOnSurfaceVariant else CharcoalMuted
     val backIconTint = primaryText
 
     LaunchedEffect(uiState.message) {
@@ -144,6 +146,7 @@ fun ProfileScreen(
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
             // Profile avatar + name card — warm, inviting, premium
+            val cardBg = if (isDark) DarkSurface else WarmWhite
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(20.dp),
@@ -273,7 +276,7 @@ fun ProfileScreen(
                                 .background(if (isDark) DarkDivider else Divider)
                         )
                         StatItem(
-                            value = if (uiState.storageUsedBytes > 0) formatStorage(uiState.storageUsedBytes) else "Free",
+                            value = if (uiState.storageUsedBytes > 0) formatStorage(uiState.storageUsedBytes) else "Starter",
                             label = "Plan",
                             highlight = uiState.storageUsedBytes > 0
                         )
@@ -288,6 +291,16 @@ fun ProfileScreen(
                             textAlign = TextAlign.Center
                         )
                     }
+                    if (uiState.storageUsedBytes <= 0) {
+                        Spacer(modifier = Modifier.height(12.dp))
+                        Text(
+                            text = "You can upgrade anytime to unlock more space.",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = if (isDark) DarkOnSurfaceVariant else CharcoalMuted,
+                            modifier = Modifier.fillMaxWidth(),
+                            textAlign = TextAlign.Center
+                        )
+                    }
                 }
             }
 
@@ -296,7 +309,7 @@ fun ProfileScreen(
                 SettingsRow(
                     icon = Icons.Default.Book,
                     label = "Invite family member",
-                    value = "Add contributors to your books",
+                    value = "Share books with family members",
                     onClick = { }
                 )
             }
@@ -308,12 +321,12 @@ fun ProfileScreen(
 
 @Composable
 private fun StatItem(value: String, label: String, highlight: Boolean = false) {
-    val mutedTextColor = if (isSystemInDarkTheme()) DarkOnSurfaceVariant else CharcoalMuted
+    val mutedTextColor = if (isDark) DarkOnSurfaceVariant else CharcoalMuted
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
             text = value,
             style = MaterialTheme.typography.headlineMedium,
-            color = if (highlight) if (isSystemInDarkTheme()) DarkBronze else Bronze else mutedTextColor,
+            color = if (highlight) if (isDark) DarkBronze else Bronze else mutedTextColor,
             fontWeight = FontWeight.Bold
         )
         Text(

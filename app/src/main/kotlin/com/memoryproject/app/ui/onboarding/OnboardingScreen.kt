@@ -1,6 +1,7 @@
 package com.memoryproject.app.ui.onboarding
 
 import androidx.compose.animation.animateDpAsState
+import androidx.compose.animation.animateFloatAsState
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
@@ -69,19 +70,19 @@ private val PAGES = listOf(
     OnboardingPage(
         emoji = "📖",
         title = "Every family has stories\nworth preserving",
-        subtitle = "Capture the moments, voices, and wisdom that make your family uniquely yours — before they fade.",
+        subtitle = "The moments, voices, and wisdom that make your family uniquely yours — preserved forever.",
         accentColor = Bronze
     ),
     OnboardingPage(
         emoji = "✨",
         title = "Write freely,\nat your own pace",
-        subtitle = "No pressure, no structure. Answer thoughtful prompts or just start writing. Your story, your words, your pace.",
+        subtitle = "Answer thoughtful prompts or simply start writing. No pressure, no structure — just your story.",
         accentColor = TeaGreen
     ),
     OnboardingPage(
         emoji = "🌿",
         title = "A gift that lasts\nfor generations",
-        subtitle = "Turn your memories into a beautifully printed book. A keepsake your family will treasure for decades.",
+        subtitle = "Every memory becomes a beautifully printed book — a keepsake your family will treasure for generations.",
         accentColor = BronzeLight
     )
 )
@@ -163,9 +164,15 @@ fun OnboardingScreen(
                             animationSpec = spring(stiffness = Spring.StiffnessHigh),
                             label = "dotSize"
                         )
+                        val dotScale by animateFloatAsState(
+                            targetValue = if (isSelected) 1.15f else 1f,
+                            animationSpec = spring(stiffness = Spring.StiffnessMedium),
+                            label = "dotScale"
+                        )
                         Box(
                             modifier = Modifier
                                 .size(size)
+                                .scale(dotScale)
                                 .clip(CircleShape)
                                 .background(
                                     if (isSelected) PAGES[index].accentColor else mutedText.copy(alpha = 0.3f),

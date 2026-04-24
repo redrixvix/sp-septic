@@ -20,6 +20,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -65,6 +67,12 @@ fun HomeScreen(
             .background(scaffoldBg)
             .pullRefresh(pullRefreshState)
     ) {
+        // Warm ambient bottom gradient for dark mode
+        if (darkTheme) {
+            Box(modifier = Modifier.fillMaxSize().background(
+                Brush.verticalGradient(listOf(DarkBackground.copy(alpha = 0.0f), DarkBackground.copy(alpha = 0.85f), DarkBackground))
+            ))
+        }
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(bottom = 100.dp)
@@ -349,18 +357,17 @@ private fun WelcomeHeader(
                                     )
                             )
                         } else {
-                            val displayName = if (userName.isNotBlank()) userName.split(" ").first() else null
                             val greeting = rememberGreeting()
                             Text(
-                                text = if (displayName != null) "$greeting, $displayName" else greeting,
+                                text = greeting,
                                 style = MaterialTheme.typography.headlineSmall,
                                 color = primaryText,
                                 fontWeight = FontWeight.SemiBold
                             )
                             Spacer(modifier = Modifier.height(6.dp))
                             Text(
-                                text = if (displayName != null) {
-                                    "Ready to capture another moment?"
+                                text = if (userName.isNotBlank()) {
+                                    "Every moment matters"
                                 } else {
                                     "Welcome to Memory Project"
                                 },
@@ -471,6 +478,16 @@ private fun StatCard(
     mutedText: Color,
     modifier: Modifier = Modifier
 ) {
+    val shimmerInfiniteTransition = rememberInfiniteTransition(label = "shimmer")
+    val shimmerOffset by shimmerInfiniteTransition.animateFloat(
+        initialValue = -60f,
+        targetValue = 120f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 1400, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart
+        ),
+        label = "shimmerOffset"
+    )
     Card(
         modifier = modifier,
         shape = RoundedCornerShape(16.dp),
@@ -486,14 +503,43 @@ private fun StatCard(
         ) {
             Box(
                 modifier = Modifier
-                    .size(44.dp)
-                    .background(
-                        color = if (darkTheme) DarkSurfaceVariant else Papaya.copy(alpha = 0.7f),
-                        shape = RoundedCornerShape(12.dp)
-                    ),
+                    .size(44.dp),
                 contentAlignment = Alignment.Center
             ) {
-                Text(icon, fontSize = 22.sp)
+                // Warm gradient background
+                Box(
+                    modifier = Modifier
+                        .matchParentSize()
+                        .background(
+                            brush = Brush.linearGradient(
+                                colors = if (darkTheme) {
+                                    listOf(DarkBronze.copy(alpha = 0.4f), DarkSurfaceVariant)
+                                } else {
+                                    listOf(Bronze.copy(alpha = 0.25f), Papaya.copy(alpha = 0.8f))
+                                }
+                            ),
+                            shape = RoundedCornerShape(12.dp)
+                        )
+                )
+                // Shimmer overlay
+                Box(
+                    modifier = Modifier
+                        .matchParentSize()
+                        .background(
+                            brush = Brush.linearGradient(
+                                colors = listOf(
+                                    Color.Transparent,
+                                    Color.White.copy(alpha = 0.35f),
+                                    Color.Transparent
+                                ),
+                                start = androidx.compose.ui.geometry.Offset(shimmerOffset - 30f, 0f),
+                                end = androidx.compose.ui.geometry.Offset(shimmerOffset + 30f, 0f)
+                            )
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(icon, fontSize = 22.sp)
+                }
             }
             Column {
                 Text(
@@ -560,31 +606,62 @@ private fun QuickActionButton(
     primaryText: Color,
     modifier: Modifier = Modifier
 ) {
-    Card(
-        onClick = onClick,
-        modifier = modifier,
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = if (isPrimary) Bronze else cardBg,
-            contentColor = if (isPrimary) WarmWhite else primaryText
-        ),
-        elevation = CardDefaults.cardElevation(defaultElevation = if (isPrimary) 4.dp else 1.dp)
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
+    if (isPrimary) {
+        Card(
+            onClick = onClick,
+            modifier = modifier,
+            shape = RoundedCornerShape(16.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = Bronze,
+                contentColor = WarmWhite
+            ),
+            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
         ) {
-            Text(icon, fontSize = 20.sp)
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(
-                text = label,
-                style = MaterialTheme.typography.labelLarge,
-                color = if (isPrimary) WarmWhite else primaryText,
-                fontWeight = FontWeight.SemiBold
-            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(icon, fontSize = 20.sp)
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = label,
+                    style = MaterialTheme.typography.labelLarge,
+                    color = WarmWhite,
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
+        }
+    } else {
+        // Secondary button — outlined style with Bronze border
+        OutlinedCard(
+            onClick = onClick,
+            modifier = modifier,
+            shape = RoundedCornerShape(16.dp),
+            colors = CardDefaults.outlinedCardColors(
+                containerColor = Color.Transparent,
+                contentColor = Bronze
+            ),
+            border = CardDefaults.outlinedCardBorder().copy(width = 1.5.dp, brush = SolidColor(if (darkTheme) DarkBronze else Bronze))
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(icon, fontSize = 20.sp)
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = label,
+                    style = MaterialTheme.typography.labelLarge,
+                    color = if (darkTheme) DarkBronzeLight else Bronze,
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
         }
     }
 }
@@ -730,10 +807,10 @@ private fun RecentMemoryCard(
         Row(modifier = Modifier.fillMaxWidth()) {
             Box(
                 modifier = Modifier
-                    .width(4.dp)
+                    .width(3.dp)
                     .fillMaxHeight()
                     .background(
-                        color = accentColor.copy(alpha = 0.3f),
+                        color = accentColor.copy(alpha = 0.45f),
                         shape = RoundedCornerShape(topStart = 14.dp, bottomStart = 14.dp)
                     )
             )
