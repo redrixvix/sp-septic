@@ -87,13 +87,9 @@ class AuthViewModel(private val repository: MemoryRepository) : ViewModel() {
         )
     }
 
-
     fun clearForgotPasswordMessage() {
         _uiState.value = _uiState.value.copy(forgotPasswordMessage = null)
     }
-
-
-    fun logout() {
         viewModelScope.launch {
             repository.logout()
             _uiState.value = AuthUiState(isLoggedIn = false)

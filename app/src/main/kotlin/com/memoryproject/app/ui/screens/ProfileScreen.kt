@@ -291,8 +291,7 @@ fun ProfileScreen(
                     icon = Icons.Default.Book,
                     label = "Invite family member",
                     value = "Add contributors to your books",
-                    onClick = { },
-                    showChevron = true
+                    onClick = { }
                 )
             }
 
