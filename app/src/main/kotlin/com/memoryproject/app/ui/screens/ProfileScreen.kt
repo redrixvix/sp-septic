@@ -1,4 +1,5 @@
 package com.memoryproject.app.ui.screens
+import androidx.compose.ui.graphics.Brush
 
 import androidx.compose.animation.*
 import androidx.compose.foundation.background
@@ -273,7 +274,7 @@ fun ProfileScreen(
 
                         // Name — warm, confident
                         Text(
-                            text = uiState.userName.ifBlank { "Welcome" },
+                            text = uiState.userName.ifBlank { "Your Story" },
                             style = MaterialTheme.typography.headlineMedium,
                             color = primaryText,
                             fontWeight = FontWeight.SemiBold,

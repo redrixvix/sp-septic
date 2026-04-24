@@ -3,6 +3,7 @@ package com.memoryproject.app.ui.settings
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.animation.*
+import com.memoryproject.app.BuildConfig
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -24,6 +25,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.memoryproject.app.ui.theme.*
@@ -50,6 +52,7 @@ fun SettingsScreen(
     val scaffoldBg = if (isDark) DarkBackground else Cornsilk
     val primaryText = if (isDark) DarkOnSurface else Charcoal
     val mutedText = if (isDark) DarkOnSurfaceVariant else CharcoalMuted
+    val cardBg = if (isDark) DarkSurface else WarmWhite
 
     // Show coming soon snackbar for profile row
     LaunchedEffect(uiState.profileMessage) {
@@ -129,24 +132,49 @@ fun SettingsScreen(
             }
             // Appearance section
             SettingsSection(title = "Appearance", cardBg = cardBg, isDark = isDark) {
+                val darkModeActivePill: (@Composable () -> Unit)? = if (uiState.isDarkMode) {
+                    {
+                        Box(
+                            modifier = Modifier
+                                .background(
+                                    color = if (isDark) DarkBronze.copy(alpha = 0.25f) else Bronze.copy(alpha = 0.15f),
+                                    shape = RoundedCornerShape(8.dp)
+                                )
+                                .padding(horizontal = 10.dp, vertical = 5.dp)
+                        ) {
+                            Text(
+                                text = "Active",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = if (isDark) DarkBronze else BronzeDark,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        }
+                    }
+                } else null
                 SettingsItem(
                     icon = Icons.Default.DarkMode,
                     title = "Dark Mode",
                     subtitle = if (uiState.isDarkMode) "🌙 Dark" else "☀️ Light",
                     trailing = {
-                        Switch(
-                            checked = uiState.isDarkMode,
-                            onCheckedChange = {
-                                viewModel.toggleDarkMode()
-                                onToggleDarkMode()
-                            },
-                            colors = SwitchDefaults.colors(
-                                checkedThumbColor = WarmWhite,
-                                checkedTrackColor = Bronze,
-                                uncheckedThumbColor = WarmWhite,
-                                uncheckedTrackColor = if (isDark) DarkBorder else Border
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            if (darkModeActivePill != null) {
+                                darkModeActivePill()
+                                Spacer(modifier = Modifier.width(8.dp))
+                            }
+                            Switch(
+                                checked = uiState.isDarkMode,
+                                onCheckedChange = {
+                                    viewModel.toggleDarkMode()
+                                    onToggleDarkMode()
+                                },
+                                colors = SwitchDefaults.colors(
+                                    checkedThumbColor = WarmWhite,
+                                    checkedTrackColor = Bronze,
+                                    uncheckedThumbColor = WarmWhite,
+                                    uncheckedTrackColor = if (isDark) DarkBorder else Border
+                                )
                             )
-                        )
+                        }
                     },
                     onClick = {
                         viewModel.toggleDarkMode()
@@ -199,7 +227,7 @@ fun SettingsScreen(
                                 text = "✓ Up to date",
                                 style = MaterialTheme.typography.labelSmall,
                                 color = if (isDark) DarkBronze else BronzeDark,
-                                fontWeight = FontWeight.SemiBold
+                                fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold
                             )
                         }
                     },
@@ -351,6 +379,7 @@ private fun SettingsItem(
     val iconBgColor = if (isDark) DarkSurfaceVariant else Bronze.copy(alpha = 0.1f)
     val primaryText = if (isDark) DarkOnSurface else Charcoal
     val mutedText = if (isDark) DarkOnSurfaceVariant else CharcoalMuted
+    val cardBg = if (isDark) DarkSurface else WarmWhite
     val dividerColor = if (isDark) DarkDivider else Divider
 
     Column {

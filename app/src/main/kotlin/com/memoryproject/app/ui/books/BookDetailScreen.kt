@@ -1,108 +1,66 @@
 package com.memoryproject.app.ui.books
-
-
-
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import android.content.Intent
-
 import android.net.Uri
-
 import androidx.compose.animation.*
-
 import androidx.compose.animation.core.*
-
 import androidx.compose.foundation.background
-
-
 import androidx.compose.foundation.clickable
-
 import androidx.compose.foundation.interaction.MutableInteractionSource
-
 import androidx.compose.foundation.interaction.collectIsPressedAsState
-
 import androidx.compose.foundation.layout.*
-
 import androidx.compose.foundation.lazy.LazyColumn
-
 import androidx.compose.foundation.lazy.items
-
 import androidx.compose.foundation.shape.CircleShape
-
 import androidx.compose.foundation.shape.RoundedCornerShape
-
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-
-import androidx.compose.material.icons.automirrored.filled.Groups
-
-import androidx.compose.material.icons.automirrored.filled.Share
-
+import androidx.compose.material.icons.filled.Group
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.PersonRemove
-
 import androidx.compose.material.icons.filled.Add
-
 import androidx.compose.material.icons.filled.Close
-
 import androidx.compose.material.icons.filled.Delete
-
 import androidx.compose.material.icons.filled.Edit
-
 import androidx.compose.material3.*
-
 import androidx.compose.runtime.*
-
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
-
 import androidx.compose.ui.Modifier
-
 import androidx.compose.ui.draw.clip
-
 import androidx.compose.ui.draw.scale
-
 import androidx.compose.ui.graphics.Brush
-
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
-
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.pointerInput
-
+import androidx.compose.ui.input.pointer.rememberTransformableState
+import androidx.compose.ui.input.pointer.transformable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.ui.layout.ContentScale
-
 import androidx.compose.ui.platform.LocalContext
-
 import androidx.compose.ui.text.font.FontWeight
-
 import androidx.compose.ui.text.input.ImeAction
-
 import androidx.compose.ui.text.style.TextAlign
-
 import androidx.compose.ui.text.style.TextOverflow
-
 import androidx.compose.ui.unit.dp
-
 import androidx.compose.ui.unit.sp
-
 import androidx.compose.ui.window.Dialog
-
 import androidx.compose.ui.window.DialogProperties
-
 import coil.compose.AsyncImage
-
 import com.memoryproject.app.data.model.Memory
-
 import com.memoryproject.app.ui.common.MemoryCard
-
 import com.memoryproject.app.ui.theme.*
-
 import org.koin.androidx.compose.koinViewModel
-
 import org.koin.core.parameter.parametersOf
 import org.koin.compose.koinInject
 import com.memoryproject.app.data.model.BookMember
 import androidx.compose.foundation.text.KeyboardActions
 import kotlinx.coroutines.launch
-
-
+import kotlinx.coroutines.delay
 
 private val PROMPT_SUGGESTIONS = listOf(
 
@@ -156,6 +114,7 @@ fun BookDetailScreen(
     var showMembersSheet by remember { mutableStateOf(false) }
     val snackbarHostState = remember { SnackbarHostState() }
     val darkTheme = darkTheme
+    val scaffoldBg = if (darkTheme) DarkBackground else Cornsilk
     val topBarTitleColor = if (darkTheme) DarkOnSurface else Charcoal
     val topBarSubtitleColor = if (darkTheme) DarkOnSurfaceVariant else CharcoalMuted
 
@@ -311,7 +270,7 @@ fun BookDetailScreen(
 
                         Icon(
 
-                            Icons.AutoMirrored.Filled.Groups,
+                            Icons.Default.Group,
 
                             contentDescription = "Members",
 
@@ -515,7 +474,7 @@ fun BookDetailScreen(
 
                         Text(
 
-                            "Every great book starts with a single memory",
+                            "Your story starts here",
 
                             style = MaterialTheme.typography.headlineSmall,
 
@@ -529,7 +488,7 @@ fun BookDetailScreen(
 
                         Text(
 
-                            "Capture your first moment — your family will thank you for it someday.",
+                            "Every memory you capture is a gift to the people you'll leave behind.",
 
                             style = MaterialTheme.typography.bodyLarge,
 
@@ -938,117 +897,114 @@ fun BookDetailScreen(
 @Composable
 
 private fun PhotoViewer(
-
     photoUrl: String,
-
     onDismiss: () -> Unit
-
 ) {
-
-    Dialog(
-
-        onDismissRequest = onDismiss,
-
-        properties = DialogProperties(
-
-            usePlatformDefaultWidth = false,
-
-            dismissOnBackPress = true,
-
-            dismissOnClickOutside = true
-
-        )
-
-    ) {
-
-        Box(
-
-            modifier = Modifier
-
-                .fillMaxSize()
-
-                .background(Color.Black.copy(alpha = 0.92f))
-
-                .clickable(
-
-                    interactionSource = remember { MutableInteractionSource() },
-
-                    indication = null,
-
-                    onClick = onDismiss
-
-                ),
-
-            contentAlignment = Alignment.Center
-
-        ) {
-
-            AsyncImage(
-
-                model = photoUrl,
-
-                contentDescription = "Full size photo",
-
-                modifier = Modifier
-
-                    .fillMaxWidth()
-
-                    .padding(24.dp)
-
-                    .clip(RoundedCornerShape(16.dp)),
-
-                contentScale = ContentScale.Fit
-
-            )
-
-
-
-            // Close button
-
-            IconButton(
-
-                onClick = onDismiss,
-
-                modifier = Modifier
-
-                    .align(Alignment.TopEnd)
-
-                    .padding(24.dp)
-
-                    .size(44.dp)
-
-                    .background(
-
-                        color = Color.Black.copy(alpha = 0.5f),
-
-                        shape = CircleShape
-
-                    )
-
-            ) {
-
-                Icon(
-
-                    Icons.Default.Close,
-
-                    contentDescription = "Close",
-
-                    tint = Color.White
-
-                )
-
-            }
-
+    var scale by remember { mutableStateOf(1f) }
+    var offset by remember { mutableStateOf(Offset.Zero) }
+    val transformableState = rememberTransformableState { zoomChange, panChange, _ ->
+        scale = (scale * zoomChange).coerceIn(1f, 4f)
+        if (scale > 1f) {
+            offset += panChange
+        } else {
+            offset = Offset.Zero
         }
-
     }
 
+    // Double tap to toggle zoom
+    val doubleTapModifier = Modifier.pointerInput(photoUrl) {
+        detectTapGestures(
+            onDoubleTap = {
+                scale = if (scale > 1f) 1f else 2f
+                offset = Offset.Zero
+            }
+        )
+    }
+
+    Dialog(
+        onDismissRequest = onDismiss,
+        properties = DialogProperties(
+            usePlatformDefaultWidth = false,
+            dismissOnBackPress = true,
+            dismissOnClickOutside = true
+        )
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black.copy(alpha = 0.92f))
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null,
+                    onClick = onDismiss
+                ),
+            contentAlignment = Alignment.Center
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .transformable(state = transformableState)
+                    .doubleTapModifier,
+                contentAlignment = Alignment.Center
+            ) {
+                AsyncImage(
+                    model = photoUrl,
+                    contentDescription = "Full size photo",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(24.dp)
+                        .clip(RoundedCornerShape(16.dp))
+                        .graphicsLayer {
+                            scaleX = scale
+                            scaleY = scale
+                            translationX = offset.x
+                            translationY = offset.y
+                        },
+                    contentScale = ContentScale.Fit
+                )
+            }
+
+            // Close button
+            IconButton(
+                onClick = onDismiss,
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(24.dp)
+                    .size(44.dp)
+                    .background(
+                        color = Color.Black.copy(alpha = 0.5f),
+                        shape = CircleShape
+                    )
+            ) {
+                Icon(
+                    Icons.Default.Close,
+                    contentDescription = "Close",
+                    tint = Color.White
+                )
+            }
+
+            // Zoom hint — shown briefly
+            var showHint by remember { mutableStateOf(true) }
+            LaunchedEffect(Unit) {
+                delay(2000)
+                showHint = false
+            }
+            if (showHint && scale == 1f) {
+                Text(
+                    "Pinch to zoom · Double-tap",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = Color.White.copy(alpha = 0.5f),
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .padding(bottom = 32.dp)
+                )
+            }
+        }
+    }
 }
 
 
-
 @OptIn(ExperimentalLayoutApi::class)
-
 @Composable
 
 private fun MemoryDialog(
@@ -1134,9 +1090,11 @@ private fun MemoryDialog(
 
                     ),
 
-                    supportingText = if (promptInput.isBlank()) {
-                        Text("Or pick a prompt below to get started", color = if (darkTheme) DarkOnSurfaceVariant else CharcoalMuted, style = MaterialTheme.typography.bodySmall)
-                    } else null
+                    supportingText = {
+                        if (promptInput.isBlank()) {
+                            Text("Or pick a prompt below to get started", color = if (darkTheme) DarkOnSurfaceVariant else CharcoalMuted, style = MaterialTheme.typography.bodySmall)
+                        }
+                    }
 
                 )
 
@@ -1380,6 +1338,7 @@ private fun MemorySkeletonCard(darkTheme: Boolean) {
     }
 
     val cardBg = if (darkTheme) DarkSurface else WarmWhite
+    val scaffoldBg = if (darkTheme) DarkBackground else Cornsilk
 
 
 
@@ -1490,6 +1449,7 @@ private fun MembersBottomSheet(
     var inviteError by remember { mutableStateOf<String?>(null) }
 
     val cardBg = if (darkTheme) DarkSurface else WarmWhite
+    val scaffoldBg = if (darkTheme) DarkBackground else Cornsilk
     val primaryText = if (darkTheme) DarkOnSurface else Charcoal
     val mutedText = if (darkTheme) DarkOnSurfaceVariant else CharcoalMuted
     val borderColor = if (darkTheme) DarkBorder else Border

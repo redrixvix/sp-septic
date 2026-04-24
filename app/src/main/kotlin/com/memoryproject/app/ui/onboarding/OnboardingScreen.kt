@@ -1,7 +1,7 @@
 package com.memoryproject.app.ui.onboarding
 
-import androidx.compose.animation.animateDpAsState
-import androidx.compose.animation.animateFloatAsState
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
@@ -40,6 +41,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -68,20 +70,20 @@ private data class OnboardingPage(
 private val PAGES = listOf(
     OnboardingPage(
         emoji = "📖",
-        title = "Every family has stories\nworth preserving",
-        subtitle = "The moments, voices, and wisdom that make your family uniquely yours — preserved forever.",
+        title = "Your family's stories\ndeserve to live forever",
+        subtitle = "Gather the moments, stories, and wisdom that make your family who they are — and preserve them forever.",
         accentColor = Bronze
     ),
     OnboardingPage(
         emoji = "✨",
-        title = "Write freely,\nat your own pace",
-        subtitle = "Answer thoughtful prompts or follow your own thread. No pressure, no structure — just your story, in your own time.",
+        title = "Write in your own\nwords, your own time",
+        subtitle = "Guided prompts or free-form — whatever feels right. No pressure, no structure. Just your story.",
         accentColor = TeaGreen
     ),
     OnboardingPage(
         emoji = "🌿",
-        title = "A gift that lasts\nfor generations",
-        subtitle = "Every memory becomes a beautifully printed book — a keepsake your family will treasure for generations.",
+        title = "Print a real book\nyour family will keep",
+        subtitle = "Every story becomes a beautifully printed hardcover book — a tangible keepsake your family will hold onto for generations.",
         accentColor = BronzeLight
     )
 )
@@ -210,7 +212,7 @@ fun OnboardingScreen(
                     )
                 ) {
                     Text(
-                        text = if (isLastPage) "Begin Your Story" else "Continue",
+                        text = if (isLastPage) "Start Capturing" else "Continue",
                         style = MaterialTheme.typography.labelLarge,
                         fontWeight = FontWeight.SemiBold
                     )

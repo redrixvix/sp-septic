@@ -1,7 +1,6 @@
 package com.memoryproject.app.data.model
 
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.JsonProperty
 
 @Serializable
 data class User(
@@ -69,7 +68,7 @@ data class InviteInfo(val book_id: Int, val book_title: String, val role: String
 @Serializable
 data class InviteAcceptResponse(val success: Boolean, val book_id: Int = 0)
 @Serializable
-data class InviteResponse(@JsonProperty("invite_url") val invite_link: String)
+data class InviteResponse(val invite_link: String)
 @Serializable
 data class InviteRequest(val email: String)
 @Serializable

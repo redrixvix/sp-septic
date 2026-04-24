@@ -11,8 +11,9 @@ import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Share
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -119,14 +120,13 @@ fun MemoryCard(
                             fontWeight = FontWeight.Medium,
                             maxLines = 2,
                             overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.widthIn(max = 200.dp)
+                            modifier = Modifier.widthIn(max = 200.dp)
                         )
                     }
+                    var visible by remember { mutableStateOf(true) }
                     AnimatedVisibility(
-                        enter = fadeIn(animationSpec = tween(300, delayMillis = 100)) + scaleIn(
-                            initialScale = 0.5f,
-                            animationSpec = tween(300, delayMillis = 100)
-                        )
+                        visible = visible,
+                        enter = fadeIn(animationSpec = tween(300))
                     ) {
                         Row {
                             IconButton(
@@ -134,8 +134,19 @@ fun MemoryCard(
                                 modifier = Modifier.size(36.dp)
                             ) {
                                 Icon(
-                                    Icons.AutoMirrored.Filled.Share,
+                                    Icons.Default.Share,
                                     contentDescription = "Share",
+                                    tint = mutedText,
+                                    modifier = Modifier.size(18.dp)
+                                )
+                            }
+                            IconButton(
+                                onClick = onEdit,
+                                modifier = Modifier.size(36.dp)
+                            ) {
+                                Icon(
+                                    Icons.Default.Edit,
+                                    contentDescription = "Edit",
                                     tint = mutedText,
                                     modifier = Modifier.size(18.dp)
                                 )

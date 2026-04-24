@@ -1,8 +1,16 @@
 package com.memoryproject.app.ui.books
+import androidx.compose.foundation.lazy.itemsIndexed
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
 
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -13,9 +21,6 @@ import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
-import androidx.compose.material3.pulltorefresh.PullRefreshIndicator
-import androidx.compose.material3.pulltorefresh.pullRefresh
-import androidx.compose.material3.pulltorefresh.rememberPullRefreshState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -83,7 +88,7 @@ fun BooksScreen(
                         )
                         if (uiState.books.isNotEmpty()) {
                             Text(
-                                "${uiState.books.size} ${uiState.books.size == 1 ? "book" else "books"}",
+                                uiState.books.size.toString() + " " + (if (uiState.books.size == 1) "book" else "books"),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = mutedText
                             )
@@ -123,17 +128,8 @@ fun BooksScreen(
                             contentPadding = PaddingValues(16.dp),
                             verticalArrangement = Arrangement.spacedBy(14.dp)
                         ) {
-                            repeat(4) { index ->
-                                item(key = "skeleton_$index") {
-                                    var visible by remember { mutableStateOf(false) }
-                                    LaunchedEffect(index) { visible = true }
-                                    AnimatedVisibility(
-                                        visible = visible,
-                                        enter = fadeIn(animationSpec = tween(300, delayMillis = index * 80))
-                                    ) {
-                                        BooksSkeletonCard(darkTheme = darkTheme)
-                                    }
-                                }
+                            items(4) { index ->
+                                BooksSkeletonCard(darkTheme = darkTheme, index = index)
                             }
                         }
                     }
@@ -209,14 +205,14 @@ fun BooksScreen(
                             }
                             Spacer(modifier = Modifier.height(28.dp))
                             Text(
-                                "Your story is waiting",
+                                "Ready to begin?",
                                 style = MaterialTheme.typography.headlineSmall,
                                 fontWeight = FontWeight.SemiBold,
                                 color = primaryText
                             )
                             Spacer(modifier = Modifier.height(10.dp))
                             Text(
-                                "Start a book for your family — every story deserves to be remembered.",
+                                "Start your first book and capture the moments worth remembering — before they slip away.",
                                 style = MaterialTheme.typography.bodyLarge,
                                 color = mutedText,
                                 lineHeight = 24.sp
@@ -236,28 +232,15 @@ fun BooksScreen(
                             contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 96.dp),
                             verticalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
-                            itemsIndexed(
-                                items = uiState.books,
-                                key = { _, book -> "book_${book.id}" }
-                            ) { index, book ->
-                                var visible by remember { mutableStateOf(false) }
-                                LaunchedEffect(book.id) {
-                                    visible = true
-                                }
-                                AnimatedVisibility(
-                                    visible = visible,
-                                    enter = fadeIn(animationSpec = tween(400, delayMillis = index * 60)) +
-                                            slideInVertically(animationSpec = tween(400, delayMillis = index * 60), initialOffsetY = { it / 4 })
-                                ) {
-                                    BookCard(
-                                        book = book,
-                                        onClick = { onBookClick(book.id) },
-                                        darkTheme = darkTheme,
-                                        cardBg = cardBg,
-                                        primaryText = primaryText,
-                                        mutedText = mutedText
-                                    )
-                                }
+                            items(uiState.books) { book ->
+                                BookCard(
+                                    book = book,
+                                    onClick = { onBookClick(book.id) },
+                                    darkTheme = darkTheme,
+                                    cardBg = cardBg,
+                                    primaryText = primaryText,
+                                    mutedText = mutedText
+                                )
                             }
                         }
                     }
@@ -286,6 +269,8 @@ fun BooksScreen(
             ) {
                 Icon(Icons.Default.Add, contentDescription = "Create new book")
                 Spacer(modifier = Modifier.width(8.dp))
+                Text("✨", fontSize = 16.sp)
+                Spacer(modifier = Modifier.width(4.dp))
                 Text("New Book", style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.SemiBold)
             }
         }
@@ -549,7 +534,7 @@ private fun BookCard(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "${book.memories_count ?: 0} ${(book.memories_count ?: 0) == 1 ? "memory" : "memories"}",
+                        text = (book.memories_count ?: 0).toString() + " " + (if ((book.memories_count ?: 0) == 1) "memory" else "memories"),
                         style = MaterialTheme.typography.bodySmall,
                         color = mutedText
                     )

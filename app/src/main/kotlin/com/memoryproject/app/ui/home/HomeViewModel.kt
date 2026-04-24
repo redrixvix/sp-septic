@@ -6,6 +6,8 @@ import com.memoryproject.app.data.model.Book
 import com.memoryproject.app.data.model.Memory
 import com.memoryproject.app.data.repository.MemoryRepository
 import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -89,33 +91,35 @@ class HomeViewModel(
             .sortedByDescending { it.updated_at ?: it.created_at }
             .take(3)
 
-        // Fetch all in parallel with a timeout
-        val memoriesDeferreds = recentBooks.map { book ->
-            async {
-                repository.getBook(book.id)
-                    .getOrNull()
-                    ?.second
-                    ?: emptyList()
+        // Use coroutineScope to enable async inside suspend function
+        coroutineScope {
+            val memoriesDeferreds = recentBooks.map { book ->
+                async {
+                    repository.getBook(book.id)
+                        .getOrNull()
+                        ?.second
+                        ?: emptyList()
+                }
             }
-        }
 
-        try {
-            withTimeoutOrNull(8000L) {
-                val results = memoriesDeferreds.awaitAll()
-                val allMemories = results.flatten()
-                    .sortedByDescending { it.created_at }
-                    .take(10)
-
-                _uiState.value = _uiState.value.copy(
-                    isLoading = false,
-                    recentMemories = allMemories
-                )
-            } ?: run {
-                // Timeout — show what we have
+            try {
+                val results = withTimeoutOrNull(8000L) {
+                    memoriesDeferreds.awaitAll()
+                }
+                if (results != null) {
+                    val allMemories = results.flatten()
+                        .sortedByDescending { it.created_at }
+                        .take(10)
+                    _uiState.value = _uiState.value.copy(
+                        isLoading = false,
+                        recentMemories = allMemories
+                    )
+                } else {
+                    _uiState.value = _uiState.value.copy(isLoading = false)
+                }
+            } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(isLoading = false)
             }
-        } catch (e: Exception) {
-            _uiState.value = _uiState.value.copy(isLoading = false)
         }
     }
 

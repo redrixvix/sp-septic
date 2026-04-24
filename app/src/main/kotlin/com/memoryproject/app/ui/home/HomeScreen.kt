@@ -1,4 +1,7 @@
 package com.memoryproject.app.ui.home
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
 
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
@@ -11,10 +14,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
-import androidx.compose.material3.pulltorefresh.PullRefreshIndicator
-import androidx.compose.material3.pulltorefresh.pullRefresh
-import androidx.compose.material3.pulltorefresh.rememberPullRefreshState
 import androidx.compose.runtime.*
+import kotlinx.coroutines.delay
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -46,6 +47,7 @@ fun HomeScreen(
     onNavigateToBooks: () -> Unit,
     onNavigateToBook: (Int) -> Unit,
     onNavigateToProfile: () -> Unit,
+    onNavigateToAddMemory: () -> Unit = {},
     darkTheme: Boolean,
     viewModel: HomeViewModel = koinViewModel()
 ) {
@@ -711,7 +713,7 @@ private fun EmptyHomeCard(
                 Spacer(modifier = Modifier.height(24.dp))
 
                 Text(
-                    text = "Your story starts here",
+                    text = "Every great book starts with a single page",
                     style = MaterialTheme.typography.headlineSmall,
                     color = primaryText,
                     fontWeight = FontWeight.SemiBold,
@@ -721,7 +723,7 @@ private fun EmptyHomeCard(
                 Spacer(modifier = Modifier.height(10.dp))
 
                 Text(
-                    text = "Every family has stories worth preserving. Capture your first memory and begin building something precious.",
+                    text = "Capture your first memory — start writing the story your family will treasure forever.",
                     style = MaterialTheme.typography.bodyMedium,
                     color = mutedText,
                     textAlign = TextAlign.Center,
@@ -916,7 +918,7 @@ private fun BookMiniCard(
                     overflow = TextOverflow.Ellipsis
                 )
                 Text(
-                    text = "${book.memories_count ?: 0} ${(book.memories_count ?: 0) == 1 ? "memory" else "memories"}",
+                    text = (book.memories_count ?: 0).toString() + " " + (if ((book.memories_count ?: 0) == 1) "memory" else "memories"),
                     style = MaterialTheme.typography.bodySmall,
                     color = mutedText
                 )

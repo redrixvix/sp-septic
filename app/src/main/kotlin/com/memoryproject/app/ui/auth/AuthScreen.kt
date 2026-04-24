@@ -219,9 +219,11 @@ fun AuthScreen(
                     )
                 },
                 isError = emailError != null && email.isNotEmpty(),
-                supportingText = if (emailError != null && email.isNotEmpty()) {
-                    Text(emailError, color = ErrorRed)
-                } else null,
+                supportingText = {
+                    if (emailError != null && email.isNotEmpty()) {
+                        Text(emailError, color = ErrorRed)
+                    }
+                },
                 modifier = Modifier.fillMaxWidth(),
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Email,
@@ -318,9 +320,11 @@ fun AuthScreen(
                         )
                     }
                 },
-                supportingText = if (passwordHint != null) {
-                    Text(passwordHint, color = mutedText)
-                } else null,
+                supportingText = {
+                    if (passwordHint != null) {
+                        Text(passwordHint, color = mutedText)
+                    }
+                },
                 visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
                 modifier = Modifier.fillMaxWidth(),
                 keyboardOptions = KeyboardOptions(

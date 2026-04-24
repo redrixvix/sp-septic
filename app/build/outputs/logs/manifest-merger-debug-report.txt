@@ -1,9 +1,9 @@
 -- Merging decision tree log ---
 manifest
-ADDED from /home/rixvix/.openclaw/workspace/memory-project/kmp/app/src/main/AndroidManifest.xml:2:1-28:12
-INJECTED from /home/rixvix/.openclaw/workspace/memory-project/kmp/app/src/main/AndroidManifest.xml:2:1-28:12
-INJECTED from /home/rixvix/.openclaw/workspace/memory-project/kmp/app/src/main/AndroidManifest.xml:2:1-28:12
-INJECTED from /home/rixvix/.openclaw/workspace/memory-project/kmp/app/src/main/AndroidManifest.xml:2:1-28:12
+ADDED from /home/rixvix/.openclaw/workspace/memory-project/kmp/app/src/main/AndroidManifest.xml:2:1-35:12
+INJECTED from /home/rixvix/.openclaw/workspace/memory-project/kmp/app/src/main/AndroidManifest.xml:2:1-35:12
+INJECTED from /home/rixvix/.openclaw/workspace/memory-project/kmp/app/src/main/AndroidManifest.xml:2:1-35:12
+INJECTED from /home/rixvix/.openclaw/workspace/memory-project/kmp/app/src/main/AndroidManifest.xml:2:1-35:12
 MERGED from [androidx.navigation:navigation-common:2.7.7] /home/rixvix/.gradle/caches/transforms-4/1eeebfde154f66e90240a4324d778567/transformed/navigation-common-2.7.7/AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.navigation:navigation-runtime:2.7.7] /home/rixvix/.gradle/caches/transforms-4/19a33d1a721bc0f9dda2699907992770/transformed/navigation-runtime-2.7.7/AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.navigation:navigation-common-ktx:2.7.7] /home/rixvix/.gradle/caches/transforms-4/c9320eb43101dd8de82db96c7e88cfd0/transformed/navigation-common-ktx-2.7.7/AndroidManifest.xml:2:1-7:12
@@ -98,8 +98,8 @@ ADDED from /home/rixvix/.openclaw/workspace/memory-project/kmp/app/src/main/Andr
 	android:name
 		ADDED from /home/rixvix/.openclaw/workspace/memory-project/kmp/app/src/main/AndroidManifest.xml:5:22-76
 application
-ADDED from /home/rixvix/.openclaw/workspace/memory-project/kmp/app/src/main/AndroidManifest.xml:7:5-26:19
-INJECTED from /home/rixvix/.openclaw/workspace/memory-project/kmp/app/src/main/AndroidManifest.xml:7:5-26:19
+ADDED from /home/rixvix/.openclaw/workspace/memory-project/kmp/app/src/main/AndroidManifest.xml:7:5-34:19
+INJECTED from /home/rixvix/.openclaw/workspace/memory-project/kmp/app/src/main/AndroidManifest.xml:7:5-34:19
 MERGED from [io.insert-koin:koin-android:3.5.3] /home/rixvix/.gradle/caches/transforms-4/116cecbd42a1d26b26dc11f5739a25c7/transformed/jetified-koin-android-3.5.3/AndroidManifest.xml:9:5-20
 MERGED from [io.insert-koin:koin-android:3.5.3] /home/rixvix/.gradle/caches/transforms-4/116cecbd42a1d26b26dc11f5739a25c7/transformed/jetified-koin-android-3.5.3/AndroidManifest.xml:9:5-20
 MERGED from [androidx.compose.ui:ui-tooling-android:1.7.4] /home/rixvix/.gradle/caches/transforms-4/b75cbc89a8587c53cb8f4efefe8b445b/transformed/jetified-ui-tooling-release/AndroidManifest.xml:22:5-26:19
@@ -131,7 +131,7 @@ MERGED from [androidx.startup:startup-runtime:1.1.1] /home/rixvix/.gradle/caches
 	android:icon
 		ADDED from /home/rixvix/.openclaw/workspace/memory-project/kmp/app/src/main/AndroidManifest.xml:10:9-43
 	android:allowBackup
-		ADDED from /home/rixvix/.openclaw/workspace/memory-project/kmp/app/src/main/AndroidManifest.xml:9:9-35
+		ADDED from /home/rixvix/.openclaw/workspace/memory-project/kmp/app/src/main/AndroidManifest.xml:9:9-36
 	android:theme
 		ADDED from /home/rixvix/.openclaw/workspace/memory-project/kmp/app/src/main/AndroidManifest.xml:14:9-51
 	android:usesCleartextTraffic
@@ -139,11 +139,11 @@ MERGED from [androidx.startup:startup-runtime:1.1.1] /home/rixvix/.gradle/caches
 	android:name
 		ADDED from /home/rixvix/.openclaw/workspace/memory-project/kmp/app/src/main/AndroidManifest.xml:8:9-41
 activity#com.memoryproject.app.MainActivity
-ADDED from /home/rixvix/.openclaw/workspace/memory-project/kmp/app/src/main/AndroidManifest.xml:17:9-25:20
+ADDED from /home/rixvix/.openclaw/workspace/memory-project/kmp/app/src/main/AndroidManifest.xml:17:9-33:20
 	android:exported
 		ADDED from /home/rixvix/.openclaw/workspace/memory-project/kmp/app/src/main/AndroidManifest.xml:19:13-36
 	android:theme
-		ADDED from /home/rixvix/.openclaw/workspace/memory-project/kmp/app/src/main/AndroidManifest.xml:20:13-55
+		ADDED from /home/rixvix/.openclaw/workspace/memory-project/kmp/app/src/main/AndroidManifest.xml:20:13-62
 	android:name
 		ADDED from /home/rixvix/.openclaw/workspace/memory-project/kmp/app/src/main/AndroidManifest.xml:18:13-41
 intent-filter#action:name:android.intent.action.MAIN+category:name:android.intent.category.LAUNCHER
@@ -156,6 +156,26 @@ category#android.intent.category.LAUNCHER
 ADDED from /home/rixvix/.openclaw/workspace/memory-project/kmp/app/src/main/AndroidManifest.xml:23:17-77
 	android:name
 		ADDED from /home/rixvix/.openclaw/workspace/memory-project/kmp/app/src/main/AndroidManifest.xml:23:27-74
+intent-filter#action:name:android.intent.action.VIEW+category:name:android.intent.category.BROWSABLE+category:name:android.intent.category.DEFAULT+data:host:invite+data:scheme:memoryproject
+ADDED from /home/rixvix/.openclaw/workspace/memory-project/kmp/app/src/main/AndroidManifest.xml:25:13-32:29
+action#android.intent.action.VIEW
+ADDED from /home/rixvix/.openclaw/workspace/memory-project/kmp/app/src/main/AndroidManifest.xml:26:17-69
+	android:name
+		ADDED from /home/rixvix/.openclaw/workspace/memory-project/kmp/app/src/main/AndroidManifest.xml:26:25-66
+category#android.intent.category.DEFAULT
+ADDED from /home/rixvix/.openclaw/workspace/memory-project/kmp/app/src/main/AndroidManifest.xml:27:17-76
+	android:name
+		ADDED from /home/rixvix/.openclaw/workspace/memory-project/kmp/app/src/main/AndroidManifest.xml:27:27-73
+category#android.intent.category.BROWSABLE
+ADDED from /home/rixvix/.openclaw/workspace/memory-project/kmp/app/src/main/AndroidManifest.xml:28:17-78
+	android:name
+		ADDED from /home/rixvix/.openclaw/workspace/memory-project/kmp/app/src/main/AndroidManifest.xml:28:27-75
+data
+ADDED from /home/rixvix/.openclaw/workspace/memory-project/kmp/app/src/main/AndroidManifest.xml:29:17-31:45
+	android:host
+		ADDED from /home/rixvix/.openclaw/workspace/memory-project/kmp/app/src/main/AndroidManifest.xml:31:21-42
+	android:scheme
+		ADDED from /home/rixvix/.openclaw/workspace/memory-project/kmp/app/src/main/AndroidManifest.xml:30:21-51
 uses-sdk
 INJECTED from /home/rixvix/.openclaw/workspace/memory-project/kmp/app/src/main/AndroidManifest.xml reason: use-sdk injection requested
 INJECTED from /home/rixvix/.openclaw/workspace/memory-project/kmp/app/src/main/AndroidManifest.xml
