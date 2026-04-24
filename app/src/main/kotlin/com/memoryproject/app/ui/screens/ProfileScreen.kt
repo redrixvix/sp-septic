@@ -35,6 +35,7 @@ fun ProfileScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
     var showEditNameDialog by remember { mutableStateOf(false) }
     var showInviteDialog by remember { mutableStateOf(false) }
     var editedName by remember { mutableStateOf("") }
@@ -142,10 +143,11 @@ fun ProfileScreen(
             confirmButton = {
                 Button(
                     onClick = {
+                        val email = inviteEmail
                         showInviteDialog = false
                         inviteEmail = ""
-                        val scope = rememberCoroutineScope()
-                    scope.launch {
+                        viewModel.clearMessage()
+                        scope.launch {
                             snackbarHostState.showSnackbar("Coming soon! Family sharing will be available soon.", duration = SnackbarDuration.Short)
                         }
                     },

@@ -4,8 +4,6 @@ package com.memoryproject.app.ui.books
 
 import android.content.Intent
 
-import android.net.Uri
-
 import androidx.compose.animation.*
 
 import androidx.compose.animation.core.*
