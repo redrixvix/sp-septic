@@ -139,33 +139,51 @@ fun BooksScreen(
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = scaffoldBg)
             )
 
-            // Search bar
-            OutlinedTextField(
-                value = searchQuery,
-                onValueChange = { searchQuery = it },
-                placeholder = { Text("Search books...", color = mutedText) },
-                leadingIcon = { Icon(Icons.Default.Search, contentDescription = null, tint = mutedText) },
-                trailingIcon = {
-                    if (searchQuery.isNotEmpty()) {
-                        IconButton(onClick = { searchQuery = "" }) {
-                            Icon(Icons.Default.Clear, contentDescription = "Clear", tint = mutedText)
+            // Search bar with shimmer when loading
+            Box(modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
+                OutlinedTextField(
+                    value = if (uiState.isLoading && searchQuery.isEmpty()) "" else searchQuery,
+                    onValueChange = { searchQuery = it },
+                    placeholder = { Text("Search books...", color = mutedText) },
+                    leadingIcon = { Icon(Icons.Default.Search, contentDescription = null, tint = mutedText) },
+                    trailingIcon = {
+                        if (searchQuery.isNotEmpty()) {
+                            IconButton(onClick = { searchQuery = "" }) {
+                                Icon(Icons.Default.Clear, contentDescription = "Clear", tint = mutedText)
+                            }
+                        } else if (uiState.isLoading) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(20.dp),
+                                color = Bronze.copy(alpha = 0.5f),
+                                strokeWidth = 2.dp
+                            )
                         }
-                    }
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 8.dp),
-                singleLine = true,
-                shape = RoundedCornerShape(14.dp),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = Bronze,
-                    unfocusedBorderColor = if (isDark) DarkBorder else Border,
-                    focusedContainerColor = cardBg,
-                    unfocusedContainerColor = cardBg,
-                    focusedLeadingIconColor = mutedText,
-                    unfocusedLeadingIconColor = mutedText
+                    },
+                    enabled = !uiState.isLoading || searchQuery.isNotEmpty(),
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
+                    shape = RoundedCornerShape(14.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = Bronze,
+                        unfocusedBorderColor = if (isDark) DarkBorder else Border,
+                        focusedContainerColor = cardBg,
+                        unfocusedContainerColor = cardBg,
+                        focusedLeadingIconColor = mutedText,
+                        unfocusedLeadingIconColor = mutedText
+                    )
                 )
-            )
+                // Shimmer overlay when loading
+                if (uiState.isLoading && searchQuery.isEmpty()) {
+                    Box(
+                        modifier = Modifier
+                            .matchParentSize()
+                            .background(
+                                color = cardBg.copy(alpha = 0.6f),
+                                shape = RoundedCornerShape(14.dp)
+                            )
+                    )
+                }
+            }
 
             Box(
                 modifier = Modifier

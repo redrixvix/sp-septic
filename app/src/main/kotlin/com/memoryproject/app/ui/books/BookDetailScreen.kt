@@ -498,9 +498,9 @@ fun BookDetailScreen(
 
                                 .background(
 
-                                    brush = Brush.radialGradient(
+                                    brush = Brush.verticalGradient(
 
-                                        colors = if (isDark) listOf(DarkSurfaceVariant, DarkSurfaceVariant) else listOf(Papaya, Beige)
+                                        colors = if (isDark) listOf(DarkSurfaceVariant, DarkSurface) else listOf(Papaya, Beige)
 
                                     ),
 
@@ -512,6 +512,19 @@ fun BookDetailScreen(
 
                         ) {
 
+                            Box(
+                                modifier = Modifier
+                                    .size(80.dp)
+                                    .background(
+                                        brush = Brush.radialGradient(
+                                            colors = listOf(
+                                                Bronze.copy(alpha = 0.2f),
+                                                Color.Transparent
+                                            )
+                                        ),
+                                        shape = CircleShape
+                                    )
+                            )
                             Text("✨", fontSize = 48.sp)
 
                         }
@@ -526,7 +539,7 @@ fun BookDetailScreen(
 
                             fontWeight = FontWeight.SemiBold,
 
-                            color = Charcoal
+                            color = if (isDark) DarkOnSurface else Charcoal
 
                         )
 
@@ -1600,7 +1613,7 @@ private fun MembersBottomSheet(
                     modifier = Modifier.height(56.dp),
                     shape = RoundedCornerShape(14.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = Bronze, contentColor = WarmWhite),
-                    elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp)
+                    elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp, pressedElevation = 8.dp)
                 ) {
                     if (isInviting) {
                         CircularProgressIndicator(modifier = Modifier.size(20.dp), color = WarmWhite, strokeWidth = 2.dp)

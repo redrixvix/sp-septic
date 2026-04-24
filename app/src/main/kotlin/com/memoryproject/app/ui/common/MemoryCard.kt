@@ -1,9 +1,7 @@
 package com.memoryproject.app.ui.common
 
-import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.*
 import androidx.compose.animation.core.*
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.scaleIn
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -127,7 +125,7 @@ fun MemoryCard(
                     .fillMaxWidth()
                     .padding(18.dp)
             ) {
-                // Header row: prompt label + actions
+// Header row: prompt label + actions
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -151,48 +149,72 @@ fun MemoryCard(
                             modifier = Modifier.widthIn(max = 200.dp)
                         )
                     }
-                    AnimatedVisibility(
-                        visible = true,
-                        enter = fadeIn(animationSpec = tween(300, delayMillis = 100)) +
-                            scaleIn(
-                                initialScale = 0.5f,
-                                animationSpec = tween(300, delayMillis = 100)
+                    // Chevron affordance for cards with photos
+                    if (memory.photo_urls.isNotEmpty()) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(4.dp)
+                        ) {
+                            Text(
+                                text = "${memory.photo_urls.size}",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = mutedText
                             )
+                            Icon(
+                                imageVector = androidx.compose.material.icons.Icons.Default.ChevronRight,
+                                contentDescription = "Tap to view",
+                                tint = mutedText,
+                                modifier = Modifier.size(14.dp)
+                            )
+                        }
+                    }
+                    // Action icons (edit/share/delete) with entrance animation
+                    val iconsVisible by animateFloatAsState(
+                        targetValue = 1f,
+                        animationSpec = tween(300, delayMillis = 200),
+                        label = "iconsVisible"
+                    )
+                    Row(
+                        modifier = Modifier.graphicsLayer {
+                            alpha = iconsVisible
+                            scaleX = 0.6f + (0.4f * iconsVisible)
+                            scaleY = 0.6f + (0.4f * iconsVisible)
+                        },
+                        horizontalArrangement = Arrangement.spacedBy(0.dp),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Row {
-                            IconButton(
-                                onClick = onEdit,
-                                modifier = Modifier.size(36.dp)
-                            ) {
-                                Icon(
-                                    Icons.Default.Edit,
-                                    contentDescription = "Edit",
-                                    tint = mutedText,
-                                    modifier = Modifier.size(18.dp)
-                                )
-                            }
-                            IconButton(
-                                onClick = onShareClick,
-                                modifier = Modifier.size(36.dp)
-                            ) {
-                                Icon(
-                                    Icons.AutoMirrored.Filled.Share,
-                                    contentDescription = "Share",
-                                    tint = mutedText,
-                                    modifier = Modifier.size(18.dp)
-                                )
-                            }
-                            IconButton(
-                                onClick = onDelete,
-                                modifier = Modifier.size(36.dp)
-                            ) {
-                                Icon(
-                                    Icons.Default.Delete,
-                                    contentDescription = "Delete",
-                                    tint = mutedText,
-                                    modifier = Modifier.size(18.dp)
-                                )
-                            }
+                        IconButton(
+                            onClick = onEdit,
+                            modifier = Modifier.size(32.dp)
+                        ) {
+                            Icon(
+                                Icons.Default.Edit,
+                                contentDescription = "Edit",
+                                tint = mutedText.copy(alpha = 0.7f),
+                                modifier = Modifier.size(16.dp)
+                            )
+                        }
+                        IconButton(
+                            onClick = onShareClick,
+                            modifier = Modifier.size(32.dp)
+                        ) {
+                            Icon(
+                                Icons.Default.Share,
+                                contentDescription = "Share",
+                                tint = mutedText.copy(alpha = 0.7f),
+                                modifier = Modifier.size(16.dp)
+                            )
+                        }
+                        IconButton(
+                            onClick = onDelete,
+                            modifier = Modifier.size(32.dp)
+                        ) {
+                            Icon(
+                                Icons.Default.Delete,
+                                contentDescription = "Delete",
+                                tint = mutedText.copy(alpha = 0.7f),
+                                modifier = Modifier.size(16.dp)
+                            )
                         }
                     }
                 }
@@ -211,21 +233,42 @@ fun MemoryCard(
                 if (photosToShow.isNotEmpty()) {
                     Spacer(modifier = Modifier.height(12.dp))
                     Row(
-                        horizontalArrangement = if (photosToShow.size <= 1) Arrangement.Start else Arrangement.spacedBy(8.dp)
+                        horizontalArrangement = if (photosToShow.size <= 1) Arrangement.Start else Arrangement.spacedBy(8.dp),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
                         photosToShow.forEach { url ->
-                            AsyncImage(
-                                model = url,
-                                contentDescription = "Memory photo",
-                                modifier = Modifier
-                                    .size(56.dp)
-                                    .clip(RoundedCornerShape(10.dp))
-                                    .clickable {
-                                        val index = memory.photo_urls.indexOf(url)
-                                        if (index >= 0) photoIndexToShow = url
-                                    },
-                                onError = { }
-                            )
+                            Box {
+                                AsyncImage(
+                                    model = url,
+                                    contentDescription = "Memory photo",
+                                    modifier = Modifier
+                                        .size(56.dp)
+                                        .clip(RoundedCornerShape(10.dp))
+                                        .clickable {
+                                            val index = memory.photo_urls.indexOf(url)
+                                            if (index >= 0) photoIndexToShow = url
+                                        },
+                                    onError = { }
+                                )
+                                // Subtle "view" affordance — small expansion icon on corner
+                                Box(
+                                    modifier = Modifier
+                                        .size(18.dp)
+                                        .align(Alignment.BottomEnd)
+                                        .background(
+                                            color = Bronze.copy(alpha = 0.6f),
+                                            shape = CircleShape
+                                        ),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(
+                                        text = if (memory.photo_urls.size > 1) "+" else "→",
+                                        style = MaterialTheme.typography.labelSmall,
+                                        color = WarmWhite,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
+                            }
                         }
                         if (showExtraCount) {
                             Box(
@@ -250,6 +293,24 @@ fun MemoryCard(
                                 )
                             }
                         }
+                    }
+                    // Tap hint for photo
+                    if (photosToShow.size > 1 || showExtraCount) {
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = "Tap to view",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = mutedText.copy(alpha = 0.7f),
+                            modifier = Modifier.align(Alignment.Start)
+                        )
+                    } else {
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = "Tap to enlarge",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = mutedText.copy(alpha = 0.7f),
+                            modifier = Modifier.align(Alignment.Start)
+                        )
                     }
                 }
 

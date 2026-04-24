@@ -351,7 +351,7 @@ private fun WelcomeHeader(
                             Spacer(modifier = Modifier.height(10.dp))
                             Box(
                                 modifier = Modifier
-                                    .width(200.dp)
+                                    .width(90.dp)
                                     .height(16.dp)
                                     .background(
                                         color = if (darkTheme) DarkDivider else Divider,

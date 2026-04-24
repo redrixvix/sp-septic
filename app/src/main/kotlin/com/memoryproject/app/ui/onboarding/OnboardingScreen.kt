@@ -2,8 +2,13 @@ package com.memoryproject.app.ui.onboarding
 
 import androidx.compose.animation.animateDpAsState
 import androidx.compose.animation.animateFloatAsState
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -188,6 +193,11 @@ fun OnboardingScreen(
 
                 // CTA button
                 val isLastPage = pagerState.currentPage == PAGES.size - 1
+                val ctaColors = if (isLastPage) {
+                    ButtonDefaults.buttonColors(containerColor = Bronze)
+                } else {
+                    ButtonDefaults.buttonColors(containerColor = cardBg)
+                }
                 Button(
                     onClick = {
                         if (isLastPage) {
@@ -201,16 +211,47 @@ fun OnboardingScreen(
                     },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(56.dp),
+                        .height(56.dp)
+                        .then(
+                            if (isLastPage) {
+                                Modifier.background(
+                                    brush = Brush.linearGradient(
+                                        colors = listOf(Bronze, BronzeDark)
+                                    ),
+                                    shape = RoundedCornerShape(16.dp)
+                                )
+                            } else Modifier
+                        ),
                     shape = RoundedCornerShape(16.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = if (isLastPage) Bronze else cardBg,
-                        contentColor = if (isLastPage) WarmWhite else if (isDark) DarkOnSurface else Charcoal
-                    ),
+                    colors = ctaColors,
+                    contentColor = if (isLastPage) WarmWhite else if (isDark) DarkOnSurface else Charcoal,
                     elevation = ButtonDefaults.buttonElevation(
-                        defaultElevation = if (isLastPage) 6.dp else 2.dp
+                        defaultElevation = if (isLastPage) 8.dp else 4.dp,
+                        pressedElevation = if (isLastPage) 12.dp else 8.dp
                     )
                 ) {
+                    if (isLastPage) {
+                        // Warm glow pulse for premium CTA feel
+                        val infiniteTransition = rememberInfiniteTransition(label = "ctaGlow")
+                        val glowAlpha by infiniteTransition.animateFloat(
+                            initialValue = 0.15f,
+                            targetValue = 0.35f,
+                            animationSpec = infiniteRepeatable(
+                                animation = tween(1200, easing = FastOutSlowInEasing),
+                                repeatMode = RepeatMode.Reverse
+                            ),
+                            label = "glowAlpha"
+                        )
+                        Box(
+                            modifier = Modifier
+                                .size(8.dp)
+                                .background(
+                                    color = WarmWhite.copy(alpha = glowAlpha),
+                                    shape = CircleShape
+                                )
+                        )
+                        Spacer(modifier = Modifier.width(10.dp))
+                    }
                     Text(
                         text = if (isLastPage) "Begin Your Story" else "Continue",
                         style = MaterialTheme.typography.labelLarge,
@@ -250,21 +291,37 @@ private fun OnboardingPageContent(
             modifier = Modifier.size(140.dp),
             shape = RoundedCornerShape(36.dp),
             colors = CardDefaults.cardColors(containerColor = cardBg),
-            elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
+            elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+            shadowElevation = 12.dp
         ) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(
-                        brush = Brush.radialGradient(
+                        brush = Brush.verticalGradient(
                             colors = listOf(
-                                page.accentColor.copy(alpha = 0.25f),
+                                page.accentColor.copy(alpha = 0.35f),
+                                page.accentColor.copy(alpha = 0.12f),
                                 cardBg
                             )
                         )
                     ),
                 contentAlignment = Alignment.Center
             ) {
+                // Warm ambient glow behind emoji — subtle, premium
+                Box(
+                    modifier = Modifier
+                        .size(90.dp)
+                        .background(
+                            brush = Brush.radialGradient(
+                                colors = listOf(
+                                    page.accentColor.copy(alpha = 0.18f),
+                                    Color.Transparent
+                                )
+                            ),
+                            shape = CircleShape
+                        )
+                )
                 Text(page.emoji, fontSize = 72.sp)
             }
         }
