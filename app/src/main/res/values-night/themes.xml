@@ -1,9 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.MemoryProject" parent="android:Theme.Material.Light.NoActionBar">
+    <style name="Theme.MemoryProject" parent="android:Theme.Material.NoActionBar">
         <item name="android:statusBarColor">#1A1814</item>
         <item name="android:navigationBarColor">#1A1814</item>
         <item name="android:windowLightStatusBar">false</item>
         <item name="android:windowBackground">#1A1814</item>
+    </style>
+    <style name="Theme.MemoryProject.Splash" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowBackground">@color/dark_background</item>
+        <item name="android:statusBarColor">#1A1814</item>
+        <item name="android:navigationBarColor">#1A1814</item>
     </style>
 </resources>

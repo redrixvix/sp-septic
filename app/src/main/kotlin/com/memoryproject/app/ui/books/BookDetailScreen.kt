@@ -739,19 +739,17 @@ private fun MemoryCard(
                 if (memory.photo_urls.isNotEmpty()) {
                     Spacer(modifier = Modifier.height(12.dp))
                     Row(
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        horizontalArrangement = if (memory.photo_urls.size <= 1 && extraCount <= 0) Arrangement.Start else Arrangement.spacedBy(8.dp)
                     ) {
                         memory.photo_urls.take(3).forEach { url ->
-                            Box {
-                                AsyncImage(
-                                    model = url,
-                                    contentDescription = null,
-                                    modifier = Modifier
-                                        .size(56.dp)
-                                        .clip(RoundedCornerShape(10.dp)),
-                                    onError = { /* Silently handle failed image loads */ }
-                                )
-                            }
+                            AsyncImage(
+                                model = url,
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .size(56.dp)
+                                    .clip(RoundedCornerShape(10.dp)),
+                                onError = { /* Silently handle failed image loads */ }
+                            )
                         }
                         // Show count if more than 3 photos
                         val extraCount = memory.photo_urls.size - 3
