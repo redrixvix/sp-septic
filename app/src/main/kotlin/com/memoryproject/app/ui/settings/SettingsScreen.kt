@@ -4,6 +4,7 @@ import android.content.Intent
 import android.net.Uri
 import androidx.compose.animation.*
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -25,9 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import com.memoryproject.app.BuildConfig
 import com.memoryproject.app.ui.theme.*
-import com.memoryproject.app.BuildConfig
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import androidx.compose.runtime.rememberCoroutineScope
@@ -39,6 +38,7 @@ fun SettingsScreen(
     onLogout: () -> Unit,
     onToggleDarkMode: () -> Unit = {},
     onProfileClick: () -> Unit = {},
+    darkTheme: Boolean,
     viewModel: SettingsViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -46,7 +46,7 @@ fun SettingsScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
-    val isDark = isSystemInDarkTheme()
+    val isDark = darkTheme
     val scaffoldBg = if (isDark) DarkBackground else Cornsilk
     val primaryText = if (isDark) DarkOnSurface else Charcoal
     val mutedText = if (isDark) DarkOnSurfaceVariant else CharcoalMuted
@@ -104,7 +104,7 @@ fun SettingsScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             // Account section
-            SettingsSection(title = "Account") {
+            SettingsSection(title = "Account", cardBg = cardBg, isDark = isDark) {
                 SettingsItem(
                     icon = Icons.Default.Person,
                     title = "Profile",
@@ -122,12 +122,13 @@ fun SettingsScreen(
                             )
                         }
                     },
-                    onClick = onProfileClick
+                    onClick = onProfileClick,
+                    bgColor = cardBg,
+                    isDark = isDark
                 )
             }
-
             // Appearance section
-            SettingsSection(title = "Appearance") {
+            SettingsSection(title = "Appearance", cardBg = cardBg, isDark = isDark) {
                 SettingsItem(
                     icon = Icons.Default.DarkMode,
                     title = "Dark Mode",
@@ -150,16 +151,18 @@ fun SettingsScreen(
                     onClick = {
                         viewModel.toggleDarkMode()
                         onToggleDarkMode()
-                    }
+                    },
+                    bgColor = cardBg,
+                    isDark = isDark
                 )
             }
 
             // Notifications section
-            SettingsSection(title = "Notifications") {
+            SettingsSection(title = "Notifications", cardBg = cardBg, isDark = isDark) {
                 SettingsItem(
                     icon = Icons.Default.Notifications,
                     title = "Reminders",
-                    subtitle = "Get gentle reminders to add memories (coming soon)",
+                    subtitle = "Get gentle reminders to add memories",
                     trailing = {
                         Switch(
                             checked = uiState.notificationsEnabled,
@@ -172,12 +175,13 @@ fun SettingsScreen(
                             )
                         )
                     },
-                    onClick = { viewModel.toggleNotifications() }
+                    onClick = { viewModel.toggleNotifications() },
+                    bgColor = cardBg,
+                    isDark = isDark
                 )
             }
-
             // About section
-            SettingsSection(title = "About") {
+            SettingsSection(title = "About", cardBg = cardBg, isDark = isDark) {
                 SettingsItem(
                     icon = Icons.Default.Info,
                     title = "Memory Project",
@@ -200,7 +204,9 @@ fun SettingsScreen(
                         }
                     },
                     showDivider = true,
-                    onClick = { }
+                    onClick = { },
+                    bgColor = cardBg,
+                    isDark = isDark
                 )
                 SettingsItem(
                     icon = Icons.Default.PrivacyTip,
@@ -209,7 +215,9 @@ fun SettingsScreen(
                     onClick = {
                         val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://web-redrixvixs-projects.vercel.app/privacy"))
                         context.startActivity(intent)
-                    }
+                    },
+                    bgColor = cardBg,
+                    isDark = isDark
                 )
                 SettingsItem(
                     icon = Icons.Default.Star,
@@ -224,7 +232,9 @@ fun SettingsScreen(
                             val webIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=${context.packageName}"))
                             context.startActivity(webIntent)
                         }
-                    }
+                    },
+                    bgColor = cardBg,
+                    isDark = isDark
                 )
             }
 
@@ -301,11 +311,11 @@ fun SettingsScreen(
 @Composable
 private fun SettingsSection(
     title: String,
+    cardBg: androidx.compose.ui.graphics.Color,
+    isDark: Boolean,
     content: @Composable ColumnScope.() -> Unit
 ) {
-    val isDark = isSystemInDarkTheme()
     val sectionTitleColor = if (isDark) DarkOnSurfaceVariant else CharcoalMuted
-    val cardBg = if (isDark) DarkSurface else WarmWhite
 
     Column {
         Text(
@@ -334,10 +344,10 @@ private fun SettingsItem(
     subtitle: String,
     trailing: (@Composable () -> Unit)? = null,
     showDivider: Boolean = false,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    bgColor: androidx.compose.ui.graphics.Color,
+    isDark: Boolean
 ) {
-    val isDark = isSystemInDarkTheme()
-    val bgColor = if (isDark) DarkSurface else WarmWhite
     val iconBgColor = if (isDark) DarkSurfaceVariant else Bronze.copy(alpha = 0.1f)
     val primaryText = if (isDark) DarkOnSurface else Charcoal
     val mutedText = if (isDark) DarkOnSurfaceVariant else CharcoalMuted
@@ -348,7 +358,8 @@ private fun SettingsItem(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(bgColor)
-                .padding(horizontal = 16.dp, vertical = 14.dp),
+                .clickable(onClick = onClick)
+                .padding(horizontal = 16.dp, vertical = 18.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Box(
@@ -362,7 +373,7 @@ private fun SettingsItem(
             ) {
                 Icon(
                     icon,
-                    contentDescription = null,
+                    contentDescription = title,
                     tint = Bronze,
                     modifier = Modifier.size(20.dp)
                 )
@@ -389,7 +400,7 @@ private fun SettingsItem(
             } else {
                 Icon(
                     Icons.Default.ChevronRight,
-                    contentDescription = null,
+                    contentDescription = "Navigate to $title",
                     tint = mutedText,
                     modifier = Modifier.size(20.dp)
                 )

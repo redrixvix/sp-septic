@@ -2,7 +2,7 @@ package com.memoryproject.app.ui.screens
 
 import androidx.compose.animation.*
 import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -25,21 +25,24 @@ import androidx.compose.ui.unit.sp
 import com.memoryproject.app.ui.theme.*
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
+import androidx.compose.runtime.rememberCoroutineScope
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen(
     onBack: () -> Unit,
+    darkTheme: Boolean,
     viewModel: ProfileViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
+    val coroutineScope = rememberCoroutineScope()
     var showEditNameDialog by remember { mutableStateOf(false) }
     var showInviteDialog by remember { mutableStateOf(false) }
     var editedName by remember { mutableStateOf("") }
     var inviteEmail by remember { mutableStateOf("") }
 
-    val isDark = isSystemInDarkTheme()
+    val isDark = darkTheme
     val scaffoldBg = if (isDark) DarkBackground else Cornsilk
     val cardBg = if (isDark) DarkSurface else WarmWhite
     val primaryText = if (isDark) DarkOnSurface else Charcoal
@@ -144,7 +147,7 @@ fun ProfileScreen(
                         showInviteDialog = false
                         inviteEmail = ""
                         coroutineScope.launch {
-                            snackbarHostState.showSnackbar("Coming soon! Family sharing will be available soon.", duration = SnackbarDuration.Short)
+                            snackbarHostState.showSnackbar("We'll notify you when family sharing is ready.", duration = SnackbarDuration.Short)
                         }
                     },
                     enabled = inviteEmail.isNotBlank(),
@@ -291,7 +294,7 @@ fun ProfileScreen(
             }
 
             // Personal info section
-            SettingsSection(title = "Personal") {
+            SettingsSection(title = "Personal", cardBg = cardBg, isDark = isDark) {
                 SettingsRow(
                     icon = Icons.Default.Person,
                     label = "Display Name",
@@ -300,19 +303,23 @@ fun ProfileScreen(
                     onClick = {
                         editedName = uiState.userName.ifBlank { "" }
                         showEditNameDialog = true
-                    }
+                    },
+                    bgColor = cardBg,
+                    isDark = isDark
                 )
                 HorizontalDivider(color = if (isDark) DarkDivider else Divider, thickness = 0.5.dp)
                 SettingsRow(
                     icon = Icons.Default.Email,
                     label = "Email",
                     value = uiState.userEmail.ifBlank { "Not set" },
-                    onClick = { }
+                    onClick = { },
+                    bgColor = cardBg,
+                    isDark = isDark
                 )
             }
 
             // Usage stats section
-            SettingsSection(title = "Your Library") {
+            SettingsSection(title = "Your Library", cardBg = cardBg, isDark = isDark) {
                 Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 16.dp)) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -321,7 +328,8 @@ fun ProfileScreen(
                         StatItem(
                             value = "${uiState.booksCount}",
                             label = if (uiState.booksCount == 1) "Book" else "Books",
-                            highlight = uiState.booksCount > 0
+                            highlight = uiState.booksCount > 0,
+                            isDark = isDark
                         )
                         Box(
                             modifier = Modifier
@@ -332,7 +340,8 @@ fun ProfileScreen(
                         StatItem(
                             value = "${uiState.memoriesCount}",
                             label = if (uiState.memoriesCount == 1) "Memory" else "Memories",
-                            highlight = uiState.memoriesCount > 0
+                            highlight = uiState.memoriesCount > 0,
+                            isDark = isDark
                         )
                         Box(
                             modifier = Modifier
@@ -343,7 +352,8 @@ fun ProfileScreen(
                         StatItem(
                             value = if (uiState.storageUsedBytes > 0) formatStorage(uiState.storageUsedBytes) else "Starter",
                             label = "Plan",
-                            highlight = uiState.storageUsedBytes > 0
+                            highlight = uiState.storageUsedBytes > 0,
+                            isDark = isDark
                         )
                     }
                     if (uiState.userCreatedAt.isNotBlank()) {
@@ -369,12 +379,14 @@ fun ProfileScreen(
                 }
             }
 
-            SettingsSection(title = "Family Sharing") {
+            SettingsSection(title = "Family Sharing", cardBg = cardBg, isDark = isDark) {
                 SettingsRow(
                     icon = Icons.Default.Book,
                     label = "Invite family member",
                     value = "Share books with family members",
-                    onClick = { showInviteDialog = true }
+                    onClick = { showInviteDialog = true },
+                    bgColor = cardBg,
+                    isDark = isDark
                 )
             }
 
@@ -384,7 +396,7 @@ fun ProfileScreen(
 }
 
 @Composable
-private fun StatItem(value: String, label: String, highlight: Boolean = false) {
+private fun StatItem(value: String, label: String, highlight: Boolean = false, isDark: Boolean) {
     val mutedTextColor = if (isDark) DarkOnSurfaceVariant else CharcoalMuted
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
@@ -404,11 +416,11 @@ private fun StatItem(value: String, label: String, highlight: Boolean = false) {
 @Composable
 private fun SettingsSection(
     title: String,
+    cardBg: androidx.compose.ui.graphics.Color,
+    isDark: Boolean,
     content: @Composable ColumnScope.() -> Unit
 ) {
-    val isDark = isSystemInDarkTheme()
     val sectionTitleColor = if (isDark) DarkOnSurfaceVariant else CharcoalMuted
-    val cardBg = if (isDark) DarkSurface else WarmWhite
 
     Column {
         Text(
@@ -436,10 +448,10 @@ private fun SettingsRow(
     label: String,
     value: String,
     showChevron: Boolean = false,
-    onClick: () -> Unit = {}
+    onClick: () -> Unit = {},
+    bgColor: androidx.compose.ui.graphics.Color = WarmWhite,
+    isDark: Boolean
 ) {
-    val isDark = isSystemInDarkTheme()
-    val bgColor = if (isDark) DarkSurface else WarmWhite
     val iconBgColor = if (isDark) DarkSurfaceVariant else Bronze.copy(alpha = 0.1f)
     val primaryText = if (isDark) DarkOnSurface else Charcoal
     val mutedText = if (isDark) DarkOnSurfaceVariant else CharcoalMuted
@@ -448,6 +460,7 @@ private fun SettingsRow(
         modifier = Modifier
             .fillMaxWidth()
             .background(bgColor)
+            .clickable(onClick = onClick)
             .padding(horizontal = 16.dp, vertical = 14.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -462,7 +475,7 @@ private fun SettingsRow(
         ) {
             Icon(
                 icon,
-                contentDescription = null,
+                contentDescription = label,
                 tint = Bronze,
                 modifier = Modifier.size(20.dp)
             )

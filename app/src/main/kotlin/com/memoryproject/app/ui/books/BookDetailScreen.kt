@@ -141,6 +141,8 @@ fun BookDetailScreen(
 
     onBack: () -> Unit,
 
+    darkTheme: Boolean,
+
     viewModel: BookDetailViewModel = koinViewModel { parametersOf(bookId) }
 
 ) {
@@ -154,10 +156,9 @@ fun BookDetailScreen(
     var showPhotoViewer by remember { mutableStateOf<String?>(null) }
     var showMembersSheet by remember { mutableStateOf(false) }
     val snackbarHostState = remember { SnackbarHostState() }
-    val isDark = isSystemInDarkTheme()
-    val scaffoldBg = if (isDark) DarkBackground else Cornsilk
-    val topBarTitleColor = if (isDark) DarkOnSurface else Charcoal
-    val topBarSubtitleColor = if (isDark) DarkOnSurfaceVariant else CharcoalMuted
+    val darkTheme = darkTheme
+    val topBarTitleColor = if (darkTheme) DarkOnSurface else Charcoal
+    val topBarSubtitleColor = if (darkTheme) DarkOnSurfaceVariant else CharcoalMuted
 
     // Clear form when dialogs close
 
@@ -241,7 +242,7 @@ fun BookDetailScreen(
 
                                 style = MaterialTheme.typography.bodyMedium,
 
-                                color = if (isDark) DarkOnSurfaceVariant else CharcoalMuted,
+                                color = if (darkTheme) DarkOnSurfaceVariant else CharcoalMuted,
 
                                 maxLines = 1,
 
@@ -267,7 +268,7 @@ fun BookDetailScreen(
 
                             .background(
 
-                                color = if (isDark) DarkSurface else WarmWhite,
+                                color = if (darkTheme) DarkSurface else WarmWhite,
 
                                 shape = RoundedCornerShape(12.dp)
 
@@ -281,7 +282,7 @@ fun BookDetailScreen(
 
                             contentDescription = "Back",
 
-                            tint = if (isDark) DarkOnSurface else Charcoal
+                            tint = if (darkTheme) DarkOnSurface else Charcoal
 
                         )
 
@@ -301,7 +302,7 @@ fun BookDetailScreen(
 
                             .background(
 
-                                color = if (isDark) DarkSurface else WarmWhite,
+                                color = if (darkTheme) DarkSurface else WarmWhite,
 
                                 shape = RoundedCornerShape(12.dp)
 
@@ -315,7 +316,7 @@ fun BookDetailScreen(
 
                             contentDescription = "Members",
 
-                            tint = if (isDark) DarkOnSurface else Charcoal
+                            tint = if (darkTheme) DarkOnSurface else Charcoal
 
                         )
 
@@ -355,7 +356,7 @@ fun BookDetailScreen(
 
             ) {
 
-                Icon(Icons.Default.Add, contentDescription = null)
+                Icon(Icons.Default.Add, contentDescription = "Add memory")
 
                 Spacer(modifier = Modifier.width(8.dp))
 
@@ -405,7 +406,7 @@ fun BookDetailScreen(
 
                     ) {
 
-                        repeat(3) { MemorySkeletonCard() }
+                        repeat(3) { MemorySkeletonCard(darkTheme) }
 
                     }
 
@@ -433,7 +434,7 @@ fun BookDetailScreen(
 
                             style = MaterialTheme.typography.headlineSmall,
 
-                            color = if (isDark) DarkOnSurface else Charcoal
+                            color = if (darkTheme) DarkOnSurface else Charcoal
 
                         )
 
@@ -495,7 +496,7 @@ fun BookDetailScreen(
 
                                     brush = Brush.radialGradient(
 
-                                        colors = if (isDark) listOf(DarkSurfaceVariant, DarkSurfaceVariant) else listOf(Papaya, Beige)
+                                        colors = if (darkTheme) listOf(DarkSurfaceVariant, DarkSurfaceVariant) else listOf(Papaya, Beige)
 
                                     ),
 
@@ -515,7 +516,7 @@ fun BookDetailScreen(
 
                         Text(
 
-                            "Add your first memory",
+                            "Every great book starts with a single memory",
 
                             style = MaterialTheme.typography.headlineSmall,
 
@@ -529,11 +530,11 @@ fun BookDetailScreen(
 
                         Text(
 
-                            "Capture a moment, preserve a story — your memories begin here.",
+                            "Capture your first moment — your family will thank you for it someday.",
 
                             style = MaterialTheme.typography.bodyLarge,
 
-                            color = if (isDark) DarkOnSurfaceVariant else CharcoalMuted,
+                            color = if (darkTheme) DarkOnSurfaceVariant else CharcoalMuted,
 
                             textAlign = TextAlign.Center
 
@@ -559,7 +560,7 @@ fun BookDetailScreen(
 
                         ) {
 
-                            Icon(Icons.Default.Add, contentDescription = null)
+                            Icon(Icons.Default.Add, contentDescription = "Add your first memory")
 
                             Spacer(modifier = Modifier.width(8.dp))
 
@@ -637,7 +638,7 @@ fun BookDetailScreen(
 
                                     style = MaterialTheme.typography.bodyMedium,
 
-                                    color = if (isDark) DarkOnSurfaceVariant else CharcoalMuted,
+                                    color = if (darkTheme) DarkOnSurfaceVariant else CharcoalMuted,
 
                                     modifier = Modifier.padding(bottom = 4.dp)
 
@@ -680,6 +681,7 @@ fun BookDetailScreen(
                                     onShareClick = { onShareMemory(memory) },
                                     onPhotoClick = { photoUrl -> showPhotoViewer = photoUrl },
                                     accentIndex = uiState.memories.indexOf(memory),
+                                    darkTheme = darkTheme,
                                     modifier = Modifier.graphicsLayer {
                                         scaleX = scale
                                         scaleY = scale
@@ -701,7 +703,7 @@ fun BookDetailScreen(
 
                             contentColor = Bronze,
 
-                            backgroundColor = if (isDark) DarkSurfaceVariant else Papaya
+                            backgroundColor = if (darkTheme) DarkSurfaceVariant else Papaya
 
                         )
 
@@ -895,7 +897,7 @@ fun BookDetailScreen(
 
                 TextButton(onClick = { viewModel.hideDeleteConfirm() }) {
 
-                    Text("Keep It", color = if (isDark) DarkOnSurfaceVariant else CharcoalMuted)
+                    Text("Keep It", color = if (darkTheme) DarkOnSurfaceVariant else CharcoalMuted)
 
                 }
 
@@ -912,26 +914,20 @@ fun BookDetailScreen(
     // Photo viewer — full-screen lightbox
 
     showPhotoViewer?.let { photoUrl ->
-
         PhotoViewer(
-
             photoUrl = photoUrl,
-
             onDismiss = { showPhotoViewer = null }
-
+        )
+    }
 
     if (showMembersSheet) {
         MembersBottomSheet(
             bookId = bookId,
             onDismiss = { showMembersSheet = false },
-            isDark = isDark,
+            darkTheme = darkTheme,
             snackbarHostState = snackbarHostState
         )
     }
-        )
-
-    }
-
 }
 
 
@@ -1128,16 +1124,14 @@ private fun MemoryDialog(
 
                         focusedBorderColor = Bronze,
 
-                        unfocusedBorderColor = if (isDark) DarkBorder else Border,
+                        unfocusedBorderColor = if (darkTheme) DarkBorder else Border,
 
                         focusedLabelColor = Bronze
 
                     ),
 
                     supportingText = if (promptInput.isBlank()) {
-
-                        { Text("Or pick a prompt below to get started", color = if (isDark) DarkOnSurfaceVariant else CharcoalMuted, style = MaterialTheme.typography.bodySmall) }
-
+                        Text("Or pick a prompt below to get started", color = if (darkTheme) DarkOnSurfaceVariant else CharcoalMuted, style = MaterialTheme.typography.bodySmall)
                     } else null
 
                 )
@@ -1150,11 +1144,11 @@ private fun MemoryDialog(
 
                     Text(
 
-                        "Or choose a prompt to get started:",
+                        "Or pick one of these to get started:",
 
                         style = MaterialTheme.typography.labelMedium,
 
-                        color = if (isDark) DarkOnSurfaceVariant else CharcoalMuted,
+                        color = if (darkTheme) DarkOnSurfaceVariant else CharcoalMuted,
 
                         fontWeight = FontWeight.Medium
 
@@ -1178,7 +1172,7 @@ private fun MemoryDialog(
 
                                     .background(
 
-                                        color = if (promptInput == prompt) if (isDark) DarkBronze.copy(alpha = 0.3f) else Bronze.copy(alpha = 0.15f) else if (isDark) DarkSurfaceVariant else Papaya,
+                                        color = if (promptInput == prompt) if (darkTheme) DarkBronze.copy(alpha = 0.3f) else Bronze.copy(alpha = 0.15f) else if (darkTheme) DarkSurfaceVariant else Papaya,
 
                                         shape = RoundedCornerShape(20.dp)
 
@@ -1196,7 +1190,7 @@ private fun MemoryDialog(
 
                                     style = MaterialTheme.typography.labelMedium,
 
-                                    color = if (promptInput == prompt) if (isDark) DarkBronzeLight else BronzeDark else if (isDark) DarkOnSurface else Charcoal,
+                                    color = if (promptInput == prompt) if (darkTheme) DarkBronzeLight else BronzeDark else if (darkTheme) DarkOnSurface else Charcoal,
 
                                     fontWeight = if (promptInput == prompt) FontWeight.SemiBold else FontWeight.Normal,
 
@@ -1252,7 +1246,7 @@ private fun MemoryDialog(
 
                         focusedBorderColor = Bronze,
 
-                        unfocusedBorderColor = if (isDark) DarkBorder else Border,
+                        unfocusedBorderColor = if (darkTheme) DarkBorder else Border,
 
                         focusedLabelColor = Bronze
 
@@ -1262,14 +1256,14 @@ private fun MemoryDialog(
                         if (answerInput.isBlank()) {
                             Text(
                                 "Share what matters",
-                                color = if (isDark) DarkOnSurfaceVariant else CharcoalMuted,
+                                color = if (darkTheme) DarkOnSurfaceVariant else CharcoalMuted,
                                 style = MaterialTheme.typography.bodySmall
                             )
                         } else {
                             val words = answerInput.split("\\s+".toRegex()).filter { it.isNotBlank() }.size
                             Text(
                                 "${answerInput.length} characters · $words ${if (words == 1) "word" else "words"}",
-                                color = if (isDark) DarkOnSurfaceVariant else CharcoalMuted,
+                                color = if (darkTheme) DarkOnSurfaceVariant else CharcoalMuted,
                                 style = MaterialTheme.typography.bodySmall
                             )
                         }
@@ -1307,7 +1301,7 @@ private fun MemoryDialog(
 
                         modifier = Modifier.size(18.dp),
 
-                        color = if (isDark) DarkSurface else WarmWhite,
+                        color = if (darkTheme) DarkSurface else WarmWhite,
 
                         strokeWidth = 2.dp
 
@@ -1331,7 +1325,7 @@ private fun MemoryDialog(
 
             TextButton(onClick = onDismiss) {
 
-                Text("Cancel", color = if (isDark) DarkOnSurfaceVariant else CharcoalMuted)
+                Text("Cancel", color = if (darkTheme) DarkOnSurfaceVariant else CharcoalMuted)
 
             }
 
@@ -1347,9 +1341,7 @@ private fun MemoryDialog(
 
 @Composable
 
-private fun MemorySkeletonCard() {
-
-    val isDark = isSystemInDarkTheme()
+private fun MemorySkeletonCard(darkTheme: Boolean) {
 
     val shimmerAlpha = remember { Animatable(0.3f) }
 
@@ -1369,11 +1361,11 @@ private fun MemorySkeletonCard() {
 
 
 
-    val shimmerBase = if (isDark) DarkDivider else Divider
+    val shimmerBase = if (darkTheme) DarkDivider else Divider
 
-    val shimmerHighlight = if (isDark) DarkOnSurface.copy(alpha = 0.08f) else Divider.copy(alpha = shimmerAlpha.value)
+    val shimmerHighlight = if (darkTheme) DarkOnSurface.copy(alpha = 0.08f) else Divider.copy(alpha = shimmerAlpha.value)
 
-    val shimmerBrush = remember(shimmerAlpha.value, isDark) {
+    val shimmerBrush = remember(shimmerAlpha.value, darkTheme) {
 
         Brush.linearGradient(
 
@@ -1383,7 +1375,7 @@ private fun MemorySkeletonCard() {
 
     }
 
-    val cardBg = if (isDark) DarkSurface else WarmWhite
+    val cardBg = if (darkTheme) DarkSurface else WarmWhite
 
 
 
@@ -1480,7 +1472,7 @@ private fun MemorySkeletonCard() {
 private fun MembersBottomSheet(
     bookId: Int,
     onDismiss: () -> Unit,
-    isDark: Boolean,
+    darkTheme: Boolean,
     snackbarHostState: SnackbarHostState
 ) {
     val repository: com.memoryproject.app.data.repository.MemoryRepository = koinInject()
@@ -1493,10 +1485,10 @@ private fun MembersBottomSheet(
     var isInviting by remember { mutableStateOf(false) }
     var inviteError by remember { mutableStateOf<String?>(null) }
 
-    val cardBg = if (isDark) DarkSurface else WarmWhite
-    val primaryText = if (isDark) DarkOnSurface else Charcoal
-    val mutedText = if (isDark) DarkOnSurfaceVariant else CharcoalMuted
-    val borderColor = if (isDark) DarkBorder else Border
+    val cardBg = if (darkTheme) DarkSurface else WarmWhite
+    val primaryText = if (darkTheme) DarkOnSurface else Charcoal
+    val mutedText = if (darkTheme) DarkOnSurfaceVariant else CharcoalMuted
+    val borderColor = if (darkTheme) DarkBorder else Border
 
     LaunchedEffect(Unit) {
         repository.getBookMembers(bookId)
@@ -1510,7 +1502,7 @@ private fun MembersBottomSheet(
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
-        containerColor = if (isDark) DarkSurfaceVariant else Cornsilk,
+        containerColor = if (darkTheme) DarkSurfaceVariant else Cornsilk,
         shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)
     ) {
         Column(
@@ -1638,7 +1630,7 @@ private fun MembersBottomSheet(
                             modifier = Modifier
                                 .size(40.dp)
                                 .background(
-                                    color = if (isDark) DarkBronze.copy(alpha = 0.3f) else Bronze.copy(alpha = 0.15f),
+                                    color = if (darkTheme) DarkBronze.copy(alpha = 0.3f) else Bronze.copy(alpha = 0.15f),
                                     shape = CircleShape
                                 ),
                             contentAlignment = Alignment.Center
@@ -1646,7 +1638,7 @@ private fun MembersBottomSheet(
                             Text(
                                 (member.name.firstOrNull() ?: member.email.firstOrNull() ?: '?').uppercase(),
                                 style = MaterialTheme.typography.labelLarge,
-                                color = if (isDark) DarkOnSurface else Charcoal,
+                                color = if (darkTheme) DarkOnSurface else Charcoal,
                                 fontWeight = FontWeight.SemiBold
                             )
                         }
@@ -1670,9 +1662,9 @@ private fun MembersBottomSheet(
                             modifier = Modifier
                                 .background(
                                     color = if (member.role == "owner")
-                                        (if (isDark) Bronze.copy(alpha = 0.2f) else Bronze.copy(alpha = 0.1f))
+                                        (if (darkTheme) Bronze.copy(alpha = 0.2f) else Bronze.copy(alpha = 0.1f))
                                     else
-                                        (if (isDark) TeaGreen.copy(alpha = 0.2f) else TeaGreen.copy(alpha = 0.1f)),
+                                        (if (darkTheme) TeaGreen.copy(alpha = 0.2f) else TeaGreen.copy(alpha = 0.1f)),
                                     shape = RoundedCornerShape(8.dp)
                                 )
                                 .padding(horizontal = 10.dp, vertical = 4.dp)
@@ -1680,7 +1672,7 @@ private fun MembersBottomSheet(
                             Text(
                                 member.role.replaceFirstChar { it.uppercase() },
                                 style = MaterialTheme.typography.labelSmall,
-                                color = if (member.role == "owner") Bronze else (if (isDark) TeaGreen else Color(0xFF4A7A4A)),
+                                color = if (member.role == "owner") Bronze else (if (darkTheme) TeaGreen else Color(0xFF4A7A4A)),
                                 fontWeight = FontWeight.Medium
                             )
                         }

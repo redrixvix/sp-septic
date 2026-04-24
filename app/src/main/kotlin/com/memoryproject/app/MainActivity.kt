@@ -211,7 +211,6 @@ fun MemoryNavHost(
                         navController.navigate("profile")
                     },
                     onNavigateToAddMemory = {
-                        // Navigate to books first so user can pick a book to add memory to
                         navController.navigate("books")
                     },
                     darkTheme = darkThemeEnabled
@@ -237,7 +236,8 @@ fun MemoryNavHost(
                     },
                     onProfile = {
                         navController.navigate("profile")
-                    }
+                    },
+                    darkTheme = darkThemeEnabled
                 )
             }
 
@@ -250,7 +250,8 @@ fun MemoryNavHost(
                 val bookId = backStackEntry.arguments?.getInt("bookId") ?: return@composable
                 BookDetailScreen(
                     bookId = bookId,
-                    onBack = { navController.popBackStack() }
+                    onBack = { navController.popBackStack() },
+                    darkTheme = darkThemeEnabled
                 )
             }
 
@@ -269,7 +270,8 @@ fun MemoryNavHost(
                     onToggleDarkMode = onDarkThemeToggle,
                     onProfileClick = {
                         navController.navigate("profile")
-                    }
+                    },
+                    darkTheme = darkThemeEnabled
                 )
             }
 
@@ -279,7 +281,8 @@ fun MemoryNavHost(
                 exitTransition = { fadeOut(animationSpec = tween(300)) }
             ) {
                 ProfileScreen(
-                    onBack = { navController.popBackStack() }
+                    onBack = { navController.popBackStack() },
+                    darkTheme = darkThemeEnabled
                 )
             }
 
