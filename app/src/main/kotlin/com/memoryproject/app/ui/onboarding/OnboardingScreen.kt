@@ -48,6 +48,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.memoryproject.app.ui.theme.Bronze
 import com.memoryproject.app.ui.theme.BronzeLight
+import com.memoryproject.app.ui.theme.Charcoal
 import com.memoryproject.app.ui.theme.Cornsilk
 import com.memoryproject.app.ui.theme.DarkBackground
 import com.memoryproject.app.ui.theme.DarkOnSurface
@@ -204,7 +205,7 @@ fun OnboardingScreen(
                     shape = RoundedCornerShape(16.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = if (isLastPage) Bronze else cardBg,
-                        contentColor = if (isDark) DarkOnSurface else WarmWhite
+                        contentColor = if (isLastPage) WarmWhite else if (isDark) DarkOnSurface else Charcoal
                     ),
                     elevation = ButtonDefaults.buttonElevation(
                         defaultElevation = if (isLastPage) 6.dp else 2.dp
