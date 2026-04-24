@@ -23,6 +23,9 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.filled.AutoAwesome
+import androidx.compose.material.icons.filled.LocalLibrary
+import androidx.compose.material.icons.filled.MenuBook
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -61,7 +64,7 @@ import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 private data class OnboardingPage(
-    val emoji: String,
+    val icon: androidx.compose.ui.graphics.vector.ImageVector,
     val title: String,
     val subtitle: String,
     val accentColor: Color
@@ -69,19 +72,19 @@ private data class OnboardingPage(
 
 private val PAGES = listOf(
     OnboardingPage(
-        emoji = "📖",
+        icon = Icons.Default.MenuBook,
         title = "Your family's stories\ndeserve to live forever",
         subtitle = "Gather the moments, stories, and wisdom that make your family who they are — and preserve them forever.",
         accentColor = Bronze
     ),
     OnboardingPage(
-        emoji = "✨",
+        icon = Icons.Default.AutoAwesome,
         title = "Write in your own\nwords, your own time",
         subtitle = "Guided prompts or free-form — whatever feels right. No pressure, no structure. Just your story.",
         accentColor = TeaGreen
     ),
     OnboardingPage(
-        emoji = "🌿",
+        icon = Icons.Default.LocalLibrary,
         title = "Print a real book\nyour family will keep",
         subtitle = "Every story becomes a beautifully printed hardcover book — a tangible keepsake your family will hold onto for generations.",
         accentColor = BronzeLight
@@ -265,7 +268,12 @@ private fun OnboardingPageContent(
                     ),
                 contentAlignment = Alignment.Center
             ) {
-                Text(page.emoji, fontSize = 72.sp)
+                Icon(
+                    imageVector = page.icon,
+                    contentDescription = null,
+                    tint = page.accentColor,
+                    modifier = Modifier.size(72.dp)
+                )
             }
         }
 

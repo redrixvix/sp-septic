@@ -14,6 +14,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.MenuBook
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
@@ -110,9 +111,11 @@ fun AuthScreen(
                     ),
                 contentAlignment = Alignment.Center
             ) {
-                Text(
-                    text = "📖",
-                    fontSize = 32.sp
+                Icon(
+                    imageVector = Icons.Default.MenuBook,
+                    contentDescription = null,
+                    tint = WarmWhite,
+                    modifier = Modifier.size(32.dp)
                 )
             }
 

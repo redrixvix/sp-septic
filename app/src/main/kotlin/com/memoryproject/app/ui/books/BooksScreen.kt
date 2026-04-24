@@ -20,6 +20,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Book
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -202,11 +203,28 @@ fun BooksScreen(
                                     ),
                                 contentAlignment = Alignment.Center
                             ) {
-                                Text("📖", fontSize = 48.sp)
+                                Box(
+                                    modifier = Modifier
+                                        .size(96.dp)
+                                        .background(
+                                            brush = Brush.radialGradient(
+                                                colors = if (darkTheme) listOf(DarkSurfaceVariant, DarkSurface) else listOf(Papaya, Beige)
+                                            ),
+                                            shape = RoundedCornerShape(24.dp)
+                                        ),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Book,
+                                        contentDescription = null,
+                                        tint = if (darkTheme) DarkBronze else Bronze,
+                                        modifier = Modifier.size(48.dp)
+                                    )
+                                }
                             }
                             Spacer(modifier = Modifier.height(28.dp))
                             Text(
-                                "Your memories begin here",
+                                "Your family's story is waiting",
                                 style = MaterialTheme.typography.headlineSmall,
                                 fontWeight = FontWeight.SemiBold,
                                 color = primaryText,
@@ -214,7 +232,7 @@ fun BooksScreen(
                             )
                             Spacer(modifier = Modifier.height(10.dp))
                             Text(
-                                "Create your first book to start preserving the moments that matter.",
+                                "Create a book and start capturing the moments, stories, and memories worth preserving.",
                                 style = MaterialTheme.typography.bodyLarge,
                                 color = mutedText,
                                 textAlign = TextAlign.Center,
@@ -324,7 +342,12 @@ fun BooksScreen(
                             ),
                         contentAlignment = Alignment.Center
                     ) {
-                        Text("📖", fontSize = 20.sp)
+                        Icon(
+                            imageVector = Icons.Default.Book,
+                            contentDescription = null,
+                            tint = WarmWhite,
+                            modifier = Modifier.size(20.sp)
+                        )
                     }
                     Spacer(modifier = Modifier.width(12.dp))
                     Text(
@@ -503,7 +526,12 @@ private fun BookCard(
                     ),
                 contentAlignment = Alignment.Center
             ) {
-                Text("📖", fontSize = 26.sp)
+                Icon(
+                    imageVector = Icons.Default.Book,
+                    contentDescription = null,
+                    tint = if (darkTheme) DarkBronze else Bronze,
+                    modifier = Modifier.size(26.dp)
+                )
             }
 
             Spacer(modifier = Modifier.width(16.dp))

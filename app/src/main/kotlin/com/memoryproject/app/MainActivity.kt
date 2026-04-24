@@ -211,8 +211,8 @@ fun MemoryNavHost(
                     onNavigateToProfile = {
                         navController.navigate("profile")
                     },
-                    onNavigateToAddMemory = {
-                        navController.navigate("books")
+                    onNavigateToAddMemory = { bookId ->
+                        navController.navigate("book/$bookId")
                     },
                     darkTheme = darkThemeEnabled
                 )

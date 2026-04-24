@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Book
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -105,11 +106,17 @@ fun InviteScreen(
                         ),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text("📖", fontSize = 48.sp)
+                    Icon(
+                        imageVector = Icons.Default.Book,
+                        contentDescription = null,
+                        tint = if (isDark) DarkBronze else Bronze,
+                        modifier = Modifier.size(48.dp)
+                    )
                 }
             }
 
             Spacer(modifier = Modifier.height(32.dp))
+
 
             when (val state = uiState) {
                 is InviteUiState.Loading -> {
@@ -173,7 +180,12 @@ fun InviteScreen(
                                             ),
                                         contentAlignment = Alignment.Center
                                     ) {
-                                        Text("📚", fontSize = 28.sp)
+                                        Icon(
+                                            imageVector = Icons.Default.Book,
+                                            contentDescription = null,
+                                            tint = if (isDark) DarkBronze else Bronze,
+                                            modifier = Modifier.size(28.dp)
+                                        )
                                     }
 
                                     Spacer(modifier = Modifier.height(16.dp))

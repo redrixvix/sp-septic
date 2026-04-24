@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -65,7 +66,6 @@ fun MemoryCard(
     val promptLabelText = if (isDark) DarkOnSurface else BronzeDark
     val bodyText = if (isDark) DarkOnSurface else Charcoal
     val mutedText = if (isDark) DarkOnSurfaceVariant else CharcoalMuted
-    val extraPhotoBg = if (isDark) DarkBronze.copy(alpha = 0.2f) else Bronze.copy(alpha = 0.15f)
 
     Card(
         modifier = modifier
@@ -74,7 +74,7 @@ fun MemoryCard(
             .clickable(
                 interactionSource = interactionSource,
                 indication = null,
-                onClick = { }
+                onClick = onEdit
             ),
         shape = RoundedCornerShape(14.dp),
         colors = CardDefaults.cardColors(containerColor = cardBg),
@@ -146,8 +146,29 @@ fun MemoryCard(
                             modifier = Modifier.widthIn(max = 200.dp)
                         )
                     }
-                    // Share + Delete icon buttons only (no Edit — answer text is tappable for editing)
+                    // Share + Delete + Edit icon buttons in header row
                     Row {
+                        val editInteraction = remember { MutableInteractionSource() }
+                        val editPressed by editInteraction.collectIsPressedAsState()
+                        val editScale by animateFloatAsState(
+                            targetValue = if (editPressed) 1.15f else 1f,
+                            animationSpec = spring(dampingRatio = 0.6f, stiffness = Spring.StiffnessMedium),
+                            label = "editScale"
+                        )
+                        IconButton(
+                            onClick = onEdit,
+                            modifier = Modifier
+                                .size(36.dp)
+                                .graphicsLayer { scaleX = editScale; scaleY = editScale },
+                            interactionSource = editInteraction
+                        ) {
+                            Icon(
+                                Icons.Default.Edit,
+                                contentDescription = "Edit",
+                                tint = if (editPressed) (if (isDark) DarkBronze else Bronze) else mutedText,
+                                modifier = Modifier.size(18.dp)
+                            )
+                        }
                         val shareInteraction = remember { MutableInteractionSource() }
                         val sharePressed by shareInteraction.collectIsPressedAsState()
                         val shareScale by animateFloatAsState(
@@ -195,15 +216,13 @@ fun MemoryCard(
 
                 Spacer(modifier = Modifier.height(12.dp))
 
-                // Answer text — tappable to trigger edit
+                // Answer text
                 Text(
                     text = memory.answer_text,
                     style = MaterialTheme.typography.bodyLarge,
                     color = bodyText,
                     lineHeight = 26.sp,
-                    modifier = Modifier
-                        .clickable(onClick = onEdit)
-                        .padding(vertical = 2.dp)
+                    modifier = Modifier.padding(vertical = 2.dp)
                 )
 
                 // Photo thumbnails
@@ -229,7 +248,7 @@ fun MemoryCard(
                                 modifier = Modifier
                                     .size(56.dp)
                                     .background(
-                                        color = extraPhotoBg,
+                                        color = if (isDark) DarkBronze.copy(alpha = 0.35f) else Bronze.copy(alpha = 0.22f),
                                         shape = RoundedCornerShape(10.dp)
                                     )
                                     .clickable { memory.photo_urls.getOrNull(3)?.let { onPhotoClick(it) } },
@@ -238,8 +257,41 @@ fun MemoryCard(
                                 Text(
                                     "+$extraCount",
                                     style = MaterialTheme.typography.labelSmall,
-                                    color = if (isDark) DarkOnSurface else BronzeDark
+                                    color = if (isDark) DarkOnSurface else BronzeDark,
+                                    fontWeight = FontWeight.SemiBold
                                 )
+                            }
+                        }
+                        // Photo count indicator when more than 1 photo
+                        if (memory.photo_urls.size > 1) {
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Box(
+                                modifier = Modifier
+                                    .background(
+                                        color = if (isDark) DarkBronze.copy(alpha = 0.2f) else Bronze.copy(alpha = 0.1f),
+                                        shape = RoundedCornerShape(8.dp)
+                                    )
+                                    .padding(horizontal = 8.dp, vertical = 4.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                                ) {
+                                    Icon(
+                                        Icons.Default.Share,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(10.dp),
+                                        tint = if (isDark) DarkOnSurfaceVariant else CharcoalMuted
+                                    )
+                                    Spacer(modifier = Modifier.width(2.dp))
+                                    Text(
+                                        "${memory.photo_urls.size}",
+                                        style = MaterialTheme.typography.labelSmall,
+                                        color = if (isDark) DarkOnSurfaceVariant else CharcoalMuted,
+                                        fontWeight = FontWeight.Medium
+                                    )
+                                }
                             }
                         }
                     }
@@ -261,8 +313,8 @@ internal fun formatMemoryDate(isoDate: String): String {
         val parts = isoDate.substringBefore("T").split("-")
         if (parts.size < 3) return isoDate
         val months = listOf(
-            "", "January", "February", "March", "April", "May", "June",
-            "July", "August", "September", "October", "November", "December"
+            "", "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
         )
         val month = parts[1].toInt()
         val day = parts[2].toInt()

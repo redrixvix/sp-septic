@@ -23,9 +23,11 @@ import androidx.compose.material.icons.filled.Group
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.PersonRemove
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Lightbulb
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -86,6 +88,7 @@ fun BookDetailScreen(
     val uiState by viewModel.uiState.collectAsState()
     var promptInput by remember { mutableStateOf("") }
     var answerInput by remember { mutableStateOf("") }
+    var pendingSuggestion by remember { mutableStateOf<String?>(null) }
     var showPhotoViewer by remember { mutableStateOf<String?>(null) }
     var showMembersSheet by remember { mutableStateOf(false) }
     val snackbarHostState = remember { SnackbarHostState() }
@@ -105,6 +108,16 @@ fun BookDetailScreen(
         uiState.editMemory?.let { memory ->
             promptInput = memory.prompt_question
             answerInput = memory.answer_text
+        }
+    }
+
+    // Apply pending suggestion when dialog opens
+    LaunchedEffect(uiState.showAddMemory, pendingSuggestion) {
+        if (uiState.showAddMemory) {
+            pendingSuggestion?.let {
+                promptInput = it
+                pendingSuggestion = null
+            }
         }
     }
 
@@ -292,7 +305,12 @@ fun BookDetailScreen(
                                 ),
                             contentAlignment = Alignment.Center
                         ) {
-                            Text("✨", fontSize = 48.sp)
+                            Icon(
+                                imageVector = Icons.Default.AutoAwesome,
+                                contentDescription = null,
+                                tint = Bronze,
+                                modifier = Modifier.size(48.dp)
+                            )
                         }
                         Spacer(modifier = Modifier.height(28.dp))
                         Text(
@@ -354,7 +372,13 @@ fun BookDetailScreen(
                         ) {
                             // Prompt suggestions — staggered entrance
                             item {
-                                PromptSuggestionsSection(darkTheme = darkTheme)
+                                PromptSuggestionsSection(
+                                    darkTheme = darkTheme,
+                                    onSuggestionSelected = { prompt ->
+                                        pendingSuggestion = prompt
+                                        viewModel.showAddMemory()
+                                    }
+                                )
                             }
 
                             // Memory count header
@@ -538,7 +562,10 @@ fun BookDetailScreen(
 }
 
 @Composable
-private fun PromptSuggestionsSection(darkTheme: Boolean) {
+private fun PromptSuggestionsSection(
+    darkTheme: Boolean,
+    onSuggestionSelected: (String) -> Unit
+) {
     val suggestions = remember {
         PROMPT_SUGGESTIONS.shuffled().take(6)
     }
@@ -588,7 +615,7 @@ private fun PromptSuggestionsSection(darkTheme: Boolean) {
                     prompt = prompt,
                     cardBg = cardBg,
                     primaryText = primaryText,
-                    onClick = { /* handled by parent via dialog */ }
+                    onClick = { onSuggestionSelected(prompt) }
                 )
             }
         }
@@ -627,7 +654,12 @@ private fun PromptSuggestionChip(
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text("💡", fontSize = 12.sp)
+            Icon(
+                imageVector = Icons.Default.Lightbulb,
+                contentDescription = null,
+                tint = if (darkTheme) DarkBronze else Bronze,
+                modifier = Modifier.size(12.dp)
+            )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
                 text = prompt,
@@ -645,7 +677,7 @@ private fun PromptSuggestionChip(
 private fun PhotoViewer(
     photoUrl: String,
     onDismiss: () -> Unit,
-    @Suppress("UNUSED_PARAMETER") darkTheme: Boolean
+    darkTheme: Boolean
 ) {
     var scale by remember { mutableStateOf(1f) }
     var offset by remember { mutableStateOf(Offset.Zero) }
@@ -673,7 +705,7 @@ private fun PhotoViewer(
     var isVisible by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) { isVisible = true }
     val overlayAlpha by animateFloatAsState(
-        targetValue = if (isVisible) 0.96f else 0f,
+        targetValue = if (isVisible) if (darkTheme) 0.98f else 0.94f else 0f,
         animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing),
         label = "overlayAlpha"
     )
@@ -849,9 +881,11 @@ private fun MemoryDialog(
                             ),
                         contentAlignment = Alignment.Center
                     ) {
-                        Text(
-                            "📝",
-                            fontSize = 22.sp
+                        Icon(
+                            imageVector = Icons.Default.Edit,
+                            contentDescription = null,
+                            tint = if (darkTheme) DarkBronze else Bronze,
+                            modifier = Modifier.size(22.dp)
                         )
                     }
                     Column {
@@ -913,9 +947,11 @@ private fun MemoryDialog(
                                 ),
                             contentAlignment = Alignment.Center
                         ) {
-                            Text(
-                                "💡",
-                                style = MaterialTheme.typography.bodySmall
+                            Icon(
+                                imageVector = Icons.Default.Lightbulb,
+                                contentDescription = null,
+                                tint = if (darkTheme) DarkBronze else Bronze,
+                                modifier = Modifier.size(14.dp)
                             )
                         }
                         Spacer(modifier = Modifier.width(8.dp))

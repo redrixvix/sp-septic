@@ -16,6 +16,10 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.AutoAwesome
+import androidx.compose.material.icons.filled.Book
+import androidx.compose.material.icons.filled.CameraAlt
+import androidx.compose.material.icons.filled.Lightbulb
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import kotlinx.coroutines.delay
@@ -50,7 +54,7 @@ fun HomeScreen(
     onNavigateToBooks: () -> Unit,
     onNavigateToBook: (Int) -> Unit,
     onNavigateToProfile: () -> Unit,
-    onNavigateToAddMemory: () -> Unit = {},
+    onNavigateToAddMemory: (Int) -> Unit = {},
     darkTheme: Boolean,
     viewModel: HomeViewModel = koinViewModel()
 ) {
@@ -112,7 +116,7 @@ fun HomeScreen(
             // Quick action buttons
             item(key = "quick_actions") {
                 QuickActions(
-                    onAddMemory = onNavigateToAddMemory,
+                    onAddMemory = { uiState.books.firstOrNull()?.let { onNavigateToAddMemory(it.id) } },
                     onBrowseBooks = onNavigateToBooks,
                     darkTheme = darkTheme,
                     cardBg = cardBg,
@@ -145,7 +149,7 @@ fun HomeScreen(
                         cardBg = cardBg,
                         primaryText = primaryText,
                         mutedText = mutedText,
-                        onAddMemory = onNavigateToAddMemory,
+                        onAddMemory = { uiState.books.firstOrNull()?.let { onNavigateToAddMemory(it.id) } },
                         modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
                     )
                 }
@@ -363,7 +367,11 @@ private fun WelcomeHeader(
                         } else {
                             val greeting = rememberGreeting()
                             Text(
-                                text = greeting,
+                                text = if (userName.isNotBlank()) {
+                                    "Good to see you, $userName"
+                                } else {
+                                    greeting
+                                },
                                 style = MaterialTheme.typography.headlineSmall,
                                 color = primaryText,
                                 fontWeight = FontWeight.SemiBold
@@ -371,9 +379,9 @@ private fun WelcomeHeader(
                             Spacer(modifier = Modifier.height(6.dp))
                             Text(
                                 text = if (userName.isNotBlank()) {
-                                    "Let's capture something great today"
+                                    "What will you remember today?"
                                 } else {
-                                    "Welcome to Memory Project"
+                                    "Let's capture something great today"
                                 },
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = mutedText
@@ -439,7 +447,7 @@ private fun QuickStats(
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         StatCard(
-            icon = "📚",
+            icon = "book",
             value = booksCount.toString(),
             label = if (booksCount == 1) "Book" else "Books",
             accentColor = Bronze,
@@ -450,7 +458,7 @@ private fun QuickStats(
             modifier = Modifier.weight(1f)
         )
         StatCard(
-            icon = "✨",
+            icon = "memory",
             value = memoriesCount.toString(),
             label = if (memoriesCount == 1) "Memory" else "Memories",
             accentColor = if (darkTheme) DarkBronze else CardAccentTea,
@@ -475,11 +483,6 @@ private fun StatCard(
     mutedText: Color,
     modifier: Modifier = Modifier
 ) {
-    // Single-pass shimmer — plays once on load then settles
-    val shimmerAlpha = remember { Animatable(0.2f) }
-    LaunchedEffect(Unit) {
-        shimmerAlpha.animateTo(0.55f, animationSpec = tween(durationMillis = 1400, easing = FastOutSlowInEasing))
-    }
     Card(
         modifier = modifier,
         shape = RoundedCornerShape(16.dp),
@@ -495,41 +498,25 @@ private fun StatCard(
         ) {
             Box(
                 modifier = Modifier
-                    .size(44.dp),
+                    .size(44.dp)
+                    .background(
+                        brush = Brush.linearGradient(
+                            colors = if (darkTheme) {
+                                listOf(DarkBronze.copy(alpha = 0.4f), DarkSurfaceVariant)
+                            } else {
+                                listOf(Bronze.copy(alpha = 0.25f), Papaya.copy(alpha = 0.8f))
+                            }
+                        ),
+                        shape = RoundedCornerShape(12.dp)
+                    ),
                 contentAlignment = Alignment.Center
             ) {
-                // Warm gradient background
-                Box(
-                    modifier = Modifier
-                        .matchParentSize()
-                        .background(
-                            brush = Brush.linearGradient(
-                                colors = if (darkTheme) {
-                                    listOf(DarkBronze.copy(alpha = 0.4f), DarkSurfaceVariant)
-                                } else {
-                                    listOf(Bronze.copy(alpha = 0.25f), Papaya.copy(alpha = 0.8f))
-                                }
-                            ),
-                            shape = RoundedCornerShape(12.dp)
-                        )
+                Icon(
+                    imageVector = if (icon == "book") Icons.Default.Book else Icons.Default.AutoAwesome,
+                    contentDescription = null,
+                    tint = if (darkTheme) DarkBronze else Bronze,
+                    modifier = Modifier.size(22.dp)
                 )
-                // Shimmer overlay — single pass
-                Box(
-                    modifier = Modifier
-                        .matchParentSize()
-                        .background(
-                            brush = Brush.linearGradient(
-                                colors = listOf(
-                                    Color.Transparent,
-                                    Color.White.copy(alpha = shimmerAlpha.value),
-                                    Color.Transparent
-                                )
-                            )
-                        ),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(icon, fontSize = 22.sp)
-                }
             }
             Column {
                 Text(
@@ -563,7 +550,6 @@ private fun QuickActions(
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         QuickActionButton(
-            icon = "✏️",
             label = "Add Memory",
             onClick = onAddMemory,
             isPrimary = true,
@@ -573,7 +559,6 @@ private fun QuickActions(
             modifier = Modifier.weight(1f)
         )
         QuickActionButton(
-            icon = "📖",
             label = "Browse Books",
             onClick = onBrowseBooks,
             isPrimary = false,
@@ -587,7 +572,6 @@ private fun QuickActions(
 
 @Composable
 private fun QuickActionButton(
-    icon: String,
     label: String,
     onClick: () -> Unit,
     isPrimary: Boolean,
@@ -614,7 +598,12 @@ private fun QuickActionButton(
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(icon, fontSize = 20.sp)
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = null,
+                    tint = WarmWhite,
+                    modifier = Modifier.size(20.dp)
+                )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     text = label,
@@ -643,7 +632,12 @@ private fun QuickActionButton(
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(icon, fontSize = 20.sp)
+                Icon(
+                    imageVector = Icons.Default.Book,
+                    contentDescription = null,
+                    tint = if (darkTheme) DarkBronzeLight else Bronze,
+                    modifier = Modifier.size(20.dp)
+                )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     text = label,
@@ -696,7 +690,12 @@ private fun EmptyHomeCard(
                         ),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text("🌟", fontSize = 44.sp)
+                    Icon(
+                        imageVector = Icons.Default.AutoAwesome,
+                        contentDescription = null,
+                        tint = Bronze,
+                        modifier = Modifier.size(44.dp)
+                    )
                 }
 
                 Spacer(modifier = Modifier.height(24.dp))
@@ -712,7 +711,7 @@ private fun EmptyHomeCard(
                 Spacer(modifier = Modifier.height(10.dp))
 
                 Text(
-                    text = "Capture your first memory — start writing the story your family will treasure forever.",
+                    text = "Capture your first memory — it's easier than writing a letter, more meaningful than a photo, and it'll be treasured for generations.",
                     style = MaterialTheme.typography.bodyMedium,
                     color = mutedText,
                     textAlign = TextAlign.Center,
@@ -733,10 +732,10 @@ private fun EmptyHomeCard(
                     ),
                     elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp, pressedElevation = 8.dp)
                 ) {
-                    Icon(Icons.Default.Add, contentDescription = "Add your first memory", modifier = Modifier.size(20.dp))
+                    Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.size(20.dp))
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "Add Your First Memory",
+                        text = "Start Writing",
                         style = MaterialTheme.typography.labelLarge,
                         fontWeight = FontWeight.SemiBold
                     )
@@ -844,7 +843,12 @@ private fun RecentMemoryCard(
                     )
                     if (memory.photo_urls.isNotEmpty()) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            Text("📷", fontSize = 12.sp)
+                            Icon(
+                                imageVector = Icons.Default.CameraAlt,
+                                contentDescription = null,
+                                tint = mutedText,
+                                modifier = Modifier.size(12.dp)
+                            )
                             Spacer(modifier = Modifier.width(4.dp))
                             Text(
                                 text = "${memory.photo_urls.size}",
@@ -894,7 +898,12 @@ private fun BookMiniCard(
                     ),
                 contentAlignment = Alignment.Center
             ) {
-                Text("📖", fontSize = 20.sp)
+                Icon(
+                    imageVector = Icons.Default.Book,
+                    contentDescription = null,
+                    tint = WarmWhite,
+                    modifier = Modifier.size(20.dp)
+                )
             }
             Spacer(modifier = Modifier.width(14.dp))
             Column(modifier = Modifier.weight(1f)) {
@@ -1018,7 +1027,12 @@ private fun MemoryPromptsSection(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.padding(bottom = 8.dp)
                 ) {
-                    Text("✨", fontSize = 14.sp)
+                    Icon(
+                        imageVector = Icons.Default.AutoAwesome,
+                        contentDescription = null,
+                        tint = if (darkTheme) DarkOnSurfaceVariant else BronzeDark,
+                        modifier = Modifier.size(14.dp)
+                    )
                     Spacer(modifier = Modifier.width(6.dp))
                     Text(
                         text = "Inspiration",
@@ -1105,7 +1119,12 @@ private fun PromptCard(
                     ),
                 contentAlignment = Alignment.Center
             ) {
-                Text("💡", fontSize = 14.sp)
+                Icon(
+                    imageVector = Icons.Default.Lightbulb,
+                    contentDescription = null,
+                    tint = if (darkTheme) DarkBronze.copy(alpha = 0.6f) else Bronze.copy(alpha = 0.5f),
+                    modifier = Modifier.size(14.dp)
+                )
             }
             Spacer(modifier = Modifier.width(12.dp))
             Text(
