@@ -1,5 +1,7 @@
 package com.memoryproject.app.ui.settings
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.animation.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -15,9 +17,12 @@ import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PrivacyTip
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.memoryproject.app.BuildConfig
 import com.memoryproject.app.ui.theme.*
@@ -38,6 +43,7 @@ fun SettingsScreen(
     var showLogoutDialog by remember { mutableStateOf(false) }
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
+    val context = LocalContext.current
 
     // Show coming soon snackbar for profile row
     LaunchedEffect(uiState.profileMessage) {
@@ -54,7 +60,7 @@ fun SettingsScreen(
                     Text(
                         "Settings",
                         style = MaterialTheme.typography.headlineMedium,
-                        fontWeight = FontWeight.Bold,
+                        fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
                         color = Charcoal
                     )
                 },
@@ -156,20 +162,31 @@ fun SettingsScreen(
                 SettingsItem(
                     icon = Icons.Default.Info,
                     title = "Version",
-                    subtitle = "Build ${BuildConfig.VERSION_CODE}",
+                    subtitle = "1.0.0",
                     showDivider = true,
                     onClick = { }
                 )
                 SettingsItem(
                     icon = Icons.Default.PrivacyTip,
-                    title = "Privacy",
+                    title = "Privacy Policy",
                     subtitle = "Your data is always private",
                     onClick = {
-                        scope.launch {
-                            snackbarHostState.showSnackbar(
-                                message = "Privacy policy coming soon",
-                                duration = SnackbarDuration.Short
-                            )
+                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://web-redrixvixs-projects.vercel.app/privacy"))
+                        context.startActivity(intent)
+                    }
+                )
+                SettingsItem(
+                    icon = Icons.Default.Star,
+                    title = "Rate This App",
+                    subtitle = "Share your experience",
+                    onClick = {
+                        // Open Play Store — use market:// for Play Store app, fallback to web URL
+                        try {
+                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=${context.packageName}"))
+                            context.startActivity(intent)
+                        } catch (e: Exception) {
+                            val webIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=${context.packageName}"))
+                            context.startActivity(webIntent)
                         }
                     }
                 )
@@ -198,7 +215,7 @@ fun SettingsScreen(
                 Text(
                     "Sign Out",
                     style = MaterialTheme.typography.labelLarge,
-                    fontWeight = FontWeight.SemiBold
+                    fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold
                 )
             }
 
@@ -214,7 +231,7 @@ fun SettingsScreen(
                 Text(
                     "Sign Out?",
                     style = MaterialTheme.typography.headlineSmall,
-                    fontWeight = FontWeight.SemiBold
+                    fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold
                 )
             },
             text = {
@@ -232,7 +249,7 @@ fun SettingsScreen(
                         onLogout()
                     }
                 ) {
-                    Text("Sign Out", color = ErrorRed, fontWeight = FontWeight.SemiBold)
+                    Text("Sign Out", color = ErrorRed, fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold)
                 }
             },
             dismissButton = {
@@ -255,7 +272,7 @@ private fun SettingsSection(
             text = title,
             style = MaterialTheme.typography.labelMedium,
             color = CharcoalMuted,
-            fontWeight = FontWeight.SemiBold,
+            fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold,
             modifier = Modifier.padding(start = 4.dp, bottom = 8.dp)
         )
         Card(
@@ -272,7 +289,7 @@ private fun SettingsSection(
 
 @Composable
 private fun SettingsItem(
-    icon: ImageVector,
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
     title: String,
     subtitle: String,
     trailing: (@Composable () -> Unit)? = null,
@@ -311,7 +328,7 @@ private fun SettingsItem(
                     text = title,
                     style = MaterialTheme.typography.bodyLarge,
                     color = Charcoal,
-                    fontWeight = FontWeight.Medium
+                    fontWeight = androidx.compose.ui.text.font.FontWeight.Medium
                 )
                 Text(
                     text = subtitle,

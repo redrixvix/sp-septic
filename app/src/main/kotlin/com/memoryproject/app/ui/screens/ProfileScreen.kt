@@ -32,12 +32,65 @@ fun ProfileScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
+    var showEditNameDialog by remember { mutableStateOf(false) }
+    var editedName by remember { mutableStateOf("") }
 
     LaunchedEffect(uiState.message) {
         uiState.message?.let {
             snackbarHostState.showSnackbar(it, duration = SnackbarDuration.Short)
             viewModel.clearMessage()
         }
+    }
+
+    // Edit name dialog
+    if (showEditNameDialog) {
+        AlertDialog(
+            onDismissRequest = { showEditNameDialog = false },
+            title = {
+                Text(
+                    "Edit Display Name",
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.SemiBold
+                )
+            },
+            text = {
+                OutlinedTextField(
+                    value = editedName,
+                    onValueChange = { editedName = it },
+                    label = { Text("Display Name") },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
+                    shape = RoundedCornerShape(12.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = Bronze,
+                        unfocusedBorderColor = Border,
+                        focusedLabelColor = Bronze
+                    )
+                )
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        viewModel.updateDisplayName(editedName.trim())
+                        showEditNameDialog = false
+                    },
+                    enabled = editedName.isNotBlank() && editedName.trim() != uiState.userName.ifBlank { "" },
+                    shape = RoundedCornerShape(12.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Bronze,
+                        contentColor = WarmWhite
+                    )
+                ) {
+                    Text("Save")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showEditNameDialog = false }) {
+                    Text("Cancel", color = CharcoalMuted)
+                }
+            },
+            shape = RoundedCornerShape(20.dp)
+        )
     }
 
     Scaffold(
@@ -163,58 +216,72 @@ fun ProfileScreen(
                 }
             }
 
-            // Account info section
-            SettingsSection(title = "Account") {
+            // Personal info section
+            SettingsSection(title = "Personal") {
                 SettingsRow(
                     icon = Icons.Default.Person,
                     label = "Display Name",
-                    value = uiState.userName.ifBlank { "Not set" },
-                    onClick = { viewModel.showComingSoon() }
+                    value = uiState.userName.ifBlank { "Tap to set" },
+                    onClick = {
+                        editedName = uiState.userName.ifBlank { "" }
+                        showEditNameDialog = true
+                    }
                 )
                 HorizontalDivider(color = Divider, thickness = 0.5.dp)
                 SettingsRow(
                     icon = Icons.Default.Email,
                     label = "Email",
                     value = uiState.userEmail.ifBlank { "Not set" },
-                    onClick = { viewModel.showComingSoon() }
+                    onClick = { }
                 )
             }
 
             // Usage stats section
             SettingsSection(title = "Your Library") {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 16.dp),
-                    horizontalArrangement = Arrangement.SpaceEvenly
-                ) {
-                    StatItem(
-                        value = "${uiState.booksCount}",
-                        label = if (uiState.booksCount == 1) "Book" else "Books",
-                        highlight = uiState.booksCount > 0
-                    )
-                    Box(
-                        modifier = Modifier
-                            .width(1.dp)
-                            .height(40.dp)
-                            .background(Divider)
-                    )
-                    StatItem(
-                        value = "${uiState.memoriesCount}",
-                        label = if (uiState.memoriesCount == 1) "Memory" else "Memories",
-                        highlight = uiState.memoriesCount > 0
-                    )
-                    Box(
-                        modifier = Modifier
-                            .width(1.dp)
-                            .height(40.dp)
-                            .background(Divider)
-                    )
-                    StatItem(
-                        value = if (uiState.storageUsedBytes > 0) formatStorage(uiState.storageUsedBytes) else "Free",
-                        label = "Plan",
-                        highlight = uiState.storageUsedBytes > 0
-                    )
+                Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 16.dp)) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceEvenly
+                    ) {
+                        StatItem(
+                            value = "${uiState.booksCount}",
+                            label = if (uiState.booksCount == 1) "Book" else "Books",
+                            highlight = uiState.booksCount > 0
+                        )
+                        Box(
+                            modifier = Modifier
+                                .width(1.dp)
+                                .height(40.dp)
+                                .background(Divider)
+                        )
+                        StatItem(
+                            value = "${uiState.memoriesCount}",
+                            label = if (uiState.memoriesCount == 1) "Memory" else "Memories",
+                            highlight = uiState.memoriesCount > 0
+                        )
+                        Box(
+                            modifier = Modifier
+                                .width(1.dp)
+                                .height(40.dp)
+                                .background(Divider)
+                        )
+                        StatItem(
+                            value = if (uiState.storageUsedBytes > 0) formatStorage(uiState.storageUsedBytes) else "Free",
+                            label = "Plan",
+                            highlight = uiState.storageUsedBytes > 0
+                        )
+                    }
+                    // Account age
+                    if (uiState.userCreatedAt.isNotBlank()) {
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text(
+                            text = uiState.userCreatedAt,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = CharcoalMuted,
+                            modifier = Modifier.fillMaxWidth(),
+                            textAlign = TextAlign.Center
+                        )
+                    }
                 }
             }
 
@@ -224,42 +291,9 @@ fun ProfileScreen(
                     icon = Icons.Default.Book,
                     label = "Invite family member",
                     value = "Add contributors to your books",
-                    onClick = { viewModel.showComingSoon() },
+                    onClick = { },
                     showChevron = true
                 )
-            }
-
-            // Coming soon notice
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(14.dp),
-                colors = CardDefaults.cardColors(containerColor = Papaya.copy(alpha = 0.5f))
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "💡",
-                        fontSize = 20.sp
-                    )
-                    Spacer(modifier = Modifier.width(12.dp))
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(
-                            text = "More profile options coming",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = Charcoal,
-                            fontWeight = FontWeight.Medium
-                        )
-                        Text(
-                            text = "Profile editing, avatar upload, and notification preferences will be available soon.",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = CharcoalMuted
-                        )
-                    }
-                }
             }
 
             Spacer(modifier = Modifier.height(32.dp))

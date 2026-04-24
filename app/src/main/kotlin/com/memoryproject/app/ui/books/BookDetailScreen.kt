@@ -18,6 +18,7 @@ import androidx.compose.material.icons.automirrored.filled.Share
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -27,6 +28,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -509,14 +511,21 @@ private fun MemoryDialog(
                         .heightIn(min = 140.dp),
                     shape = RoundedCornerShape(12.dp),
                     minLines = 5,
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                    keyboardActions = KeyboardActions(
+                        onDone = {
+                            if (promptInput.isNotBlank() && answerInput.isNotBlank()) onConfirm()
+                        }
+                    ),
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = Bronze,
                         unfocusedBorderColor = Border,
                         focusedLabelColor = Bronze
                     ),
                     supportingText = {
+                        val words = answerInput.split("\\s+".toRegex()).filter { it.isNotBlank() }.size
                         Text(
-                            "${answerInput.length} characters",
+                            "${answerInput.length} characters · $words ${if (words == 1) "word" else "words"}",
                             color = CharcoalMuted,
                             style = MaterialTheme.typography.bodySmall
                         )
@@ -700,6 +709,17 @@ private fun MemoryCard(
                         )
                     }
                     Row {
+                        IconButton(
+                            onClick = onEdit,
+                            modifier = Modifier.size(36.dp)
+                        ) {
+                            Icon(
+                                Icons.Default.Edit,
+                                contentDescription = "Edit",
+                                tint = CharcoalMuted,
+                                modifier = Modifier.size(18.dp)
+                            )
+                        }
                         IconButton(
                             onClick = onShareClick,
                             modifier = Modifier.size(36.dp)

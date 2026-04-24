@@ -15,6 +15,10 @@ class PreferencesManager(context: Context) {
         get() = prefs.getBoolean(KEY_NOTIFICATIONS, true)
         set(value) = prefs.edit().putBoolean(KEY_NOTIFICATIONS, value).apply()
 
+    var displayName: String
+        get() = prefs.getString(KEY_DISPLAY_NAME, "") ?: ""
+        set(value) = prefs.edit().putString(KEY_DISPLAY_NAME, value).apply()
+
     fun clearAll() {
         // Clear auth tokens/session data but preserve user preferences
         prefs.edit()
@@ -29,6 +33,7 @@ class PreferencesManager(context: Context) {
         private const val PREFS_NAME = "memory_project_prefs"
         private const val KEY_DARK_MODE = "dark_mode"
         private const val KEY_NOTIFICATIONS = "notifications_enabled"
+        private const val KEY_DISPLAY_NAME = "display_name"
         // Auth keys — stored in SharedPreferences (not currently used; session is in-memory)
         private const val KEY_SESSION_COOKIE = "session_cookie"
         private const val KEY_AUTH_TOKEN = "auth_token"

@@ -25,6 +25,8 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
@@ -37,6 +39,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -44,6 +47,60 @@ import androidx.compose.ui.unit.sp
 import com.memoryproject.app.data.model.Book
 import com.memoryproject.app.ui.theme.*
 import org.koin.androidx.compose.koinViewModel
+
+private enum class SortOption { NEWEST, OLDEST, ALPHABETICAL, MOST_MEMORIES }
+
+@Composable
+private fun SortMenu(selected: SortOption, onSelect: (SortOption) -> Unit) {
+    var expanded by remember { mutableStateOf(false) }
+    Box {
+        TextButton(
+            onClick = { expanded = true },
+            contentPadding = PaddingValues(horizontal = 6.dp, vertical = 2.dp),
+            modifier = Modifier.height(24.dp)
+        ) {
+            Text(
+                text = when (selected) {
+                    SortOption.NEWEST -> "Newest"
+                    SortOption.OLDEST -> "Oldest"
+                    SortOption.ALPHABETICAL -> "A–Z"
+                    SortOption.MOST_MEMORIES -> "Most memories"
+                },
+                style = MaterialTheme.typography.bodySmall,
+                color = Bronze,
+                fontWeight = FontWeight.Medium
+            )
+            Icon(
+                Icons.Default.ExpandMore,
+                contentDescription = null,
+                tint = Bronze,
+                modifier = Modifier.size(14.dp)
+            )
+        }
+        DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+            DropdownMenuItem(
+                text = { Text("Newest first", color = if (selected == SortOption.NEWEST) Bronze else Charcoal) },
+                onClick = { onSelect(SortOption.NEWEST); expanded = false },
+                leadingIcon = { if (selected == SortOption.NEWEST) Icon(Icons.Default.Check, null, tint = Bronze, modifier = Modifier.size(16.dp)) else null }
+            )
+            DropdownMenuItem(
+                text = { Text("Oldest first", color = if (selected == SortOption.OLDEST) Bronze else Charcoal) },
+                onClick = { onSelect(SortOption.OLDEST); expanded = false },
+                leadingIcon = { if (selected == SortOption.OLDEST) Icon(Icons.Default.Check, null, tint = Bronze, modifier = Modifier.size(16.dp)) else null }
+            )
+            DropdownMenuItem(
+                text = { Text("Alphabetical", color = if (selected == SortOption.ALPHABETICAL) Bronze else Charcoal) },
+                onClick = { onSelect(SortOption.ALPHABETICAL); expanded = false },
+                leadingIcon = { if (selected == SortOption.ALPHABETICAL) Icon(Icons.Default.Check, null, tint = Bronze, modifier = Modifier.size(16.dp)) else null }
+            )
+            DropdownMenuItem(
+                text = { Text("Most memories", color = if (selected == SortOption.MOST_MEMORIES) Bronze else Charcoal) },
+                onClick = { onSelect(SortOption.MOST_MEMORIES); expanded = false },
+                leadingIcon = { if (selected == SortOption.MOST_MEMORIES) Icon(Icons.Default.Check, null, tint = Bronze, modifier = Modifier.size(16.dp)) else null }
+            )
+        }
+    }
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -62,15 +119,27 @@ fun BooksScreen(
     var showLogoutDialog by remember { mutableStateOf(false) }
     var searchQuery by remember { mutableStateOf("") }
 
-    // Filter books by search query
-    val filteredBooks = if (searchQuery.isBlank()) {
-        uiState.books
-    } else {
-        uiState.books.filter { it.title.contains(searchQuery, ignoreCase = true) }
-    }
+    var sortOption by remember { mutableStateOf(SortOption.NEWEST) }
 
-    // Greeting — kept simple, no personalization to avoid shared-screen privacy concerns
-    val greeting = "My Books"
+    // Filter and sort books
+    val filteredBooks = remember(sortOption, searchQuery, uiState.books) {
+        if (searchQuery.isBlank()) {
+            when (sortOption) {
+                SortOption.NEWEST -> uiState.books.sortedByDescending { it.created_at }
+                SortOption.OLDEST -> uiState.books.sortedBy { it.created_at }
+                SortOption.ALPHABETICAL -> uiState.books.sortedBy { it.title.lowercase() }
+                SortOption.MOST_MEMORIES -> uiState.books.sortedByDescending { it.memories_count ?: 0 }
+            }
+        } else {
+            val filtered = uiState.books.filter { it.title.contains(searchQuery, ignoreCase = true) }
+            when (sortOption) {
+                SortOption.NEWEST -> filtered.sortedByDescending { it.created_at }
+                SortOption.OLDEST -> filtered.sortedBy { it.created_at }
+                SortOption.ALPHABETICAL -> filtered.sortedBy { it.title.lowercase() }
+                SortOption.MOST_MEMORIES -> filtered.sortedByDescending { it.memories_count ?: 0 }
+            }
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -106,47 +175,42 @@ fun BooksScreen(
                                 }
                             }
                         }
-                        if (uiState.books.isNotEmpty()) {
+                        Row(
+                            modifier = Modifier.padding(top = 4.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(6.dp)
+                        ) {
+                            val displayCount = if (searchQuery.isNotBlank() && filteredBooks.size != uiState.books.size) {
+                                "${filteredBooks.size} of ${uiState.books.size} books"
+                            } else {
+                                "${uiState.books.size} ${if (uiState.books.size == 1) "book" else "books"}"
+                            }
                             Text(
-                                "${uiState.books.size} ${if (uiState.books.size == 1) "book" else "books"}",
+                                displayCount,
                                 style = MaterialTheme.typography.bodySmall,
                                 color = CharcoalMuted
                             )
+                            if (uiState.books.size > 1) {
+                                SortMenu(
+                                    selected = sortOption,
+                                    onSelect = { sortOption = it }
+                                )
+                            }
                         }
                     }
                 },
                 actions = {
-                    IconButton(
-                        onClick = onSettings
-                    ) {
-                        Icon(
-                            Icons.Default.Settings,
-                            contentDescription = "Settings",
-                            tint = CharcoalMuted
-                        )
+                    IconButton(onClick = onSettings) {
+                        Icon(Icons.Default.Settings, contentDescription = "Settings", tint = CharcoalMuted)
                     }
-                    IconButton(
-                        onClick = onProfile
-                    ) {
-                        Icon(
-                            Icons.Default.Person,
-                            contentDescription = "Profile",
-                            tint = CharcoalMuted
-                        )
+                    IconButton(onClick = onProfile) {
+                        Icon(Icons.Default.Person, contentDescription = "Profile", tint = CharcoalMuted)
                     }
-                    IconButton(
-                        onClick = { showLogoutDialog = true }
-                    ) {
-                        Icon(
-                            Icons.Default.Logout,
-                            contentDescription = "Sign out",
-                            tint = CharcoalMuted
-                        )
+                    IconButton(onClick = { showLogoutDialog = true }) {
+                        Icon(Icons.Default.Logout, contentDescription = "Sign out", tint = CharcoalMuted)
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Cornsilk
-                )
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = Cornsilk)
             )
         },
         floatingActionButton = {
@@ -154,74 +218,41 @@ fun BooksScreen(
                 onClick = { showCreateDialog = true },
                 containerColor = Bronze,
                 contentColor = WarmWhite,
-                elevation = FloatingActionButtonDefaults.elevation(
-                    defaultElevation = 6.dp,
-                    pressedElevation = 12.dp
-                )
+                elevation = FloatingActionButtonDefaults.elevation(defaultElevation = 6.dp, pressedElevation = 12.dp)
             ) {
                 Icon(Icons.Default.Add, contentDescription = null)
                 Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    "New Book",
-                    style = MaterialTheme.typography.labelLarge,
-                    fontWeight = FontWeight.SemiBold
-                )
+                Text("New Book", style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.SemiBold)
             }
         },
         containerColor = Cornsilk
     ) { padding ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-        ) {
+        Box(modifier = Modifier.fillMaxSize().padding(padding)) {
             when {
                 uiState.isLoading && uiState.books.isEmpty() -> {
                     Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(horizontal = 16.dp, vertical = 8.dp),
+                        modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp, vertical = 8.dp),
                         verticalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        repeat(4) { SkeletonCard() }
-                    }
+                    ) { repeat(4) { SkeletonCard() } }
                 }
-
                 uiState.error != null && uiState.books.isEmpty() -> {
-                    Column(
-                        modifier = Modifier.align(Alignment.Center),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text(text = "😕", fontSize = 56.sp)
+                    Column(modifier = Modifier.align(Alignment.Center), horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text("😕", fontSize = 56.sp)
                         Spacer(modifier = Modifier.height(16.dp))
-                        Text(
-                            text = "Couldn't load your books",
-                            style = MaterialTheme.typography.headlineSmall,
-                            color = Charcoal
-                        )
+                        Text("Couldn't load your books", style = MaterialTheme.typography.headlineSmall, color = Charcoal)
                         Spacer(modifier = Modifier.height(8.dp))
-                        Text(
-                            text = uiState.error!!,
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = CharcoalMuted,
-                            textAlign = TextAlign.Center
-                        )
+                        Text(uiState.error!!, style = MaterialTheme.typography.bodyMedium, color = CharcoalMuted, textAlign = TextAlign.Center)
                         Spacer(modifier = Modifier.height(20.dp))
                         OutlinedButton(
                             onClick = { viewModel.loadBooks() },
                             shape = RoundedCornerShape(12.dp),
                             colors = ButtonDefaults.outlinedButtonColors(contentColor = Bronze)
-                        ) {
-                            Text("Try Again")
-                        }
+                        ) { Text("Try Again") }
                     }
                 }
-
                 uiState.books.isEmpty() -> {
                     Column(
-                        modifier = Modifier
-                            .align(Alignment.Center)
-                            .padding(horizontal = 40.dp),
+                        modifier = Modifier.align(Alignment.Center).padding(horizontal = 40.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Card(
@@ -231,64 +262,32 @@ fun BooksScreen(
                             elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
                         ) {
                             Box(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .background(
-                                        brush = Brush.radialGradient(
-                                            colors = listOf(Papaya, Beige)
-                                        )
-                                    ),
+                                modifier = Modifier.fillMaxSize().background(brush = Brush.radialGradient(colors = listOf(Papaya, Beige))),
                                 contentAlignment = Alignment.Center
                             ) {
-                                Icon(
-                                    Icons.Default.MenuBook,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(48.dp),
-                                    tint = Bronze
-                                )
+                                Icon(Icons.Default.MenuBook, contentDescription = null, modifier = Modifier.size(48.dp), tint = Bronze)
                             }
                         }
                         Spacer(modifier = Modifier.height(28.dp))
-                        Text(
-                            text = "Your library is empty",
-                            style = MaterialTheme.typography.headlineSmall,
-                            fontWeight = FontWeight.SemiBold,
-                            color = Charcoal
-                        )
+                        Text("Your library is empty", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.SemiBold, color = Charcoal)
                         Spacer(modifier = Modifier.height(10.dp))
-                        Text(
-                            text = "Every family has stories worth keeping. Start yours here.",
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = CharcoalMuted,
-                            textAlign = TextAlign.Center
-                        )
+                        Text("Every family has stories worth keeping. Start yours here.", style = MaterialTheme.typography.bodyLarge, color = CharcoalMuted, textAlign = TextAlign.Center)
                         Spacer(modifier = Modifier.height(28.dp))
                         Button(
                             onClick = { showCreateDialog = true },
                             modifier = Modifier.height(52.dp),
                             shape = RoundedCornerShape(14.dp),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = Bronze,
-                                contentColor = WarmWhite
-                            )
+                            colors = ButtonDefaults.buttonColors(containerColor = Bronze, contentColor = WarmWhite)
                         ) {
                             Icon(Icons.Default.Add, contentDescription = null)
                             Spacer(modifier = Modifier.width(8.dp))
-                            Text(
-                                "Create Your First Book",
-                                style = MaterialTheme.typography.labelLarge,
-                                fontWeight = FontWeight.SemiBold
-                            )
+                            Text("Create Your First Book", style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.SemiBold)
                         }
                     }
                 }
-
                 else -> {
                     val context = LocalContext.current
-                    val pullRefreshState = rememberPullRefreshState(
-                        refreshing = uiState.isLoading,
-                        onRefresh = { viewModel.loadBooks() }
-                    )
+                    val pullRefreshState = rememberPullRefreshState(refreshing = uiState.isLoading, onRefresh = { viewModel.loadBooks() })
                     val onShareBook: (Book) -> Unit = { book ->
                         val intent = Intent(Intent.ACTION_SEND).apply {
                             type = "text/plain"
@@ -298,586 +297,212 @@ fun BooksScreen(
                         context.startActivity(Intent.createChooser(intent, "Share via"))
                     }
                     val onOpenInBrowser: (Book) -> Unit = { book ->
-                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://web-redrixvixs-projects.vercel.app/books/${book.id}"))
-                        context.startActivity(intent)
+                        context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://web-redrixvixs-projects.vercel.app/books/${book.id}")))
                     }
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .pullRefresh(pullRefreshState)
-                    ) {
+                    Box(modifier = Modifier.fillMaxSize().pullRefresh(pullRefreshState)) {
                         LazyColumn(
                             contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 96.dp),
                             verticalArrangement = Arrangement.spacedBy(14.dp)
                         ) {
-                            // Search bar
                             item {
                                 OutlinedTextField(
                                     value = searchQuery,
                                     onValueChange = { searchQuery = it },
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(bottom = 4.dp),
+                                    modifier = Modifier.fillMaxWidth().padding(bottom = 4.dp),
                                     placeholder = { Text("Search books...") },
-                                    leadingIcon = {
-                                        Icon(
-                                            Icons.Default.Search,
-                                            contentDescription = null,
-                                            tint = CharcoalMuted
-                                        )
-                                    },
+                                    leadingIcon = { Icon(Icons.Default.Search, contentDescription = null, tint = CharcoalMuted) },
                                     trailingIcon = {
                                         if (searchQuery.isNotBlank()) {
                                             IconButton(onClick = { searchQuery = "" }) {
-                                                Icon(
-                                                    Icons.Default.Clear,
-                                                    contentDescription = "Clear search",
-                                                    tint = CharcoalMuted
-                                                )
+                                                Icon(Icons.Default.Clear, contentDescription = "Clear search", tint = CharcoalMuted)
                                             }
                                         }
                                     },
                                     singleLine = true,
                                     shape = RoundedCornerShape(12.dp),
-                                    colors = OutlinedTextFieldDefaults.colors(
-                                        focusedBorderColor = Bronze,
-                                        unfocusedBorderColor = Border,
-                                        focusedLabelColor = Bronze
-                                    )
+                                    colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = Bronze, unfocusedBorderColor = Border, focusedLabelColor = Bronze)
                                 )
                             }
-
-                            // Empty search result
                             if (filteredBooks.isEmpty() && searchQuery.isNotBlank()) {
                                 item {
                                     Column(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(vertical = 32.dp),
+                                        modifier = Modifier.fillMaxWidth().padding(vertical = 32.dp),
                                         horizontalAlignment = Alignment.CenterHorizontally
                                     ) {
-                                        Text(
-                                            text = "No books match \"$searchQuery\"",
-                                            style = MaterialTheme.typography.bodyLarge,
-                                            color = CharcoalMuted
-                                        )
+                                        Text("No books match \"$searchQuery\"", style = MaterialTheme.typography.bodyLarge, color = CharcoalMuted)
                                         Spacer(modifier = Modifier.height(8.dp))
-                                        TextButton(onClick = { searchQuery = "" }) {
-                                            Text("Clear search", color = Bronze)
-                                        }
+                                        TextButton(onClick = { searchQuery = "" }) { Text("Clear search", color = Bronze) }
                                     }
                                 }
                             }
-
-                            items(
-                                items = filteredBooks,
-                                key = { it.id }
-                            ) { book ->
-                                Box {
-                                    BookCard(
-                                        book = book,
-                                        onClick = { onBookClick(book.id) },
-                                        showMenu = showMenuForBookId == book.id,
-                                        onMenuClick = { showMenuForBookId = book.id },
-                                        onMenuDismiss = { showMenuForBookId = null },
-                                        onShareClick = { onShareBook(book) },
-                                        onOpenInBrowserClick = { onOpenInBrowser(book) }
-                                    )
-                                }
+                            items(items = filteredBooks, key = { it.id }) { book ->
+                                Box { BookCard(book = book, onClick = { onBookClick(book.id) }, showMenu = showMenuForBookId == book.id, onMenuClick = { showMenuForBookId = book.id }, onMenuDismiss = { showMenuForBookId = null }, onShareClick = { onShareBook(book) }, onOpenInBrowserClick = { onOpenInBrowser(book) }) }
                             }
                         }
-                        PullRefreshIndicator(
-                            refreshing = uiState.isLoading,
-                            state = pullRefreshState,
-                            modifier = Modifier.align(Alignment.TopCenter),
-                            contentColor = Bronze,
-                            backgroundColor = Papaya
-                        )
+                        PullRefreshIndicator(refreshing = uiState.isLoading, state = pullRefreshState, modifier = Modifier.align(Alignment.TopCenter), contentColor = Bronze, backgroundColor = Papaya)
                     }
                 }
             }
         }
     }
 
-    // Create book dialog
     if (showCreateDialog) {
         AlertDialog(
-            onDismissRequest = {
-                showCreateDialog = false
-                newTitle = ""
-                newDescription = ""
-            },
-            icon = {
-                Icon(
-                    Icons.Default.MenuBook,
-                    contentDescription = null,
-                    tint = Bronze,
-                    modifier = Modifier.size(28.dp)
-                )
-            },
-            title = {
-                Text(
-                    "Create a New Book",
-                    style = MaterialTheme.typography.headlineSmall,
-                    fontWeight = FontWeight.SemiBold
-                )
-            },
+            onDismissRequest = { showCreateDialog = false; newTitle = ""; newDescription = "" },
+            icon = { Icon(Icons.Default.MenuBook, contentDescription = null, tint = Bronze, modifier = Modifier.size(28.dp)) },
+            title = { Text("Create a New Book", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.SemiBold) },
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
-                    Text(
-                        "Give your book a title — you can always change it later.",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = CharcoalMuted
-                    )
                     OutlinedTextField(
                         value = newTitle,
-                        onValueChange = { newTitle = it.take(80) },
-                        label = { Text("Book Title") },
-                        placeholder = { Text("e.g. Grandma's Stories") },
+                        onValueChange = { newTitle = it },
+                        label = { Text("Book title") },
+                        placeholder = { Text("e.g., Grandma's Life Story") },
                         modifier = Modifier.fillMaxWidth(),
                         singleLine = true,
                         shape = RoundedCornerShape(12.dp),
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = Bronze,
-                            unfocusedBorderColor = Border,
-                            focusedLabelColor = Bronze
-                        ),
-                        supportingText = {
-                            Text(
-                                "${newTitle.length}/80",
-                                color = if (newTitle.length > 60) Bronze else CharcoalMuted,
-                                style = MaterialTheme.typography.bodySmall
-                            )
-                        }
+                        colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = Bronze, unfocusedBorderColor = Border, focusedLabelColor = Bronze)
                     )
                     OutlinedTextField(
                         value = newDescription,
                         onValueChange = { newDescription = it },
                         label = { Text("Description (optional)") },
-                        placeholder = { Text("What will this book hold?") },
+                        placeholder = { Text("A short note about this book...") },
                         modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(12.dp),
                         minLines = 2,
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = Bronze,
-                            unfocusedBorderColor = Border,
-                            focusedLabelColor = Bronze
-                        ),
-                        supportingText = {
-                            Text(
-                                "Optional — describe who's book this is",
-                                color = CharcoalMuted,
-                                style = MaterialTheme.typography.bodySmall
-                            )
-                        }
+                        maxLines = 3,
+                        shape = RoundedCornerShape(12.dp),
+                        colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = Bronze, unfocusedBorderColor = Border, focusedLabelColor = Bronze)
                     )
                 }
             },
             confirmButton = {
                 Button(
                     onClick = {
-                        viewModel.createBook(newTitle, newDescription)
-                        showCreateDialog = false
-                        newTitle = ""
-                        newDescription = ""
+                        if (newTitle.isNotBlank()) {
+                            viewModel.createBook(newTitle.trim(), newDescription.trim())
+                            showCreateDialog = false
+                            newTitle = ""
+                            newDescription = ""
+                        }
                     },
-                    enabled = newTitle.isNotBlank() && !uiState.isCreating,
+                    enabled = newTitle.isNotBlank() && !uiState.isLoading,
                     shape = RoundedCornerShape(12.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Bronze,
-                        contentColor = WarmWhite
-                    )
-                ) {
-                    if (uiState.isCreating) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(18.dp),
-                            color = WarmWhite,
-                            strokeWidth = 2.dp
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text("Creating...")
-                    } else {
-                        Text("Create Book")
-                    }
-                }
+                    colors = ButtonDefaults.buttonColors(containerColor = Bronze, contentColor = WarmWhite)
+                ) { Text("Create") }
             },
             dismissButton = {
-                TextButton(
-                    onClick = {
-                        showCreateDialog = false
-                        newTitle = ""
-                        newDescription = ""
-                    }
-                ) {
-                    Text("Cancel", color = CharcoalMuted)
-                }
+                TextButton(onClick = { showCreateDialog = false; newTitle = ""; newDescription = "" }) { Text("Cancel", color = CharcoalMuted) }
             },
             shape = RoundedCornerShape(20.dp)
         )
     }
 
-    // Logout confirmation dialog
     if (showLogoutDialog) {
         AlertDialog(
             onDismissRequest = { showLogoutDialog = false },
-            title = {
-                Text(
-                    "Sign Out?",
-                    style = MaterialTheme.typography.headlineSmall,
-                    fontWeight = FontWeight.SemiBold
-                )
-            },
-            text = {
-                Text(
-                    "Your books will still be here when you come back.",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = CharcoalMuted
-                )
-            },
+            title = { Text("Sign Out?", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.SemiBold) },
+            text = { Text("Your books will still be here when you come back.", style = MaterialTheme.typography.bodyMedium, color = CharcoalMuted) },
             confirmButton = {
-                TextButton(
-                    onClick = {
-                        showLogoutDialog = false
-                        viewModel.logout()
-                        onLogout()
-                    }
-                ) {
-                    Text("Sign Out", color = ErrorRed, fontWeight = FontWeight.SemiBold)
-                }
+                TextButton(onClick = { showLogoutDialog = false; viewModel.logout(); onLogout() }) { Text("Sign Out", color = ErrorRed, fontWeight = FontWeight.SemiBold) }
             },
-            dismissButton = {
-                TextButton(onClick = { showLogoutDialog = false }) {
-                    Text("Cancel", color = CharcoalMuted)
-                }
-            },
+            dismissButton = { TextButton(onClick = { showLogoutDialog = false }) { Text("Cancel", color = CharcoalMuted) } },
             shape = RoundedCornerShape(20.dp)
         )
     }
 }
 
 @Composable
-fun SkeletonCard() {
-    val shimmerAlpha = remember { Animatable(0.3f) }
-
-    LaunchedEffect(Unit) {
-        while (true) {
-            shimmerAlpha.animateTo(0.7f, animationSpec = tween(800, easing = FastOutSlowInEasing))
-            shimmerAlpha.animateTo(0.3f, animationSpec = tween(800, easing = FastOutSlowInEasing))
-        }
-    }
-
-    val shimmerBrush = remember(shimmerAlpha.value) {
-        Brush.linearGradient(
-            colors = listOf(
-                Divider,
-                Divider.copy(alpha = shimmerAlpha.value),
-                Divider
-            )
-        )
-    }
+private fun BookCard(
+    book: Book,
+    onClick: () -> Unit,
+    showMenu: Boolean,
+    onMenuClick: () -> Unit,
+    onMenuDismiss: () -> Unit,
+    onShareClick: () -> Unit,
+    onOpenInBrowserClick: () -> Unit
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val isPressed by interactionSource.collectIsPressedAsState()
+    val scale by animateFloatAsState(if (isPressed) 0.98f else 1f, animationSpec = spring(), label = "bookCardScale")
 
     Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(100.dp),
-        shape = RoundedCornerShape(14.dp),
+        onClick = onClick,
+        modifier = Modifier.fillMaxWidth().scale(scale),
+        shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = WarmWhite),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = if (isPressed) 8.dp else 3.dp)
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth(0.6f)
-                    .height(18.dp)
-                    .background(shimmerBrush, RoundedCornerShape(4.dp))
-            )
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth(0.4f)
-                    .height(14.dp)
-                    .background(shimmerBrush, RoundedCornerShape(4.dp))
-            )
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth(0.3f)
-                    .height(12.dp)
-                    .background(shimmerBrush, RoundedCornerShape(4.dp))
-            )
+        Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Box(
+                    modifier = Modifier.size(52.dp).background(brush = Brush.linearGradient(colors = listOf(Bronze, BronzeLight)), shape = RoundedCornerShape(14.dp)),
+                    contentAlignment = Alignment.Center
+                ) { Text("📖", fontSize = 24.sp) }
+                Spacer(modifier = Modifier.width(14.dp))
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(book.title, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold, color = Charcoal, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                    if (book.description.isNotBlank()) {
+                        Text(book.description, style = MaterialTheme.typography.bodySmall, color = CharcoalMuted, maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier.padding(top = 2.dp))
+                    }
+                }
+                Box {
+                    IconButton(onClick = onMenuClick, modifier = Modifier.size(32.dp)) {
+                        Icon(Icons.Default.MoreVert, contentDescription = "More options", tint = CharcoalMuted, modifier = Modifier.size(20.dp))
+                    }
+                    DropdownMenu(expanded = showMenu, onDismissRequest = onMenuDismiss) {
+                        DropdownMenuItem(text = { Text("Share") }, onClick = { onShareClick(); onMenuDismiss() }, leadingIcon = { Icon(Icons.Default.Share, null, tint = CharcoalMuted) })
+                        DropdownMenuItem(text = { Text("Open in browser") }, onClick = { onOpenInBrowserClick(); onMenuDismiss() }, leadingIcon = { Icon(Icons.Default.OpenInNew, null, tint = CharcoalMuted) })
+                    }
+                }
+            }
+            Spacer(modifier = Modifier.height(12.dp))
+            Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                LabelChip(text = "${book.memories_count ?: 0} ${(book.memories_count ?: 0) == 1 ? "memory" else "memories"}", icon = "💬")
+                LabelChip(text = formatDate(book.created_at), icon = "📅")
+            }
         }
     }
 }
 
 @Composable
-fun BookCard(
-    book: Book,
-    onClick: () -> Unit,
-    showMenu: Boolean = false,
-    onMenuClick: () -> Unit = {},
-    onMenuDismiss: () -> Unit = {},
-    onShareClick: () -> Unit = {},
-    onOpenInBrowserClick: () -> Unit = {}
-) {
-    val interactionSource = remember { MutableInteractionSource() }
-    val isPressed by interactionSource.collectIsPressedAsState()
-    val elevation by animateDpAsState(
-        targetValue = if (isPressed) 8.dp else 3.dp,
-        animationSpec = androidx.compose.animation.core.spring(),
-        label = "cardElevation"
-    )
-
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .scale(if (isPressed) 0.98f else 1f)
-            .clickable(
-                interactionSource = interactionSource,
-                indication = null,
-                onClick = {
-                    if (showMenu) onMenuDismiss() else onClick()
-                }
-            ),
-        shape = RoundedCornerShape(14.dp),
-        colors = CardDefaults.cardColors(containerColor = WarmWhite),
-        elevation = CardDefaults.cardElevation(defaultElevation = elevation)
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(18.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            // Book icon with warm accent
-            Box(
-                modifier = Modifier
-                    .size(52.dp)
-                    .background(
-                        brush = Brush.linearGradient(
-                            colors = listOf(Bronze.copy(alpha = 0.15f), Bronze.copy(alpha = 0.08f))
-                        ),
-                        shape = RoundedCornerShape(12.dp)
-                    ),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    Icons.Default.Book,
-                    contentDescription = null,
-                    tint = Bronze,
-                    modifier = Modifier.size(26.dp)
-                )
-            }
-
-            Spacer(modifier = Modifier.width(16.dp))
-
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = book.title,
-                    style = MaterialTheme.typography.headlineSmall,
-                    fontWeight = FontWeight.SemiBold,
-                    color = Charcoal,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-                if (!book.description.isNullOrBlank()) {
-                    Spacer(modifier = Modifier.height(3.dp))
-                    Text(
-                        text = book.description,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = CharcoalMuted,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
-                Spacer(modifier = Modifier.height(6.dp))
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Box(modifier = Modifier.weight(1f)) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                            // Owner avatar (32dp circle with initial)
-                            if (book.owner_name.isNotBlank()) {
-                                val ownerInitial = book.owner_name.firstOrNull()?.uppercaseChar()?.toString() ?: ""
-                                Box(
-                                    modifier = Modifier
-                                        .size(24.dp)
-                                        .background(
-                                            color = Papaya,
-                                            shape = CircleShape
-                                        ),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Text(
-                                        text = ownerInitial,
-                                        style = MaterialTheme.typography.labelSmall,
-                                        color = Bronze,
-                                        fontWeight = FontWeight.SemiBold
-                                    )
-                                }
-                                Spacer(modifier = Modifier.width(4.dp))
-                            }
-                            Text(
-                                text = if (book.role != "owner") "Shared with you" else "Created by ${book.owner_name}",
-                                style = MaterialTheme.typography.bodySmall,
-                                color = CharcoalMuted
-                            )
-                            if (book.memories_count != null) {
-                                Text(
-                                    text = "•",
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = CharcoalMuted
-                                )
-                                Box(
-                                    modifier = Modifier
-                                        .background(
-                                            color = Bronze.copy(alpha = 0.12f),
-                                            shape = RoundedCornerShape(6.dp)
-                                        )
-                                        .padding(horizontal = 7.dp, vertical = 2.dp)
-                                ) {
-                                    Text(
-                                        text = "${book.memories_count} ${if (book.memories_count == 1) "memory" else "memories"}",
-                                        style = MaterialTheme.typography.labelSmall,
-                                        color = Bronze,
-                                        fontWeight = FontWeight.Medium
-                                    )
-                                }
-                            }
-                            val bytes = book.storage_used_bytes.toLongOrNull() ?: 0L
-                            if (bytes > 0) {
-                                Text(text = "•", style = MaterialTheme.typography.bodySmall, color = CharcoalMuted)
-                                Text(
-                                    text = formatStorage(bytes),
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = CharcoalLight
-                                )
-                            }
-                            if (book.updated_at != null) {
-                                Text(text = "•", style = MaterialTheme.typography.bodySmall, color = CharcoalMuted)
-                                Text(
-                                    text = formatRelativeDate(book.updated_at),
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = CharcoalLight
-                                )
-                            }
-                        }
-                    }
-                }
-            }
-
-            // Accent pill for shared books
-            if (book.role != "owner") {
-                Box(
-                    modifier = Modifier
-                        .background(
-                            color = Bronze.copy(alpha = 0.12f),
-                            shape = RoundedCornerShape(8.dp)
-                        )
-                        .padding(horizontal = 10.dp, vertical = 4.dp)
-                ) {
-                    Text(
-                        text = "Shared",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = Bronze,
-                        fontWeight = FontWeight.Medium
-                    )
-                }
-            }
-
-            // Storage indicator
-            val storageBytes = book.storage_used_bytes.toLongOrNull() ?: 0
-            if (storageBytes > 0) {
-                Spacer(modifier = Modifier.width(8.dp))
-                Box(
-                    modifier = Modifier
-                        .background(
-                            color = TeaGreen.copy(alpha = 0.2f),
-                            shape = RoundedCornerShape(6.dp)
-                        )
-                        .padding(horizontal = 8.dp, vertical = 4.dp)
-                ) {
-                    Text(
-                        text = formatStorageSize(storageBytes),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = TeaGreenDark,
-                        fontWeight = FontWeight.Medium
-                    )
-                }
-            }
-
-            // Kebab menu
-            Box {
-                IconButton(onClick = onMenuClick, modifier = Modifier.size(36.dp)) {
-                    Icon(
-                        Icons.Default.MoreVert,
-                        contentDescription = "More options",
-                        tint = CharcoalMuted,
-                        modifier = Modifier.size(20.dp)
-                    )
-                }
-                DropdownMenu(expanded = showMenu, onDismissRequest = onMenuDismiss) {
-                    DropdownMenuItem(
-                        text = { Text("Open in browser", color = Charcoal) },
-                        onClick = {
-                            onMenuDismiss()
-                            onOpenInBrowserClick()
-                        },
-                        leadingIcon = {
-                            Icon(Icons.Default.OpenInNew, contentDescription = null, tint = CharcoalMuted)
-                        }
-                    )
-                    DropdownMenuItem(
-                        text = { Text("Share", color = Charcoal) },
-                        onClick = {
-                            onMenuDismiss()
-                            onShareClick()
-                        },
-                        leadingIcon = {
-                            Icon(Icons.Default.Share, contentDescription = null, tint = CharcoalMuted)
-                        }
-                    )
-                }
-            }
-        }
+private fun LabelChip(text: String, icon: String) {
+    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+        Text(icon, fontSize = 12.sp)
+        Text(text, style = MaterialTheme.typography.labelSmall, color = CharcoalMuted)
     }
 }
 
-private fun formatStorageSize(bytes: Long): String {
-    return when {
-        bytes < 1024 -> "${bytes}B"
-        bytes < 1024 * 1024 -> "${bytes / 1024}KB"
-        bytes < 1024 * 1024 * 1024 -> "${bytes / (1024 * 1024)}MB"
-        else -> "${bytes / (1024 * 1024 * 1024)}GB"
-    }
-}
-
-private fun formatRelativeDate(isoDate: String): String {
+private fun formatDate(isoDate: String): String {
     return try {
-        val dateParts = isoDate.substringBefore("T").split("-")
-        val year = dateParts[0].toInt()
-        val month = dateParts[1].toInt()
-        val day = dateParts[2].toInt()
-        val now = java.util.Calendar.getInstance()
-        val then = java.util.Calendar.getInstance().apply {
-            set(year, month - 1, day)
+        val parts = isoDate.substringBefore("T").split("-")
+        val months = listOf("", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
+        val month = parts[1].toInt()
+        val day = parts[2].toInt()
+        "${months[month]} $day, ${parts[0]}"
+    } catch (e: Exception) { "" }
+}
+
+@Composable
+private fun SkeletonCard() {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = WarmWhite)
+    ) {
+        Row(modifier = Modifier.fillMaxWidth().padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
+            Box(modifier = Modifier.size(52.dp).background(Beige, RoundedCornerShape(14.dp)))
+            Spacer(modifier = Modifier.width(14.dp))
+            Column(modifier = Modifier.weight(1f)) {
+                Box(modifier = Modifier.fillMaxWidth(0.6f).height(16.dp).background(Beige, RoundedCornerShape(4.dp)))
+                Spacer(modifier = Modifier.height(8.dp))
+                Box(modifier = Modifier.fillMaxWidth(0.4f).height(12.dp).background(Beige, RoundedCornerShape(4.dp)))
+                Spacer(modifier = Modifier.height(12.dp))
+                Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                    Box(modifier = Modifier.width(80.dp).height(14.dp).background(Beige, RoundedCornerShape(4.dp)))
+                    Box(modifier = Modifier.width(60.dp).height(14.dp).background(Beige, RoundedCornerShape(4.dp)))
+                }
+            }
         }
-        val diffDays = ((now.timeInMillis - then.timeInMillis) / (1000 * 60 * 60 * 24)).toInt()
-        when {
-            diffDays == 0 -> "Today"
-            diffDays == 1 -> "Yesterday"
-            diffDays < 7 -> "$diffDays days ago"
-            diffDays < 30 -> "${diffDays / 7} weeks ago"
-            diffDays < 365 -> "${diffDays / 30} months ago"
-            else -> "${diffDays / 365} years ago"
-        }
-    } catch (e: Exception) {
-        isoDate.substringBefore("T")
     }
 }

@@ -15,7 +15,8 @@ data class AuthUiState(
     val isLoggedIn: Boolean = false,
     val user: User? = null,
     val error: String? = null,
-    val isSignUp: Boolean = false
+    val isSignUp: Boolean = false,
+    val forgotPasswordMessage: String? = null
 )
 
 class AuthViewModel(private val repository: MemoryRepository) : ViewModel() {
@@ -79,6 +80,18 @@ class AuthViewModel(private val repository: MemoryRepository) : ViewModel() {
                 }
         }
     }
+
+    fun showForgotPassword() {
+        _uiState.value = _uiState.value.copy(
+            forgotPasswordMessage = "Password reset coming soon — contact support@memoryproject.app"
+        )
+    }
+
+
+    fun clearForgotPasswordMessage() {
+        _uiState.value = _uiState.value.copy(forgotPasswordMessage = null)
+    }
+
 
     fun logout() {
         viewModelScope.launch {

@@ -412,6 +412,53 @@ fun AuthScreen(
 
             Spacer(modifier = Modifier.height(20.dp))
 
+            // Forgot password link — shown only in sign-in mode
+            AnimatedVisibility(visible = !uiState.isSignUp) {
+                Column {
+                    TextButton(
+                        onClick = {
+                            focusManager.clearFocus()
+                            viewModel.showForgotPassword()
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                        contentPadding = PaddingValues(vertical = 4.dp)
+                    ) {
+                        Text(
+                            text = "Forgot your password?",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = CharcoalMuted
+                        )
+                    }
+                    // Forgot password confirmation message
+                    AnimatedVisibility(
+                        visible = uiState.forgotPasswordMessage != null,
+                        enter = fadeIn() + expandVertically(),
+                        exit = fadeOut() + shrinkVertically()
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(
+                                    color = Bronze.copy(alpha = 0.08f),
+                                    shape = RoundedCornerShape(10.dp)
+                                )
+                                .padding(horizontal = 14.dp, vertical = 10.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text("\uD83D\uDCA1", fontSize = 14.sp)
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                text = uiState.forgotPasswordMessage ?: "",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = BronzeDark
+                            )
+                        }
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
             // Toggle mode link
             Row(
                 horizontalArrangement = Arrangement.Center,

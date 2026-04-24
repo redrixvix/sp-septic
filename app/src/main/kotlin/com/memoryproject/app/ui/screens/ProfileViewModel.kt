@@ -2,6 +2,7 @@ package com.memoryproject.app.ui.screens
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.memoryproject.app.data.preferences.PreferencesManager
 import com.memoryproject.app.data.repository.MemoryRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -12,6 +13,7 @@ data class ProfileUiState(
     val userName: String = "",
     val userEmail: String = "",
     val userInitial: String = "",
+    val userCreatedAt: String = "",
     val booksCount: Int = 0,
     val memoriesCount: Int = 0,
     val storageUsedBytes: Long = 0,
@@ -19,7 +21,8 @@ data class ProfileUiState(
 )
 
 class ProfileViewModel(
-    private val repository: MemoryRepository
+    private val repository: MemoryRepository,
+    private val preferencesManager: PreferencesManager
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ProfileUiState())
@@ -35,12 +38,33 @@ class ProfileViewModel(
             repository.getCurrentUser()
                 .onSuccess { user ->
                     val initial = user.name.firstOrNull()?.uppercaseChar()?.toString() ?: "?"
+                    // Use locally saved display name if available, otherwise server name
+                    val displayName = preferencesManager.displayName.takeIf { it.isNotBlank() } ?: user.name
+                    val createdAt = formatMemberSince(user.created_at)
                     _uiState.value = _uiState.value.copy(
-                        userName = user.name,
+                        userName = displayName,
                         userEmail = user.email,
-                        userInitial = initial
+                        userInitial = initial,
+                        userCreatedAt = createdAt
                     )
                 }
+        }
+    }
+
+    private fun formatMemberSince(isoDate: String): String {
+        return try {
+            val parts = isoDate.substringBefore("T").split("-")
+            if (parts.size < 2) return ""
+            val months = listOf(
+                "", "January", "February", "March", "April", "May", "June",
+                "July", "August", "September", "October", "November", "December"
+            )
+            val month = parts[1].toInt()
+            val year = parts[0].toInt()
+            if (month < 1 || month > 12) return ""
+            "Member since ${months[month]} $year"
+        } catch (e: Exception) {
+            ""
         }
     }
 
@@ -59,8 +83,15 @@ class ProfileViewModel(
         }
     }
 
-    fun showComingSoon() {
-        _uiState.value = _uiState.value.copy(message = "More profile options coming soon")
+    fun updateDisplayName(newName: String) {
+        if (newName.isBlank()) return
+        preferencesManager.displayName = newName
+        val initial = newName.firstOrNull()?.uppercaseChar()?.toString() ?: "?"
+        _uiState.value = _uiState.value.copy(
+            userName = newName,
+            userInitial = initial,
+            message = "Name updated"
+        )
     }
 
     fun clearMessage() {
