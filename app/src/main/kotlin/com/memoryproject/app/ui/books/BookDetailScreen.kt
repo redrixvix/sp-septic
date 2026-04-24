@@ -34,7 +34,11 @@ import androidx.compose.material.icons.Icons
 
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 
+import androidx.compose.material.icons.automirrored.filled.Groups
+
 import androidx.compose.material.icons.automirrored.filled.Share
+
+import androidx.compose.material.icons.filled.PersonRemove
 
 import androidx.compose.material.icons.filled.Add
 
@@ -94,6 +98,10 @@ import com.memoryproject.app.ui.theme.*
 import org.koin.androidx.compose.koinViewModel
 
 import org.koin.core.parameter.parametersOf
+import org.koin.compose.koinInject
+import com.memoryproject.app.data.model.BookMember
+import androidx.compose.foundation.text.KeyboardActions
+import kotlinx.coroutines.launch
 
 
 
@@ -144,7 +152,7 @@ fun BookDetailScreen(
     var answerInput by remember { mutableStateOf("") }
 
     var showPhotoViewer by remember { mutableStateOf<String?>(null) }
-
+    var showMembersSheet by remember { mutableStateOf(false) }
     val snackbarHostState = remember { SnackbarHostState() }
     val isDark = isSystemInDarkTheme()
     val scaffoldBg = if (isDark) DarkBackground else Cornsilk
@@ -272,6 +280,40 @@ fun BookDetailScreen(
                             Icons.AutoMirrored.Filled.ArrowBack,
 
                             contentDescription = "Back",
+
+                            tint = if (isDark) DarkOnSurface else Charcoal
+
+                        )
+
+                    }
+
+                },
+
+                actions = {
+
+                    IconButton(
+
+                        onClick = { showMembersSheet = true },
+
+                        modifier = Modifier
+
+                            .size(44.dp)
+
+                            .background(
+
+                                color = if (isDark) DarkSurface else WarmWhite,
+
+                                shape = RoundedCornerShape(12.dp)
+
+                            )
+
+                    ) {
+
+                        Icon(
+
+                            Icons.AutoMirrored.Filled.Groups,
+
+                            contentDescription = "Members",
 
                             tint = if (isDark) DarkOnSurface else Charcoal
 
@@ -877,6 +919,15 @@ fun BookDetailScreen(
 
             onDismiss = { showPhotoViewer = null }
 
+
+    if (showMembersSheet) {
+        MembersBottomSheet(
+            bookId = bookId,
+            onDismiss = { showMembersSheet = false },
+            isDark = isDark,
+            snackbarHostState = snackbarHostState
+        )
+    }
         )
 
     }
@@ -1422,4 +1473,233 @@ private fun MemorySkeletonCard() {
 
     }
 
+}
+
+
+@Composable
+private fun MembersBottomSheet(
+    bookId: Int,
+    onDismiss: () -> Unit,
+    isDark: Boolean,
+    snackbarHostState: SnackbarHostState
+) {
+    val repository: com.memoryproject.app.data.repository.MemoryRepository = koinInject()
+    val scope = rememberCoroutineScope()
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+
+    var members by remember { mutableStateOf<List<BookMember>>(emptyList()) }
+    var isLoading by remember { mutableStateOf(true) }
+    var inviteEmail by remember { mutableStateOf("") }
+    var isInviting by remember { mutableStateOf(false) }
+    var inviteError by remember { mutableStateOf<String?>(null) }
+
+    val cardBg = if (isDark) DarkSurface else WarmWhite
+    val primaryText = if (isDark) DarkOnSurface else Charcoal
+    val mutedText = if (isDark) DarkOnSurfaceVariant else CharcoalMuted
+    val borderColor = if (isDark) DarkBorder else Border
+
+    LaunchedEffect(Unit) {
+        repository.getBookMembers(bookId)
+            .onSuccess { members = it }
+            .onFailure {
+                snackbarHostState.showSnackbar("Couldn't load members", duration = SnackbarDuration.Short)
+            }
+        isLoading = false
+    }
+
+    ModalBottomSheet(
+        onDismissRequest = onDismiss,
+        sheetState = sheetState,
+        containerColor = if (isDark) DarkSurfaceVariant else Cornsilk,
+        shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 24.dp)
+                .padding(bottom = 40.dp)
+        ) {
+            // Header
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    "Collaborators",
+                    style = MaterialTheme.typography.titleLarge,
+                    color = primaryText,
+                    fontWeight = FontWeight.SemiBold
+                )
+                IconButton(onClick = onDismiss) {
+                    Icon(Icons.Default.Close, contentDescription = "Close", tint = mutedText)
+                }
+            }
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            // Email invite row
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                OutlinedTextField(
+                    value = inviteEmail,
+                    onValueChange = { inviteEmail = it },
+                    label = { Text("Email address") },
+                    placeholder = { Text("family@email.com") },
+                    singleLine = true,
+                    modifier = Modifier.weight(1f),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = Bronze,
+                        unfocusedBorderColor = borderColor,
+                        focusedLabelColor = Bronze,
+                        cursorColor = Bronze
+                    ),
+                    shape = RoundedCornerShape(14.dp),
+                    keyboardActions = KeyboardActions(
+                        onDone = {
+                            if (inviteEmail.isNotBlank()) {
+                                isInviting = true
+                                scope.launch {
+                                    repository.inviteMember(bookId, inviteEmail)
+                                        .onSuccess {
+                                            inviteEmail = ""
+                                            repository.getBookMembers(bookId).onSuccess { members = it }
+                                            snackbarHostState.showSnackbar("Invite sent! ✉️", duration = SnackbarDuration.Short)
+                                        }
+                                        .onFailure { e -> inviteError = e.message }
+                                    isInviting = false
+                                }
+                            }
+                        }
+                    )
+                )
+                Spacer(modifier = Modifier.width(12.dp))
+                Button(
+                    onClick = {
+                        if (inviteEmail.isBlank()) return@Button
+                        isInviting = true
+                        inviteError = null
+                        scope.launch {
+                            repository.inviteMember(bookId, inviteEmail)
+                                .onSuccess {
+                                    inviteEmail = ""
+                                    repository.getBookMembers(bookId).onSuccess { members = it }
+                                    snackbarHostState.showSnackbar("Invite sent! ✉️", duration = SnackbarDuration.Short)
+                                }
+                                .onFailure { e -> inviteError = e.message }
+                            isInviting = false
+                        }
+                    },
+                    enabled = !isInviting && inviteEmail.isNotBlank(),
+                    modifier = Modifier.height(56.dp),
+                    shape = RoundedCornerShape(14.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = Bronze, contentColor = WarmWhite),
+                    elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp)
+                ) {
+                    if (isInviting) {
+                        CircularProgressIndicator(modifier = Modifier.size(20.dp), color = WarmWhite, strokeWidth = 2.dp)
+                    } else {
+                        Text("Invite", style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.SemiBold)
+                    }
+                }
+            }
+
+            inviteError?.let { err ->
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(err, style = MaterialTheme.typography.bodySmall, color = ErrorRed)
+            }
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            // Members list
+            if (isLoading) {
+                Box(modifier = Modifier.fillMaxWidth().height(80.dp), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator(modifier = Modifier.size(24.dp), color = Bronze, strokeWidth = 2.dp)
+                }
+            } else if (members.isEmpty()) {
+                Box(modifier = Modifier.fillMaxWidth().padding(vertical = 24.dp), contentAlignment = Alignment.Center) {
+                    Text(
+                        "Only you so far — invite family!",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = mutedText
+                    )
+                }
+            } else {
+                members.forEach { member ->
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 10.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(40.dp)
+                                .background(
+                                    color = if (isDark) DarkBronze.copy(alpha = 0.3f) else Bronze.copy(alpha = 0.15f),
+                                    shape = CircleShape
+                                ),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                (member.name.firstOrNull() ?: member.email.firstOrNull() ?: '?').uppercase(),
+                                style = MaterialTheme.typography.labelLarge,
+                                color = if (isDark) DarkOnSurface else Charcoal,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        }
+                        Spacer(modifier = Modifier.width(12.dp))
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                member.name.takeIf { it.isNotBlank() } ?: member.invite_email ?: member.email,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = primaryText,
+                                fontWeight = FontWeight.Medium
+                            )
+                            if (member.invite_email != null && member.joined_at == null) {
+                                Text(
+                                    "Pending invite",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = mutedText
+                                )
+                            }
+                        }
+                        Box(
+                            modifier = Modifier
+                                .background(
+                                    color = if (member.role == "owner")
+                                        (if (isDark) Bronze.copy(alpha = 0.2f) else Bronze.copy(alpha = 0.1f))
+                                    else
+                                        (if (isDark) TeaGreen.copy(alpha = 0.2f) else TeaGreen.copy(alpha = 0.1f)),
+                                    shape = RoundedCornerShape(8.dp)
+                                )
+                                .padding(horizontal = 10.dp, vertical = 4.dp)
+                        ) {
+                            Text(
+                                member.role.replaceFirstChar { it.uppercase() },
+                                style = MaterialTheme.typography.labelSmall,
+                                color = if (member.role == "owner") Bronze else (if (isDark) TeaGreen else Color(0xFF4A7A4A)),
+                                fontWeight = FontWeight.Medium
+                            )
+                        }
+                    }
+                    if (member != members.last()) {
+                        Divider(color = borderColor.copy(alpha = 0.5f))
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Text(
+                "Invite family members to add memories to this book together.",
+                style = MaterialTheme.typography.bodySmall,
+                color = mutedText,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+    }
 }
