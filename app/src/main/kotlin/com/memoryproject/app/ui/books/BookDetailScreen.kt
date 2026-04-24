@@ -756,7 +756,9 @@ fun BookDetailScreen(
 
             isSaving = uiState.isSaving,
 
-            confirmLabel = "Add Memory"
+            confirmLabel = "Add Memory",
+
+            darkTheme = darkTheme
 
         )
 
@@ -802,7 +804,9 @@ fun BookDetailScreen(
 
             isSaving = uiState.isSaving,
 
-            confirmLabel = "Save Changes"
+            confirmLabel = "Save Changes",
+
+            darkTheme = darkTheme
 
         )
 
@@ -1065,7 +1069,8 @@ private fun MemoryDialog(
 
     isSaving: Boolean,
 
-    confirmLabel: String
+    confirmLabel: String,
+    darkTheme: Boolean = false,
 
 ) {
 
