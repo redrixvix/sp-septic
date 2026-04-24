@@ -3,6 +3,7 @@ package com.memoryproject.app.ui.books
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.animation.*
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -543,36 +544,68 @@ private fun MemoryDialog(
 
 @Composable
 private fun MemorySkeletonCard() {
+    val shimmerAlpha = remember { Animatable(0.3f) }
+
+    LaunchedEffect(Unit) {
+        while (true) {
+            shimmerAlpha.animateTo(0.7f, animationSpec = tween(800, easing = FastOutSlowInEasing))
+            shimmerAlpha.animateTo(0.3f, animationSpec = tween(800, easing = FastOutSlowInEasing))
+        }
+    }
+
+
+    val shimmerBrush = remember(shimmerAlpha.value) {
+        Brush.linearGradient(
+            colors = listOf(
+                Divider,
+                Divider.copy(alpha = shimmerAlpha.value),
+                Divider
+            )
+        )
+    }
+
+
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(14.dp),
         colors = CardDefaults.cardColors(containerColor = WarmWhite),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp)
-        ) {
+        Row(modifier = Modifier.fillMaxWidth()) {
             Box(
                 modifier = Modifier
-                    .fillMaxWidth(0.7f)
-                    .height(16.dp)
-                    .background(Divider, RoundedCornerShape(4.dp))
+                    .width(4.dp)
+                    .fillMaxHeight()
+                    .background(
+                        color = Bronze.copy(alpha = 0.1f),
+                        shape = RoundedCornerShape(topStart = 14.dp, bottomStart = 14.dp)
+                    )
             )
-            Box(
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(14.dp)
-                    .background(Divider.copy(alpha = 0.6f), RoundedCornerShape(4.dp))
-            )
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth(0.8f)
-                    .height(14.dp)
-                    .background(Divider.copy(alpha = 0.4f), RoundedCornerShape(4.dp))
-            )
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth(0.7f)
+                        .height(16.dp)
+                        .background(shimmerBrush, RoundedCornerShape(4.dp))
+                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(14.dp)
+                        .background(shimmerBrush, RoundedCornerShape(4.dp))
+                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth(0.8f)
+                        .height(14.dp)
+                        .background(shimmerBrush, RoundedCornerShape(4.dp))
+                )
+            }
         }
     }
 }
