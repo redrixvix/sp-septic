@@ -97,13 +97,16 @@ fun ProfileScreen(
                         .padding(28.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    // Avatar
+                    // Avatar — shows first initial in a bronze gradient circle
                     Box(
                         modifier = Modifier
                             .size(80.dp)
                             .background(
-                                brush = androidx.compose.ui.graphics.Brush.linearGradient(
-                                    colors = listOf(Bronze, BronzeLight)
+                                brush = Brush.linearGradient(
+                                    colors = if (uiState.userInitial != "?") 
+                                        listOf(Bronze, BronzeLight) 
+                                    else 
+                                        listOf(Border, Divider)
                                 ),
                                 shape = CircleShape
                             ),
@@ -112,7 +115,7 @@ fun ProfileScreen(
                         Text(
                             text = uiState.userInitial,
                             style = MaterialTheme.typography.displayMedium,
-                            color = WarmWhite,
+                            color = if (uiState.userInitial != "?") WarmWhite else CharcoalMuted,
                             fontWeight = FontWeight.Bold
                         )
                     }
@@ -121,7 +124,7 @@ fun ProfileScreen(
 
                     // Name
                     Text(
-                        text = uiState.userName.ifBlank { "Your Name" },
+                        text = uiState.userName.ifBlank { "Welcome" },
                         style = MaterialTheme.typography.headlineMedium,
                         color = Charcoal,
                         fontWeight = FontWeight.SemiBold,
@@ -167,7 +170,8 @@ fun ProfileScreen(
                 ) {
                     StatItem(
                         value = "${uiState.booksCount}",
-                        label = uiState.booksCount == 1 ? "Book" else "Books"
+                        label = if (uiState.booksCount == 1) "Book" else "Books",
+                        highlight = uiState.booksCount > 0
                     )
                     Box(
                         modifier = Modifier
@@ -177,7 +181,8 @@ fun ProfileScreen(
                     )
                     StatItem(
                         value = "${uiState.memoriesCount}",
-                        label = uiState.memoriesCount == 1 ? "Memory" else "Memories"
+                        label = if (uiState.memoriesCount == 1) "Memory" else "Memories",
+                        highlight = uiState.memoriesCount > 0
                     )
                     Box(
                         modifier = Modifier
@@ -187,7 +192,8 @@ fun ProfileScreen(
                     )
                     StatItem(
                         value = if (uiState.storageUsedBytes > 0) formatStorage(uiState.storageUsedBytes) else "Free",
-                        label = "Storage"
+                        label = "Plan",
+                        highlight = uiState.storageUsedBytes > 0
                     )
                 }
             }
@@ -242,12 +248,12 @@ fun ProfileScreen(
 }
 
 @Composable
-private fun StatItem(value: String, label: String) {
+private fun StatItem(value: String, label: String, highlight: Boolean = false) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
             text = value,
             style = MaterialTheme.typography.headlineMedium,
-            color = Bronze,
+            color = if (highlight) Bronze else CharcoalMuted,
             fontWeight = FontWeight.Bold
         )
         Text(
