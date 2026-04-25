@@ -2,10 +2,11 @@ package com.memoryproject.app.ui.books
 import androidx.compose.foundation.lazy.itemsIndexed
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import androidx.compose.material3.pullrefresh.PullRefreshState
-import androidx.compose.material3.pullrefresh.rememberPullRefreshState
-import androidx.compose.material3.pullrefresh.pullRefresh
-import androidx.compose.material3.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.PullRefreshState
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.ui.text.style.TextAlign
 
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
@@ -346,7 +347,7 @@ fun BooksScreen(
                             imageVector = Icons.Default.Book,
                             contentDescription = null,
                             tint = WarmWhite,
-                            modifier = Modifier.size(20.sp)
+                            modifier = Modifier.size(20.dp)
                         )
                     }
                     Spacer(modifier = Modifier.width(12.dp))

@@ -1,8 +1,8 @@
 package com.memoryproject.app.ui.books
-import androidx.compose.material3.pullrefresh.PullRefreshState
-import androidx.compose.material3.pullrefresh.rememberPullRefreshState
-import androidx.compose.material3.pullrefresh.pullRefresh
-import androidx.compose.material3.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.PullRefreshState
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.animation.*
@@ -618,6 +618,7 @@ private fun PromptSuggestionsSection(
                     prompt = prompt,
                     cardBg = cardBg,
                     primaryText = primaryText,
+                    darkTheme = darkTheme,
                     onClick = { onSuggestionSelected(prompt) }
                 )
             }
@@ -630,6 +631,7 @@ private fun PromptSuggestionChip(
     prompt: String,
     cardBg: Color,
     primaryText: Color,
+    darkTheme: Boolean,
     onClick: () -> Unit
 ) {
     val interactionSource = remember { MutableInteractionSource() }

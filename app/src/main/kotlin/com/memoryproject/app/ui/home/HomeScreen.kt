@@ -1,8 +1,8 @@
 package com.memoryproject.app.ui.home
-import androidx.compose.material3.pullrefresh.PullRefreshState
-import androidx.compose.material3.pullrefresh.rememberPullRefreshState
-import androidx.compose.material3.pullrefresh.pullRefresh
-import androidx.compose.material3.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.PullRefreshState
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
 
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
