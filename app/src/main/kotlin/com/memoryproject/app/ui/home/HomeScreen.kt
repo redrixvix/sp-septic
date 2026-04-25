@@ -50,6 +50,8 @@ private val HOME_PROMPTS = listOf(
 )
 
 @Composable
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
 fun HomeScreen(
     onNavigateToBooks: () -> Unit,
     onNavigateToBook: (Int) -> Unit,
