@@ -211,8 +211,12 @@ fun MemoryNavHost(
                     onNavigateToProfile = {
                         navController.navigate("profile")
                     },
-                    onNavigateToAddMemory = { bookId ->
-                        navController.navigate("book/$bookId")
+                    onNavigateToAddMemory = { bookId, prompt ->
+                        if (prompt != null) {
+                            navController.navigate("book/$bookId?prompt=${java.net.URLEncoder.encode(prompt, "UTF-8")}")
+                        } else {
+                            navController.navigate("book/$bookId")
+                        }
                     },
                     darkTheme = darkThemeEnabled
                 )
@@ -239,6 +243,27 @@ fun MemoryNavHost(
                         navController.navigate("profile")
                     },
                     darkTheme = darkThemeEnabled
+                )
+            }
+
+            composable(
+                route = "book/{bookId}?prompt={prompt}",
+                arguments = listOf(
+                    navArgument("bookId") { type = NavType.IntType },
+                    navArgument("prompt") { type = NavType.StringType; nullable = true; defaultValue = null },
+                ),
+                enterTransition = { fadeIn(animationSpec = tween(300)) },
+                exitTransition = { fadeOut(animationSpec = tween(300)) }
+            ) { backStackEntry ->
+                val bookId = backStackEntry.arguments?.getInt("bookId") ?: return@composable
+                val startPrompt = backStackEntry.arguments?.getString("prompt")?.let {
+                    java.net.URLDecoder.decode(it, "UTF-8")
+                }
+                BookDetailScreen(
+                    bookId = bookId,
+                    onBack = { navController.popBackStack() },
+                    darkTheme = darkThemeEnabled,
+                    startPrompt = startPrompt
                 )
             }
 

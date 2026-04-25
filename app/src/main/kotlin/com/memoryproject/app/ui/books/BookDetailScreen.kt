@@ -83,12 +83,13 @@ fun BookDetailScreen(
     bookId: Int,
     onBack: () -> Unit,
     darkTheme: Boolean,
+    startPrompt: String? = null,
     viewModel: BookDetailViewModel = koinViewModel { parametersOf(bookId) }
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var promptInput by remember { mutableStateOf("") }
     var answerInput by remember { mutableStateOf("") }
-    var pendingSuggestion by remember { mutableStateOf<String?>(null) }
+    var pendingSuggestion by remember { mutableStateOf<String?>(startPrompt) }
     var showPhotoViewer by remember { mutableStateOf<String?>(null) }
     var showMembersSheet by remember { mutableStateOf(false) }
     val snackbarHostState = remember { SnackbarHostState() }
@@ -108,6 +109,13 @@ fun BookDetailScreen(
         uiState.editMemory?.let { memory ->
             promptInput = memory.prompt_question
             answerInput = memory.answer_text
+        }
+    }
+
+    // Trigger add-memory dialog when navigated with a prompt suggestion
+    LaunchedEffect(startPrompt, uiState.book) {
+        if (startPrompt != null && uiState.book != null) {
+            viewModel.showAddMemory()
         }
     }
 
@@ -1113,7 +1121,7 @@ private fun MemorySkeletonCard(darkTheme: Boolean) {
             Box(
                 modifier = Modifier
                     .width(4.dp)
-                    .fillMaxHeight()
+                    .matchParentSize()
                     .background(
                         color = DarkBronze.copy(alpha = 0.1f),
                         shape = RoundedCornerShape(topStart = 14.dp, bottomStart = 14.dp)

@@ -100,10 +100,11 @@ fun MemoryCard(
                         )
                 )
                 // Warm gradient overlay — fixed: no fillMaxHeight in Row parent
+                // Use matchParentSize so Box fills the parent Row's height
                 Box(
                     modifier = Modifier
                         .width(48.dp)
-                        .fillMaxHeight()
+                        .matchParentSize()
                         .background(
                             brush = Brush.linearGradient(
                                 colors = listOf(

@@ -276,7 +276,7 @@ fun ProfileScreen(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
-            // Profile avatar + name card — warm, inviting, premium
+            // Profile card — warm, inviting, premium
             val profileCardBg = if (isDark) DarkSurface else WarmWhite
             Card(
                 modifier = Modifier.fillMaxWidth(),

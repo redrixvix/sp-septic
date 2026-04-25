@@ -49,14 +49,12 @@ private val HOME_PROMPTS = listOf(
     "What holiday brings back the best memories?"
 )
 
-@Composable
 @OptIn(ExperimentalMaterial3Api::class)
-@Composable
 fun HomeScreen(
     onNavigateToBooks: () -> Unit,
     onNavigateToBook: (Int) -> Unit,
     onNavigateToProfile: () -> Unit,
-    onNavigateToAddMemory: (Int) -> Unit = {},
+    onNavigateToAddMemory: (Int, String?) -> Unit = { _, _ -> },
     darkTheme: Boolean,
     viewModel: HomeViewModel = koinViewModel()
 ) {
@@ -123,7 +121,7 @@ fun HomeScreen(
             // Quick action buttons
             item(key = "quick_actions") {
                 QuickActions(
-                    onAddMemory = { uiState.books.firstOrNull()?.let { onNavigateToAddMemory(it.id) } },
+                    onAddMemory = { uiState.books.firstOrNull()?.let { onNavigateToAddMemory(it.id, null) } },
                     onBrowseBooks = onNavigateToBooks,
                     darkTheme = darkTheme,
                     cardBg = cardBg,
@@ -143,7 +141,11 @@ fun HomeScreen(
                         primaryText = primaryText,
                         mutedText = mutedText,
                         modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                        onPromptSelect = { /* prompt selected — navigates via onAddMemory */ }
+                        onPromptSelect = { prompt ->
+                            uiState.books.firstOrNull()?.let { firstBook ->
+                                onNavigateToAddMemory(firstBook.id, prompt)
+                            }
+                        }
                     )
                 }
             }
@@ -156,7 +158,7 @@ fun HomeScreen(
                         cardBg = cardBg,
                         primaryText = primaryText,
                         mutedText = mutedText,
-                        onAddMemory = { uiState.books.firstOrNull()?.let { onNavigateToAddMemory(it.id) } },
+                        onAddMemory = { onNavigateToBooks() },
                         modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
                     )
                 }

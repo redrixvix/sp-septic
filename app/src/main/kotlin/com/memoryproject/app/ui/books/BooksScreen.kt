@@ -1,14 +1,10 @@
 package com.memoryproject.app.ui.books
-import androidx.compose.foundation.lazy.itemsIndexed
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import androidx.compose.material.pullrefresh.PullRefreshState
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
-import androidx.compose.material.pullrefresh.pullRefresh
-import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
+import androidx.compose.material3.pulltorefresh.pullToRefresh
 import androidx.compose.ui.text.style.TextAlign
-
-import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -277,12 +273,11 @@ fun BooksScreen(
                     }
                 }
 
-                PullRefreshIndicator(
-                    refreshing = uiState.isLoading,
+                PullToRefreshContainer(
                     state = pullRefreshState,
                     modifier = Modifier.align(Alignment.TopCenter),
+                    containerColor = if (darkTheme) DarkSurfaceVariant else Papaya,
                     contentColor = Bronze,
-                    backgroundColor = if (darkTheme) DarkSurfaceVariant else Papaya
                 )
             }
         }
