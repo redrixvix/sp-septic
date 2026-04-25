@@ -2,11 +2,9 @@ package com.memoryproject.app.ui.onboarding
 
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.Spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -90,8 +88,8 @@ private val PAGES = listOf(
     ),
     OnboardingPage(
         icon = Icons.Default.LocalLibrary,
-        title = "Print a real book\nyour family will keep",
-        subtitle = "Every story becomes a beautifully printed hardcover book — a tangible keepsake your family will hold onto for generations.",
+        title = "A keepsake\nyour family will keep",
+        subtitle = "Every story is beautifully preserved — a timeless keepsake your family will treasure for generations.",
         accentColor = BronzeLight
     )
 )
@@ -105,8 +103,8 @@ fun OnboardingScreen(
     val isDark = darkTheme
     val scaffoldBg = if (isDark) DarkBackground else Cornsilk
     val cardBg = if (isDark) DarkSurface else WarmWhite
-    val primaryText = if (isDark) DarkOnSurface else Color(0xFF2D2D2D)
-    val mutedText = if (isDark) DarkOnSurfaceVariant else Color(0xFF777777)
+    val primaryText = if (isDark) DarkOnSurface else Charcoal
+    val mutedText = if (isDark) DarkOnSurfaceVariant else CharcoalMuted
 
     val pagerState = rememberPagerState(pageCount = { PAGES.size })
     val coroutineScope = rememberCoroutineScope()
@@ -246,16 +244,8 @@ private fun OnboardingPageContent(
     mutedText: Color,
     cardBg: Color
 ) {
-    // Animated rotation for gradient ring — subtle and continuous
-    val rotation by animateFloatAsState(
-        targetValue = 360f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(4000, easing = LinearEasing),
-            repeatMode = RepeatMode.Restart
-        ),
-        label = "ringRotation"
-    )
-    val safeIsDark = isDark
+    // Static gradient ring — warm brand accent behind icon (rotation removed for performance)
+    val ringColor = page.accentColor
 
     Column(
         modifier = Modifier
@@ -269,11 +259,10 @@ private fun OnboardingPageContent(
             modifier = Modifier.size(160.dp),
             contentAlignment = Alignment.Center
         ) {
-            // Outer ring — rotating conic gradient
+            // Outer ring — static warm gradient accent
             Box(
                 modifier = Modifier
                     .size(156.dp)
-                    .rotate(rotation)
                     .background(
                         brush = Brush.radialGradient(
                             colors = listOf(
