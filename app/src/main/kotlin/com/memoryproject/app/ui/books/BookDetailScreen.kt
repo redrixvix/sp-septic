@@ -320,7 +320,7 @@ fun BookDetailScreen(
                             "Your story starts here",
                             style = MaterialTheme.typography.headlineSmall,
                             fontWeight = FontWeight.SemiBold,
-                            color = Charcoal
+                            color = if (darkTheme) DarkOnSurface else Charcoal
                         )
                         Spacer(modifier = Modifier.height(10.dp))
                         Text(
