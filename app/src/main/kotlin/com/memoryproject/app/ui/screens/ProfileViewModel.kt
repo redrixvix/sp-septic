@@ -54,18 +54,31 @@ class ProfileViewModel(
     private fun formatMemberSince(isoDate: String): String {
         return try {
             val parts = isoDate.substringBefore("T").split("-")
-            if (parts.size < 2) return ""
+            if (parts.size < 3) return ""
             val months = listOf(
                 "", "January", "February", "March", "April", "May", "June",
                 "July", "August", "September", "October", "November", "December"
             )
             val month = parts[1].toInt()
             val year = parts[0].toInt()
+            val day = parts[2].toInt()
             if (month < 1 || month > 12) return ""
-            "Member since ${months[month]} $year"
+            "Member since ${months[month]} ${ordinalOf(day)}, $year"
         } catch (e: Exception) {
             ""
         }
+    }
+
+
+    private fun ordinalOf(n: Int): String {
+        val d = n % 10
+        val suffix = when {
+            d == 1 && n != 11 -> "st"
+            d == 2 && n != 12 -> "nd"
+            d == 3 && n != 13 -> "rd"
+            else -> "th"
+        }
+        return "$n$suffix"
     }
 
     private fun loadLibraryStats() {

@@ -309,9 +309,21 @@ internal fun formatMemoryDate(isoDate: String): String {
         )
         val month = parts[1].toInt()
         val day = parts[2].toInt()
+        val year = parts[0].toInt()
         if (month < 1 || month > 12) return isoDate
-        "${months[month]} $day, ${parts[0].toInt()}"
+        "${months[month]} ${ordinalOfMem(day)}, $year"
     } catch (e: Exception) {
         isoDate
     }
+}
+
+internal fun ordinalOfMem(n: Int): String {
+    val d = n % 10
+    val suffix = when {
+        d == 1 && n != 11 -> "st"
+        d == 2 && n != 12 -> "nd"
+        d == 3 && n != 13 -> "rd"
+        else -> "th"
+    }
+    return "$n$suffix"
 }

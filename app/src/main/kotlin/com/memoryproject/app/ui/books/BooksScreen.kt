@@ -662,8 +662,19 @@ private fun formatDate(isoDate: String): String {
         val day = parts[2].toInt()
         val year = parts[0].toInt()
         if (month < 1 || month > 12) return isoDate
-        "${months[month]} $day, $year"
+        "${months[month]} ${ordinalOf(day)}, $year"
     } catch (e: Exception) { isoDate }
+}
+
+private fun ordinalOf(n: Int): String {
+    val d = n % 10
+    val suffix = when {
+        d == 1 && n != 11 -> "st"
+        d == 2 && n != 12 -> "nd"
+        d == 3 && n != 13 -> "rd"
+        else -> "th"
+    }
+    return "$n$suffix"
 }
 
 @Composable
