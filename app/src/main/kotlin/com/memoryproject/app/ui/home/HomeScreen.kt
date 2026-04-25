@@ -1,8 +1,7 @@
 package com.memoryproject.app.ui.home
-import androidx.compose.material.pullrefresh.PullRefreshState
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
-import androidx.compose.material.pullrefresh.pullRefresh
-import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
@@ -35,6 +34,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.foundation.BorderStroke
 import com.memoryproject.app.data.model.Book
 import com.memoryproject.app.data.model.Memory
 import com.memoryproject.app.ui.theme.*
@@ -64,8 +64,8 @@ fun HomeScreen(
     val mutedText = if (darkTheme) DarkOnSurfaceVariant else CharcoalMuted
     val cardBg = if (darkTheme) DarkSurface else WarmWhite
 
-    val pullRefreshState = rememberPullRefreshState(
-        refreshing = uiState.isLoading,
+    val pullRefreshState = rememberPullToRefreshState(
+        isRefreshing = uiState.isLoading,
         onRefresh = { viewModel.refresh() }
     )
 
@@ -73,7 +73,6 @@ fun HomeScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(scaffoldBg)
-            .pullRefresh(pullRefreshState)
     ) {
         // Warm ambient bottom gradient for dark mode
         if (darkTheme) {
@@ -82,7 +81,13 @@ fun HomeScreen(
             ))
         }
         LazyColumn(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .pullToRefresh(
+                    state = pullRefreshState,
+                    isRefreshing = uiState.isLoading,
+                    onRefresh = { viewModel.refresh() }
+                ),
             contentPadding = PaddingValues(bottom = 100.dp)
         ) {
             // Welcome header — always first
@@ -290,12 +295,11 @@ fun HomeScreen(
             }
         }
 
-        PullRefreshIndicator(
-            refreshing = uiState.isLoading,
+        PullToRefreshContainer(
             state = pullRefreshState,
             modifier = Modifier.align(Alignment.TopCenter),
+            containerColor = if (darkTheme) DarkSurfaceVariant else Papaya,
             contentColor = Bronze,
-            backgroundColor = if (darkTheme) DarkSurfaceVariant else Papaya
         )
     }
 }
@@ -632,7 +636,7 @@ private fun QuickActionButton(
                 containerColor = Color.Transparent,
                 contentColor = Bronze
             ),
-            border = CardDefaults.outlinedCardBorder().copy(width = 1.5.dp, brush = SolidColor(if (darkTheme) DarkBronze else Bronze))
+            border = BorderStroke(1.5.dp, if (darkTheme) DarkBronze else Bronze)
         ) {
             Row(
                 modifier = Modifier
@@ -733,7 +737,7 @@ private fun EmptyHomeCard(
                 Spacer(modifier = Modifier.height(10.dp))
 
                 Text(
-                    text = "Capture your first memory — it's easier than writing a letter, more meaningful than a photo, and it'll be treasured for generations.",
+                    text = "Capture your first memory. It's easier than writing a letter, more meaningful than a photo — and your family will treasure it for generations.",
                     style = MaterialTheme.typography.bodyMedium,
                     color = mutedText,
                     textAlign = TextAlign.Center,
@@ -819,7 +823,7 @@ private fun RecentMemoryCard(
             Box(
                 modifier = Modifier
                     .width(3.dp)
-                    .fillMaxHeight()
+                    .fillMaxSize()
                     .background(
                         color = accentColor.copy(alpha = 0.45f),
                         shape = RoundedCornerShape(topStart = 14.dp, bottomStart = 14.dp)
@@ -1033,7 +1037,7 @@ private fun MemoryPromptsSection(
             Box(
                 modifier = Modifier
                     .width(4.dp)
-                    .fillMaxHeight()
+                    .fillMaxSize()
                     .background(
                         color = accentColor.copy(alpha = 0.4f),
                         shape = RoundedCornerShape(topStart = 18.dp, bottomStart = 18.dp)
@@ -1165,13 +1169,25 @@ private fun PromptCard(
 
 private fun formatDate(isoDate: String): String {
     return try {
-        val parts = isoDate.substringBefore("T").split("-")
+        val cleanDate = isoDate.substringBefore("T").substringBefore(" ")
+        val parts = cleanDate.split("-")
         if (parts.size < 3) return isoDate
-        val months = listOf("", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
-        val month = parts[1].toInt()
-        val day = parts[2].toInt()
         val year = parts[0].toInt()
+        val month = parts[1].toInt()
+        val day = parts[2].split("T")[0].toInt()
         if (month < 1 || month > 12) return isoDate
-        "${months[month]} $day, $year"
+        val months = listOf("", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
+        "${months[month]} ${ordinalOf(day)}, $year"
     } catch (e: Exception) { isoDate }
+}
+
+private fun ordinalOf(n: Int): String {
+    val d = n % 10
+    val suffix = when {
+        d == 1 && n != 11 -> "st"
+        d == 2 && n != 12 -> "nd"
+        d == 3 && n != 13 -> "rd"
+        else -> "th"
+    }
+    return "$n$suffix"
 }

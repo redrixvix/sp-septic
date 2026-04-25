@@ -1,8 +1,8 @@
 package com.memoryproject.app.ui.books
-import androidx.compose.material.pullrefresh.PullRefreshState
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
-import androidx.compose.material.pullrefresh.pullRefresh
-import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
+import androidx.compose.material3.pulltorefresh.pullToRefresh
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.animation.*
@@ -360,14 +360,18 @@ fun BookDetailScreen(
                         }
                         context.startActivity(Intent.createChooser(intent, "Share memory"))
                     }
-                    val pullRefreshState = rememberPullRefreshState(
-                        refreshing = uiState.isLoading,
+                    val pullRefreshState = rememberPullToRefreshState(
+                        isRefreshing = uiState.isLoading,
                         onRefresh = { viewModel.loadBook() }
                     )
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
-                            .pullRefresh(pullRefreshState)
+                            .pullToRefresh(
+                                state = pullRefreshState,
+                                isRefreshing = uiState.isLoading,
+                                onRefresh = { viewModel.loadBook() }
+                            )
                     ) {
                         LazyColumn(
                             contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 96.dp),
@@ -434,12 +438,11 @@ fun BookDetailScreen(
 
                             }
                         }
-                        PullRefreshIndicator(
-                            refreshing = uiState.isLoading,
+                        PullToRefreshContainer(
                             state = pullRefreshState,
                             modifier = Modifier.align(Alignment.TopCenter),
+                            containerColor = if (darkTheme) DarkSurfaceVariant else Papaya,
                             contentColor = Bronze,
-                            backgroundColor = if (darkTheme) DarkSurfaceVariant else Papaya
                         )
                     }
                 }
@@ -1348,7 +1351,7 @@ private fun MembersBottomSheet(
                             Text(
                                 member.role.replaceFirstChar { it.uppercase() },
                                 style = MaterialTheme.typography.labelSmall,
-                                color = if (member.role == "owner") Bronze else (if (darkTheme) TeaGreen else Color(0xFF4A7A4A)),
+                                color = if (member.role == "owner") Bronze else (if (darkTheme) TeaGreen else SuccessGreenDark),
                                 fontWeight = FontWeight.Medium
                             )
                         }
