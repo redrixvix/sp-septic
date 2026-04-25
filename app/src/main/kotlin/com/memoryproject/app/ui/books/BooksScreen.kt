@@ -56,8 +56,8 @@ fun BooksScreen(
     val primaryText = if (darkTheme) DarkOnSurface else Charcoal
     val mutedText = if (darkTheme) DarkOnSurfaceVariant else CharcoalMuted
 
-    val pullRefreshState = rememberPullRefreshState(
-        refreshing = uiState.isLoading,
+    val pullRefreshState = rememberPullToRefreshState(
+        isRefreshing = uiState.isLoading,
         onRefresh = { viewModel.loadBooks() }
     )
 
@@ -118,7 +118,11 @@ fun BooksScreen(
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .pullRefresh(pullRefreshState)
+                    .pullToRefresh(
+                        state = pullRefreshState,
+                        isRefreshing = uiState.isLoading,
+                        onRefresh = { viewModel.loadBooks() }
+                    )
             ) {
                 when {
                     uiState.isLoading && uiState.books.isEmpty() -> {
@@ -670,49 +674,4 @@ private fun ordinalOf(n: Int): String {
         else -> "th"
     }
     return "$n$suffix"
-}
-
-@Composable
-private fun ShimmerCreateBookButton(
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    val shimmerAlpha = remember { Animatable(0.1f) }
-    LaunchedEffect(Unit) {
-        while (true) {
-            shimmerAlpha.animateTo(0.2f, animationSpec = tween(1000, easing = FastOutSlowInEasing))
-            shimmerAlpha.animateTo(0.1f, animationSpec = tween(1000, easing = FastOutSlowInEasing))
-        }
-    }
-    val shimmerColor = Bronze.copy(alpha = shimmerAlpha.value)
-    
-    Button(
-        onClick = onClick,
-        modifier = modifier,
-        shape = RoundedCornerShape(14.dp),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = Bronze,
-            contentColor = WarmWhite
-        ),
-        elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp)
-    ) {
-        Box(modifier = Modifier.fillMaxWidth()) {
-            Row(
-                modifier = Modifier.align(Alignment.Center),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Icon(Icons.Default.Add, contentDescription = "Create a Book")
-                Spacer(modifier = Modifier.width(8.dp))
-                Text("Create a Book", fontWeight = FontWeight.SemiBold)
-            }
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(52.dp)
-                    .background(shimmerColor)
-                    .align(Alignment.Center)
-            )
-        }
-    }
 }

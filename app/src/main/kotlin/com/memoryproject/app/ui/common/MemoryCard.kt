@@ -99,11 +99,9 @@ fun MemoryCard(
                             shape = RoundedCornerShape(topStart = 14.dp, bottomStart = 14.dp)
                         )
                 )
-                // Warm gradient overlay — fixed: no fillMaxHeight in Row parent
-                // Use matchParentSize so Box fills the parent Row's height
+                // Warm gradient overlay — fills parent height via matchParentSize
                 Box(
                     modifier = Modifier
-                        .width(48.dp)
                         .matchParentSize()
                         .background(
                             brush = Brush.linearGradient(

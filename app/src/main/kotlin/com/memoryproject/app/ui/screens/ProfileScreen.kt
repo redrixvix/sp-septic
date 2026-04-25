@@ -409,9 +409,9 @@ fun ProfileScreen(
                         }
 
                         Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceEvenly
-                    ) {
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceEvenly
+                        ) {
                         StatItem(
                             value = "${uiState.booksCount}",
                             label = if (uiState.booksCount == 1) "Book" else "Books",
