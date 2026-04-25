@@ -693,18 +693,31 @@ private fun EmptyHomeCard(
                         .size(88.dp)
                         .background(
                             brush = Brush.radialGradient(
-                                colors = if (darkTheme) listOf(DarkSurfaceVariant, DarkSurface) else listOf(Papaya, Beige)
+                                colors = if (darkTheme) listOf(DarkSurfaceVariant.copy(alpha = 0.8f), DarkSurface) else listOf(Papaya.copy(alpha = 0.7f), Beige.copy(alpha = 0.7f))
                             ),
                             shape = RoundedCornerShape(22.dp)
-                        ),
+                        )
+                        .padding(4.dp),
                     contentAlignment = Alignment.Center
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.AutoAwesome,
-                        contentDescription = null,
-                        tint = Bronze,
-                        modifier = Modifier.size(44.dp)
-                    )
+                    Box(
+                        modifier = Modifier
+                            .size(80.dp)
+                            .background(
+                                brush = Brush.radialGradient(
+                                    colors = if (darkTheme) listOf(DarkSurfaceVariant, DarkSurface.copy(alpha = 0.9f)) else listOf(Papaya.copy(alpha = 0.5f), Beige.copy(alpha = 0.4f))
+                                ),
+                                shape = RoundedCornerShape(18.dp)
+                            ),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.AutoAwesome,
+                            contentDescription = null,
+                            tint = if (darkTheme) DarkBronze else Bronze,
+                            modifier = Modifier.size(40.dp)
+                        )
+                    }
                 }
 
                 Spacer(modifier = Modifier.height(24.dp))

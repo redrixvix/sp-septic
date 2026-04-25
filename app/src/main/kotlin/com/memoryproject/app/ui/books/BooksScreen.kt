@@ -204,24 +204,12 @@ fun BooksScreen(
                                     ),
                                 contentAlignment = Alignment.Center
                             ) {
-                                Box(
-                                    modifier = Modifier
-                                        .size(96.dp)
-                                        .background(
-                                            brush = Brush.radialGradient(
-                                                colors = if (darkTheme) listOf(DarkSurfaceVariant, DarkSurface) else listOf(Papaya, Beige)
-                                            ),
-                                            shape = RoundedCornerShape(24.dp)
-                                        ),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Default.Book,
-                                        contentDescription = null,
-                                        tint = if (darkTheme) DarkBronze else Bronze,
-                                        modifier = Modifier.size(48.dp)
-                                    )
-                                }
+                                Icon(
+                                    imageVector = Icons.Default.Book,
+                                    contentDescription = null,
+                                    tint = if (darkTheme) DarkBronze else Bronze,
+                                    modifier = Modifier.size(48.dp)
+                                )
                             }
                             Spacer(modifier = Modifier.height(28.dp))
                             Text(
@@ -446,11 +434,14 @@ fun BooksScreen(
                 )
             },
             text = {
-                Text(
-                    "Your books will still be here when you come back.",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = mutedText
-                )
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(
+                        "Everything you've captured will still be here when you get back.",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = mutedText,
+                        textAlign = TextAlign.Center
+                    )
+                }
             },
             confirmButton = {
                 Button(

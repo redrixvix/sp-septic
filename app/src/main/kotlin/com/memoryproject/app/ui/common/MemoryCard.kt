@@ -278,24 +278,12 @@ fun MemoryCard(
                                     .padding(horizontal = 8.dp, vertical = 4.dp),
                                 contentAlignment = Alignment.Center
                             ) {
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.spacedBy(4.dp)
-                                ) {
-                                    Icon(
-                                        Icons.Default.Share,
-                                        contentDescription = null,
-                                        modifier = Modifier.size(10.dp),
-                                        tint = if (isDark) DarkOnSurfaceVariant else CharcoalMuted
-                                    )
-                                    Spacer(modifier = Modifier.width(2.dp))
-                                    Text(
-                                        "${memory.photo_urls.size}",
-                                        style = MaterialTheme.typography.labelSmall,
-                                        color = if (isDark) DarkOnSurfaceVariant else CharcoalMuted,
-                                        fontWeight = FontWeight.Medium
-                                    )
-                                }
+                                Text(
+                                    text = if (memory.photo_urls.size == 1) "1 photo" else "${memory.photo_urls.size} photos",
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = if (isDark) DarkOnSurfaceVariant else CharcoalMuted,
+                                    fontWeight = FontWeight.Medium
+                                )
                             }
                         }
                     }

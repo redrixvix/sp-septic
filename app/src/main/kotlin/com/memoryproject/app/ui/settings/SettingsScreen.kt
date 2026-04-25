@@ -319,11 +319,14 @@ fun SettingsScreen(
                 )
             },
             text = {
-                Text(
-                    "Your books will still be here when you come back.",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = mutedText
-                )
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(
+                        "Take a breath — your books will be right here when you return.",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = mutedText,
+                        textAlign = TextAlign.Center
+                    )
+                }
             },
             confirmButton = {
                 TextButton(

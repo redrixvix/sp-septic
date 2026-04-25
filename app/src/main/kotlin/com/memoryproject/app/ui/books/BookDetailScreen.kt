@@ -324,7 +324,7 @@ fun BookDetailScreen(
                         )
                         Spacer(modifier = Modifier.height(10.dp))
                         Text(
-                            "Every memory you capture is a gift to the people you'll leave behind.",
+                            "Every memory you capture becomes a gift for the people who'll carry your story forward.",
                             style = MaterialTheme.typography.bodyLarge,
                             color = if (darkTheme) DarkOnSurfaceVariant else CharcoalMuted,
                             textAlign = TextAlign.Center
@@ -538,7 +538,7 @@ fun BookDetailScreen(
             },
             dismissButton = {
                 TextButton(onClick = { viewModel.hideDeleteConfirm() }) {
-                    Text("Keep It", color = if (darkTheme) DarkOnSurfaceVariant else CharcoalMuted)
+                    Text("Keep memory", color = if (darkTheme) DarkOnSurfaceVariant else CharcoalMuted)
                 }
             },
             shape = RoundedCornerShape(20.dp)
@@ -846,7 +846,7 @@ private fun MemoryDialog(
     darkTheme: Boolean = false,
 ) {
     // Shuffle suggestions each time the dialog opens
-    var suggestions by rememberSaveable { mutableStateOf(emptyList<String>()) }
+    var suggestions by remember { mutableStateOf(emptyList<String>()) }
     LaunchedEffect(title) {
         suggestions = PROMPT_SUGGESTIONS.shuffled(java.util.Random(System.currentTimeMillis() / 10000)).take(6)
     }
