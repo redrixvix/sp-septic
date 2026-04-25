@@ -530,7 +530,7 @@ private fun StatCard(
             Column {
                 Text(
                     text = value,
-                    style = MaterialTheme.typography.headlineMedium,
+                    style = MaterialTheme.typography.displaySmall,
                     color = accentColor,
                     fontWeight = FontWeight.Bold
                 )
