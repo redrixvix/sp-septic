@@ -1,7 +1,5 @@
 package com.memoryproject.app.ui.common
 
-import androidx.compose.animation.*
-import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -11,6 +9,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.*
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,6 +24,7 @@ import androidx.compose.ui.unit.sp
 import com.memoryproject.app.ui.theme.*
 import org.koin.compose.koinInject
 import com.memoryproject.app.data.preferences.PreferencesManager
+import androidx.compose.foundation.BorderStroke
 
 // ─── Premium Button ────────────────────────────────────────────────────────────
 
@@ -111,7 +111,7 @@ fun OutlineButton(
         enabled = enabled,
         shape = RoundedCornerShape(14.dp),
         colors = ButtonDefaults.outlinedButtonColors(contentColor = Bronze),
-        border = ButtonDefaults.outlinedButtonBorder.copy(width = 1.5.dp)
+        border = BorderStroke(1.5.dp, Bronze)
     ) {
         if (icon != null) {
             icon()

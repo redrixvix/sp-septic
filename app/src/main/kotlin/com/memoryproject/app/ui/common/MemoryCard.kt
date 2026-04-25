@@ -89,7 +89,6 @@ fun MemoryCard(
             Box(
                 modifier = Modifier
                     .width(4.dp)
-                    .fillMaxHeight()
             ) {
                 // Base accent color
                 Box(
@@ -100,10 +99,10 @@ fun MemoryCard(
                             shape = RoundedCornerShape(topStart = 14.dp, bottomStart = 14.dp)
                         )
                 )
-                // Warm gradient overlay
+                // Warm gradient overlay — fixed: no fillMaxHeight in Row parent
                 Box(
                     modifier = Modifier
-                        .fillMaxWidth(0.6f)
+                        .width(48.dp)
                         .fillMaxHeight()
                         .background(
                             brush = Brush.linearGradient(

@@ -412,7 +412,7 @@ fun ProfileScreen(
                                 .background(if (isDark) DarkDivider else Divider)
                         )
                         StatItem(
-                            value = if (uiState.storageUsedBytes > 0) formatStorage(uiState.storageUsedBytes) else "Starter",
+                            value = if (uiState.storageUsedBytes > 0) formatStorage(uiState.storageUsedBytes) else "Free",
                             label = "Plan",
                             highlight = uiState.storageUsedBytes > 0,
                             isDark = isDark
@@ -428,10 +428,10 @@ fun ProfileScreen(
                             textAlign = TextAlign.Center
                         )
                     }
-                    if (uiState.storageUsedBytes <= 0) {
-                        Spacer(modifier = Modifier.height(12.dp))
+                    if (uiState.storageUsedBytes > 0) {
+                        Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            text = "You can upgrade anytime to unlock more space.",
+                            text = "${formatStorage(uiState.storageUsedBytes)} used",
                             style = MaterialTheme.typography.bodySmall,
                             color = if (isDark) DarkOnSurfaceVariant else CharcoalMuted,
                             modifier = Modifier.fillMaxWidth(),

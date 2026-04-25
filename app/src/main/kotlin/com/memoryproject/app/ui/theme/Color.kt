@@ -19,6 +19,7 @@ val Border = Color(0xFFD4D0B8)            // Subtle warm borders
 val Divider = Color(0xFFE8E4D0)           // Soft dividers
 val ErrorRed = Color(0xFFB84040)          // Clear, warm error color
 val SuccessGreen = Color(0xFF5A8A5A)     // Soft success
+val SuccessGreenDark = Color(0xFF4A7A4A)   // Darker forest green — shared/active states in light theme
 
 // Section headers & soft card backgrounds
 val SectionHeaderBackground = Color(0xFFFAF5E6)  // Warm cream for settings/cards headers

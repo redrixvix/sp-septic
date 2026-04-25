@@ -552,7 +552,7 @@ private fun BookCard(
                             Text(
                                 text = "Shared",
                                 style = MaterialTheme.typography.labelSmall,
-                                color = if (darkTheme) TeaGreen else Color(0xFF4A7A4A),
+                                color = if (darkTheme) TeaGreen else SuccessGreenDark,
                                 fontWeight = FontWeight.Medium
                             )
                         }
