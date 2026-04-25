@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.memoryproject.app.data.repository.MemoryRepository
 import com.memoryproject.app.ui.theme.*
+import com.memoryproject.app.ui.common.SkeletonCard
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 
@@ -120,17 +121,31 @@ fun InviteScreen(
 
             when (val state = uiState) {
                 is InviteUiState.Loading -> {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(32.dp),
-                        color = Bronze,
-                        strokeWidth = 3.dp
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Text(
-                        "Checking invite...",
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = mutedText
-                    )
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Spacer(modifier = Modifier.height(48.dp))
+                        SkeletonCard(
+                            modifier = Modifier.fillMaxWidth(0.85f),
+                            isDark = isDark
+                        )
+                        Spacer(modifier = Modifier.height(24.dp))
+                        SkeletonCard(
+                            modifier = Modifier.fillMaxWidth(0.6f),
+                            isDark = isDark
+                        )
+                        Spacer(modifier = Modifier.height(40.dp))
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth(0.5f)
+                                .height(56.dp)
+                                .background(
+                                    color = if (isDark) DarkSurfaceVariant else Papaya.copy(alpha = 0.3f),
+                                    shape = RoundedCornerShape(14.dp)
+                                )
+                        )
+                    }
                 }
 
                 is InviteUiState.Preview -> {

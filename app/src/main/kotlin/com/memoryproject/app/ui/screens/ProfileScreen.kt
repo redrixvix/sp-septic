@@ -14,6 +14,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Book
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -40,6 +41,7 @@ fun ProfileScreen(
     val coroutineScope = rememberCoroutineScope()
     var showEditNameDialog by remember { mutableStateOf(false) }
     var showInviteDialog by remember { mutableStateOf(false) }
+    var showRateDialog by remember { mutableStateOf(false) }
     var editedName by remember { mutableStateOf("") }
     var inviteEmail by remember { mutableStateOf("") }
 
@@ -164,6 +166,65 @@ fun ProfileScreen(
             dismissButton = {
                 TextButton(onClick = { showInviteDialog = false }) {
                     Text("Cancel", color = if (isDark) DarkOnSurfaceVariant else CharcoalMuted)
+                }
+            },
+            shape = RoundedCornerShape(20.dp)
+        )
+    }
+
+    // Rate the app dialog
+    if (showRateDialog) {
+        AlertDialog(
+            onDismissRequest = { showRateDialog = false },
+            icon = {
+                Box(
+                    modifier = Modifier
+                        .size(56.dp)
+                        .background(
+                            color = Papaya.copy(alpha = 0.15f),
+                            shape = RoundedCornerShape(16.dp)
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        Icons.Default.Star,
+                        contentDescription = null,
+                        tint = Bronze,
+                        modifier = Modifier.size(28.dp)
+                    )
+                }
+            },
+            title = {
+                Text(
+                    "Love The Memory Project?",
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.SemiBold,
+                    textAlign = TextAlign.Center
+                )
+            },
+            text = {
+                Text(
+                    "Your review means the world to us — and it helps other families discover The Memory Project.",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = mutedText,
+                    textAlign = TextAlign.Center
+                )
+            },
+            confirmButton = {
+                Button(
+                    onClick = { showRateDialog = false },
+                    shape = RoundedCornerShape(12.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Bronze,
+                        contentColor = WarmWhite
+                    )
+                ) {
+                    Text("Review on Google Play")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showRateDialog = false }) {
+                    Text("Maybe later", color = if (isDark) DarkOnSurfaceVariant else CharcoalMuted)
                 }
             },
             shape = RoundedCornerShape(20.dp)
@@ -386,6 +447,17 @@ fun ProfileScreen(
                     label = "Invite family member",
                     value = "Share books with family members",
                     onClick = { showInviteDialog = true },
+                    bgColor = cardBg,
+                    isDark = isDark
+                )
+            }
+
+            SettingsSection(title = "Feedback", cardBg = cardBg, isDark = isDark) {
+                SettingsRow(
+                    icon = Icons.Default.Star,
+                    label = "Rate the app",
+                    value = "Leave a review",
+                    onClick = { showRateDialog = true },
                     bgColor = cardBg,
                     isDark = isDark
                 )
