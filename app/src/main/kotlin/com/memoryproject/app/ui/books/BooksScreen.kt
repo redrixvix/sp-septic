@@ -552,7 +552,7 @@ private fun BookCard(
                         Box(
                             modifier = Modifier
                                 .background(
-                                    color = if (darkTheme) TeaGreen.copy(alpha = 0.2f) else TeaGreen.copy(alpha = 0.15f),
+                                    color = if (darkTheme) TeaGreenDark.copy(alpha = 0.25f) else TeaGreen.copy(alpha = 0.15f),
                                     shape = RoundedCornerShape(6.dp)
                                 )
                                 .padding(horizontal = 8.dp, vertical = 3.dp)
