@@ -365,13 +365,9 @@ private fun WelcomeHeader(
                                     )
                             )
                         } else {
-                            val greeting = rememberGreeting()
+                            val greeting = if (userName.isNotBlank()) rememberWarmGreeting(userName) else rememberGreeting()
                             Text(
-                                text = if (userName.isNotBlank()) {
-                                    "Good to see you, $userName"
-                                } else {
-                                    greeting
-                                },
+                                text = greeting,
                                 style = MaterialTheme.typography.headlineSmall,
                                 color = primaryText,
                                 fontWeight = FontWeight.SemiBold
@@ -428,6 +424,19 @@ private fun rememberGreeting(): String {
             hour < 12 -> "Good morning"
             hour < 17 -> "Good afternoon"
             else -> "Good evening"
+        }
+    }
+}
+
+@Composable
+private fun rememberWarmGreeting(userName: String): String {
+    val hour = java.util.Calendar.getInstance().get(java.util.Calendar.HOUR_OF_DAY)
+    val namePart = if (userName.isNotBlank()) ", $userName" else ""
+    return remember(userName) {
+        when {
+            hour < 12 -> "Good morning$namePart"
+            hour < 17 -> "Good afternoon$namePart"
+            else -> "Good evening$namePart"
         }
     }
 }
