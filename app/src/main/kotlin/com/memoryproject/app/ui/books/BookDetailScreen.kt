@@ -856,10 +856,10 @@ private fun MemoryDialog(
     confirmLabel: String,
     darkTheme: Boolean = false,
 ) {
-    // Shuffle suggestions each time the dialog opens
+    // Shuffle suggestions once when dialog opens, stable while dialog is visible
     var suggestions by remember { mutableStateOf(emptyList<String>()) }
-    LaunchedEffect(title) {
-        suggestions = PROMPT_SUGGESTIONS.shuffled(java.util.Random(System.currentTimeMillis() / 10000)).take(6)
+    LaunchedEffect(Unit) {
+        suggestions = PROMPT_SUGGESTIONS.shuffled().take(6)
     }
 
     val cardBg = if (darkTheme) DarkSurface else WarmWhite
