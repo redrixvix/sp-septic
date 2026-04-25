@@ -157,16 +157,16 @@ fun MemoryCard(
                         )
                         IconButton(
                             onClick = onEdit,
-                            modifier = Modifier
-                                .size(36.dp)
-                                .graphicsLayer { scaleX = editScale; scaleY = editScale },
+                            modifier = Modifier.size(36.dp),
                             interactionSource = editInteraction
                         ) {
                             Icon(
                                 Icons.Default.Edit,
                                 contentDescription = "Edit",
                                 tint = if (editPressed) (if (isDark) DarkBronze else Bronze) else mutedText,
-                                modifier = Modifier.size(18.dp)
+                                modifier = Modifier
+                                    .size(18.dp)
+                                    .graphicsLayer { scaleX = editScale; scaleY = editScale }
                             )
                         }
                         val shareInteraction = remember { MutableInteractionSource() }
@@ -178,16 +178,16 @@ fun MemoryCard(
                         )
                         IconButton(
                             onClick = onShareClick,
-                            modifier = Modifier
-                                .size(36.dp)
-                                .graphicsLayer { scaleX = shareScale; scaleY = shareScale },
+                            modifier = Modifier.size(36.dp),
                             interactionSource = shareInteraction
                         ) {
                             Icon(
                                 Icons.Default.Share,
                                 contentDescription = "Share",
                                 tint = if (sharePressed) (if (isDark) DarkBronze else Bronze) else mutedText,
-                                modifier = Modifier.size(18.dp)
+                                modifier = Modifier
+                                    .size(18.dp)
+                                    .graphicsLayer { scaleX = shareScale; scaleY = shareScale }
                             )
                         }
                         val deleteInteraction = remember { MutableInteractionSource() }
@@ -199,16 +199,16 @@ fun MemoryCard(
                         )
                         IconButton(
                             onClick = onDelete,
-                            modifier = Modifier
-                                .size(36.dp)
-                                .graphicsLayer { scaleX = deleteScale; scaleY = deleteScale },
+                            modifier = Modifier.size(36.dp),
                             interactionSource = deleteInteraction
                         ) {
                             Icon(
                                 Icons.Default.Delete,
                                 contentDescription = "Delete",
                                 tint = if (deletePressed) ErrorRed else mutedText,
-                                modifier = Modifier.size(18.dp)
+                                modifier = Modifier
+                                    .size(18.dp)
+                                    .graphicsLayer { scaleX = deleteScale; scaleY = deleteScale }
                             )
                         }
                     }

@@ -124,14 +124,17 @@ fun BookDetailScreen(
     // Show snackbar on errors, then clear them
     LaunchedEffect(uiState.error) {
         uiState.error?.let {
-            snackbarHostState.showSnackbar(it, duration = SnackbarDuration.Long)
+            snackbarHostState.showSnackbar(it, duration = SnackbarDuration.Short)
             viewModel.clearError()
         }
     }
 
+    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+
     Scaffold(
         topBar = {
             LargeTopAppBar(
+                scrollBehavior = scrollBehavior,
                 title = {
                     Column {
                         Text(
