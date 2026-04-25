@@ -378,6 +378,7 @@ fun AuthScreen(
                         )
                     }
                 },
+                isError = password.isNotEmpty() && uiState.error != null,
                 supportingText = {
                     if (passwordHint != null) {
                         Text(passwordHint, color = mutedText)
@@ -406,8 +407,11 @@ fun AuthScreen(
                     unfocusedBorderColor = passwordBorderColor,
                     focusedLabelColor = Bronze,
                     unfocusedLabelColor = mutedText,
-                    cursorColor = Bronze
+                    cursorColor = Bronze,
+                    errorBorderColor = ErrorRed,
+                    errorLabelColor = ErrorRed
                 ),
+                isError = uiState.error != null,
                 textStyle = MaterialTheme.typography.bodyLarge
             )
 

@@ -265,26 +265,7 @@ fun MemoryCard(
                                 )
                             }
                         }
-                        // Photo count indicator when more than 1 photo
-                        if (memory.photo_urls.size > 1) {
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Box(
-                                modifier = Modifier
-                                    .background(
-                                        color = if (isDark) DarkBronze.copy(alpha = 0.2f) else Bronze.copy(alpha = 0.1f),
-                                        shape = RoundedCornerShape(8.dp)
-                                    )
-                                    .padding(horizontal = 8.dp, vertical = 4.dp),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text(
-                                    text = if (memory.photo_urls.size == 1) "1 photo" else "${memory.photo_urls.size} photos",
-                                    style = MaterialTheme.typography.labelSmall,
-                                    color = if (isDark) DarkOnSurfaceVariant else CharcoalMuted,
-                                    fontWeight = FontWeight.Medium
-                                )
-                            }
-                        }
+
                     }
                 }
 

@@ -536,7 +536,7 @@ private fun StatCard(
             Column {
                 Text(
                     text = value,
-                    style = MaterialTheme.typography.displaySmall,
+                    style = MaterialTheme.typography.displayMedium,
                     color = accentColor,
                     fontWeight = FontWeight.Bold
                 )

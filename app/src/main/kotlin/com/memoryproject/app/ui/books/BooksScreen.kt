@@ -85,7 +85,7 @@ fun BooksScreen(
                     Column {
                         Text(
                             "My Books",
-                            style = MaterialTheme.typography.headlineMedium,
+                            style = MaterialTheme.typography.headlineLarge,
                             fontWeight = FontWeight.Bold,
                             color = primaryText
                         )
@@ -213,7 +213,7 @@ fun BooksScreen(
                             }
                             Spacer(modifier = Modifier.height(28.dp))
                             Text(
-                                "Your family's story is waiting",
+                                "Every great collection starts with one story",
                                 style = MaterialTheme.typography.headlineSmall,
                                 fontWeight = FontWeight.SemiBold,
                                 color = primaryText,
@@ -221,7 +221,7 @@ fun BooksScreen(
                             )
                             Spacer(modifier = Modifier.height(10.dp))
                             Text(
-                                "Create a book and start capturing the moments, stories, and memories worth preserving.",
+                                "Create a book for yourself or a family member, then fill it with the moments worth remembering.",
                                 style = MaterialTheme.typography.bodyLarge,
                                 color = mutedText,
                                 textAlign = TextAlign.Center,
@@ -250,7 +250,7 @@ fun BooksScreen(
                                 )
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Text(
-                                    "Create Your First Book",
+                                    "Create a Book",
                                     style = MaterialTheme.typography.labelLarge,
                                     fontWeight = FontWeight.SemiBold
                                 )
@@ -300,7 +300,7 @@ fun BooksScreen(
             ) {
                 Icon(Icons.Default.Add, contentDescription = null)
                 Spacer(modifier = Modifier.width(8.dp))
-                Text("New Book", style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.SemiBold)
+                text = { Text("New Book", style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.SemiBold) }
             }
         }
 
@@ -707,9 +707,9 @@ private fun ShimmerCreateBookButton(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
             ) {
-                Icon(Icons.Default.Add, contentDescription = "Create Your First Book")
+                Icon(Icons.Default.Add, contentDescription = "Create a Book")
                 Spacer(modifier = Modifier.width(8.dp))
-                Text("Create Your First Book", fontWeight = FontWeight.SemiBold)
+                Text("Create a Book", fontWeight = FontWeight.SemiBold)
             }
             Box(
                 modifier = Modifier

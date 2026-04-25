@@ -65,16 +65,16 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.delay
 
 private val PROMPT_SUGGESTIONS = listOf(
-    "Tell me about your first job",
-    "What was your wedding day like?",
-    "Describe your childhood home",
-    "What's your favorite holiday memory?",
-    "Tell me about your parents",
-    "What was school like for you?",
-    "Describe a time you laughed until you cried",
-    "What's the best advice you ever received?",
-    "Tell me about learning to drive",
-    "What music did you grow up listening to?"
+    "What's your favorite memory with your mom or dad?",
+    "Tell me about a holiday tradition your family always had",
+    "What's the best piece of advice you ever received?",
+    "Describe a day that made you genuinely happy",
+    "What's something you've always wanted to tell your family?",
+    "Tell me about your first home",
+    "What was the happiest day of your life so far?",
+    "What's a skill or hobby you're most proud of?",
+    "Describe your best friend from childhood",
+    "What do you want your family to never forget?"
 )
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)

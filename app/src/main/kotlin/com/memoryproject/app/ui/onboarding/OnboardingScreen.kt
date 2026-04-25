@@ -4,8 +4,6 @@ import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.Spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -83,7 +81,7 @@ private val PAGES = listOf(
     OnboardingPage(
         icon = Icons.Default.AutoAwesome,
         title = "Write in your own\nwords, your own time",
-        subtitle = "Guided prompts or free-form — whatever feels right. No pressure, no structure. Just your story.",
+        subtitle = "Answer guided prompts or write freely — your stories, in your voice, on your own time.",
         accentColor = TeaGreen
     ),
     OnboardingPage(

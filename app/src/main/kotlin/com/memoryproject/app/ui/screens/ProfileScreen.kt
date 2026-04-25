@@ -25,6 +25,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.memoryproject.app.ui.theme.*
+import com.memoryproject.app.ui.common.EmptyState
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import androidx.compose.runtime.rememberCoroutineScope
@@ -383,7 +384,31 @@ fun ProfileScreen(
             // Usage stats section
             SettingsSection(title = "Your Library", cardBg = cardBg, isDark = isDark) {
                 Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 16.dp)) {
-                    Row(
+                    if (uiState.isLoading) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(60.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                CircularProgressIndicator(
+                                    modifier = Modifier.size(24.dp),
+                                    color = Bronze,
+                                    strokeWidth = 2.dp
+                                )
+                            }
+                        }
+
+                        if (!uiState.isLoading && uiState.userName.isBlank() && uiState.userEmail.isBlank()) {
+                            EmptyState(
+                                emoji = "👤",
+                                title = "Your profile",
+                                subtitle = "Sign in to view and manage your account details.",
+                                isDark = isDark
+                            )
+                        }
+
+                        Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceEvenly
                     ) {
