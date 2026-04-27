@@ -175,7 +175,7 @@ fun BooksScreen(
                     }
 
                     uiState.books.isEmpty() && !uiState.isLoading -> {
-                        // Empty state — warm, inviting
+                        // Empty state — warm, inviting, with CTA to create first book
                         Column(
                             modifier = Modifier
                                 .fillMaxSize()
@@ -222,15 +222,15 @@ fun BooksScreen(
                                 onClick = { showCreateDialog = true },
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .height(52.dp),
-                                shape = RoundedCornerShape(14.dp),
+                                    .height(56.dp),
+                                shape = RoundedCornerShape(16.dp),
                                 colors = ButtonDefaults.buttonColors(
                                     containerColor = Bronze,
                                     contentColor = WarmWhite
                                 ),
                                 elevation = ButtonDefaults.buttonElevation(
-                                    defaultElevation = 4.dp,
-                                    pressedElevation = 8.dp
+                                    defaultElevation = 6.dp,
+                                    pressedElevation = 12.dp
                                 )
                             ) {
                                 Icon(
@@ -240,7 +240,7 @@ fun BooksScreen(
                                 )
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Text(
-                                    "Create a Book",
+                                    "Create Your First Book",
                                     style = MaterialTheme.typography.labelLarge,
                                     fontWeight = FontWeight.SemiBold
                                 )
