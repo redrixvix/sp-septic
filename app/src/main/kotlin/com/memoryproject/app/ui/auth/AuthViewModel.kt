@@ -105,16 +105,16 @@ class AuthViewModel(
         _uiState.value = _uiState.value.copy(googleAuthUrl = null)
     }
 
+    private val _pendingGoogleCallback = MutableStateFlow<String?>(null)
+    val pendingGoogleCallback: StateFlow<String?> = _pendingGoogleCallback.asStateFlow()
+
     /**
      * Sets a pending Google OAuth callback URI to be processed when the auth screen is ready.
      * Called from MainActivity's onNewIntent before Navigation has routed to auth.
      */
     fun setPendingGoogleCallback(uri: String) {
-        _pendingGoogleCallback = uri
+        _pendingGoogleCallback.value = uri
     }
-
-    private var _pendingGoogleCallback: String? = null
-    val pendingGoogleCallback: String? get() = _pendingGoogleCallback
 
     /**
      * Handles the OAuth callback from the Custom Tab deep link.
@@ -125,6 +125,8 @@ class AuthViewModel(
      * @param callbackUri The full callback URI (memoryproject://oauth/callback?session=...&error=...)
      */
     fun handleGoogleCallback(callbackUri: String) {
+        // Clear the pending callback immediately so it is not processed twice
+        _pendingGoogleCallback.value = null
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true, googleAuthUrl = null, isGoogleLoading = false)
 

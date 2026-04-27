@@ -485,35 +485,55 @@ private fun BookCard(
         colors = CardDefaults.cardColors(containerColor = cardBg),
         elevation = CardDefaults.cardElevation(defaultElevation = elevation)
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            // Book icon in accent box
+        Row(modifier = Modifier.fillMaxWidth()) {
+            // Left accent strip — bronze brand marker
             Box(
                 modifier = Modifier
-                    .size(52.dp)
+                    .width(4.dp)
+                    .fillMaxSize()
                     .background(
-                        brush = Brush.linearGradient(
-                            colors = if (darkTheme) listOf(DarkBronze.copy(alpha = 0.25f), DarkSurfaceVariant) else listOf(Bronze.copy(alpha = 0.15f), Papaya)
+                        brush = Brush.verticalGradient(
+                            colors = if (darkTheme) {
+                                listOf(DarkBronze.copy(alpha = 0.5f), DarkBronzeLight.copy(alpha = 0.15f))
+                            } else {
+                                listOf(Bronze.copy(alpha = 0.5f), BronzeLight.copy(alpha = 0.15f))
+                            }
                         ),
-                        shape = RoundedCornerShape(14.dp)
-                    ),
+                        shape = RoundedCornerShape(topStart = 16.dp, bottomStart = 16.dp)
+                    )
+            )
+            // Book icon in subtle accent box
+            Box(
+                modifier = Modifier
+                    .size(48.dp)
+                    .padding(start = 14.dp),
                 contentAlignment = Alignment.Center
             ) {
-                Icon(
-                    imageVector = Icons.Default.Book,
-                    contentDescription = null,
-                    tint = if (darkTheme) DarkBronze else Bronze,
-                    modifier = Modifier.size(26.dp)
-                )
+                Box(
+                    modifier = Modifier
+                        .size(42.dp)
+                        .background(
+                            brush = Brush.linearGradient(
+                                colors = if (darkTheme) listOf(DarkBronze.copy(alpha = 0.3f), DarkSurfaceVariant) else listOf(Bronze.copy(alpha = 0.18f), Papaya.copy(alpha = 0.9f))
+                            ),
+                            shape = RoundedCornerShape(12.dp)
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Book,
+                        contentDescription = null,
+                        tint = if (darkTheme) DarkBronze else Bronze,
+                        modifier = Modifier.size(22.dp)
+                    )
+                }
             }
 
-            Spacer(modifier = Modifier.width(16.dp))
-
-            Column(modifier = Modifier.weight(1f)) {
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(start = 4.dp, end = 8.dp, top = 16.dp, bottom = 16.dp)
+            ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
                         text = book.title,
@@ -590,8 +610,7 @@ private fun BookCard(
                 }
             }
 
-            Spacer(modifier = Modifier.width(8.dp))
-            Text("→", style = MaterialTheme.typography.titleMedium, color = mutedText)
+            Text("→", style = MaterialTheme.typography.titleMedium, color = mutedText, modifier = Modifier.padding(end = 8.dp))
         }
     }
 }

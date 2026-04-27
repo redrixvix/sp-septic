@@ -764,19 +764,48 @@ private fun SectionHeader(
     mutedText: Color,
     modifier: Modifier = Modifier
 ) {
-    Column(modifier = modifier.fillMaxWidth()) {
-        Text(
-            text = title,
-            style = MaterialTheme.typography.titleMedium,
-            color = if (darkTheme) DarkOnSurface else Charcoal,
-            fontWeight = FontWeight.SemiBold
-        )
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .background(
+                brush = Brush.horizontalGradient(
+                    colors = if (darkTheme) {
+                        listOf(DarkSurfaceVariant.copy(alpha = 0.0f), DarkSurfaceVariant.copy(alpha = 0.0f))
+                    } else {
+                        // Subtle warm left-to-right fade for editorial feel
+                        listOf(Papaya.copy(alpha = 0.25f), Cornsilk.copy(alpha = 0.0f))
+                    }
+                )
+            )
+            .padding(horizontal = 4.dp, vertical = 12.dp)
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            // Small bronze accent dot
+            Box(
+                modifier = Modifier
+                    .size(6.dp)
+                    .background(
+                        color = if (darkTheme) DarkBronze else Bronze,
+                        shape = CircleShape
+                    )
+            )
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleMedium,
+                color = if (darkTheme) DarkOnSurface else Charcoal,
+                fontWeight = FontWeight.SemiBold
+            )
+        }
         Text(
             text = subtitle,
             style = MaterialTheme.typography.bodySmall,
-            color = mutedText
+            color = mutedText,
+            modifier = Modifier.padding(start = 14.dp)
         )
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(4.dp))
     }
 }
 
@@ -821,10 +850,15 @@ private fun RecentMemoryCard(
         Row(modifier = Modifier.fillMaxWidth()) {
             Box(
                 modifier = Modifier
-                    .width(3.dp)
+                    .width(4.dp)
                     .fillMaxSize()
                     .background(
-                        color = accentColor.copy(alpha = 0.45f),
+                        brush = Brush.verticalGradient(
+                            colors = listOf(
+                                accentColor.copy(alpha = 0.6f),
+                                accentColor.copy(alpha = 0.2f)
+                            )
+                        ),
                         shape = RoundedCornerShape(topStart = 14.dp, bottomStart = 14.dp)
                     )
             )
@@ -920,51 +954,69 @@ private fun BookMiniCard(
         colors = CardDefaults.cardColors(containerColor = cardBg),
         elevation = CardDefaults.cardElevation(defaultElevation = elevation)
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(14.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
+        Row(modifier = Modifier.fillMaxWidth()) {
+            // Left accent strip — bronze brand marker
             Box(
                 modifier = Modifier
-                    .size(44.dp)
+                    .width(4.dp)
+                    .fillMaxSize()
                     .background(
-                        brush = Brush.linearGradient(
-                            colors = if (darkTheme) listOf(DarkBronze, DarkBronzeLight) else listOf(Bronze, BronzeLight)
+                        brush = Brush.verticalGradient(
+                            colors = if (darkTheme) {
+                                listOf(DarkBronze.copy(alpha = 0.55f), DarkBronzeLight.copy(alpha = 0.2f))
+                            } else {
+                                listOf(Bronze.copy(alpha = 0.55f), BronzeLight.copy(alpha = 0.2f))
+                            }
                         ),
-                        shape = RoundedCornerShape(12.dp)
-                    ),
-                contentAlignment = Alignment.Center
+                        shape = RoundedCornerShape(topStart = 14.dp, bottomStart = 14.dp)
+                    )
+            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(14.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Icon(
-                    imageVector = Icons.Default.Book,
-                    contentDescription = null,
-                    tint = WarmWhite,
-                    modifier = Modifier.size(20.dp)
-                )
-            }
-            Spacer(modifier = Modifier.width(14.dp))
-            Column(modifier = Modifier.weight(1f)) {
+                Box(
+                    modifier = Modifier
+                        .size(44.dp)
+                        .background(
+                            brush = Brush.linearGradient(
+                                colors = if (darkTheme) listOf(DarkBronze, DarkBronzeLight) else listOf(Bronze, BronzeLight)
+                            ),
+                            shape = RoundedCornerShape(12.dp)
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Book,
+                        contentDescription = null,
+                        tint = WarmWhite,
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
+                Spacer(modifier = Modifier.width(14.dp))
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = book.title,
+                        style = MaterialTheme.typography.titleSmall,
+                        color = primaryText,
+                        fontWeight = FontWeight.SemiBold,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                    Text(
+                        text = (book.memories_count ?: 0).toString() + " " + (if ((book.memories_count ?: 0) == 1) "memory" else "memories"),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = mutedText
+                    )
+                }
                 Text(
-                    text = book.title,
-                    style = MaterialTheme.typography.titleSmall,
-                    color = primaryText,
-                    fontWeight = FontWeight.SemiBold,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-                Text(
-                    text = (book.memories_count ?: 0).toString() + " " + (if ((book.memories_count ?: 0) == 1) "memory" else "memories"),
-                    style = MaterialTheme.typography.bodySmall,
+                    "→",
+                    style = MaterialTheme.typography.titleMedium,
                     color = mutedText
                 )
             }
-            Text(
-                "→",
-                style = MaterialTheme.typography.titleMedium,
-                color = mutedText
-            )
         }
     }
 }

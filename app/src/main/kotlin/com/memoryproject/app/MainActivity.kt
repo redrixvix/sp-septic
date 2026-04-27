@@ -36,6 +36,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import androidx.navigation.navDeepLink
 import com.memoryproject.app.data.preferences.PreferencesManager
 import com.memoryproject.app.ui.auth.AuthScreen
 import com.memoryproject.app.ui.auth.AuthViewModel
@@ -78,6 +79,7 @@ class MainActivity : ComponentActivity() {
                 MemoryNavHost(
                     modifier = Modifier.fillMaxSize(),
                     startDestination = startDestination,
+                    authViewModel = authViewModel,
                     onOnboardingComplete = {
                         prefsManager.onboardingCompleted = true
                     },
@@ -105,10 +107,11 @@ class MainActivity : ComponentActivity() {
         val scheme = data.scheme ?: return
 
         if (scheme == "memoryproject" && data.host == "oauth" && data.path == "/callback") {
-            // Google OAuth callback — set pending callback in ViewModel and navigate to auth
+            // Google OAuth callback — store pending callback in ViewModel.
+            // MemoryNavHost's LaunchedEffect watches pendingGoogleCallback and
+            // performs the navigation to auth screen from inside the composable,
+            // ensuring the NavController is available.
             authViewModel.setPendingGoogleCallback(data.toString())
-            // Navigation will route to auth screen via intent-filter
-            // (handled by Navigation's NavHost deep link matching)
         } else if (scheme == "memoryproject" && data.host == "invite") {
             // Existing invite deep link — handled by Navigation deep link
         }
@@ -119,6 +122,7 @@ class MainActivity : ComponentActivity() {
 fun MemoryNavHost(
     modifier: Modifier = Modifier,
     startDestination: String,
+    authViewModel: AuthViewModel,
     onOnboardingComplete: () -> Unit,
     darkThemeEnabled: Boolean = false,
     onDarkThemeToggle: () -> Unit = {}
@@ -137,6 +141,17 @@ fun MemoryNavHost(
     val navBg = if (isDark) DarkSurface else WarmWhite
     val selectedColor = if (isDark) DarkBronze else Bronze
     val unselectedColor = if (isDark) DarkOnSurfaceVariant else CharcoalMuted
+
+    // Watch pending Google OAuth callback set by handleIntent (from onNewIntent).
+    // When set, navigate to auth screen from inside the composable so NavController is available.
+    val pendingGoogleCallback by authViewModel.pendingGoogleCallback.collectAsState()
+    LaunchedEffect(pendingGoogleCallback) {
+        pendingGoogleCallback ?: return@LaunchedEffect
+        navController.navigate("auth?google_callback=") {
+            popUpTo("auth") { inclusive = true }
+            launchSingleTop = true
+        }
+    }
 
     Scaffold(
         modifier = modifier.background(scaffoldBg),
@@ -222,6 +237,11 @@ fun MemoryNavHost(
                         defaultValue = null
                     }
                 ),
+                deepLinks = listOf(
+                    navDeepLink {
+                        uriPattern = "memoryproject://oauth/callback"
+                    }
+                ),
                 enterTransition = { fadeIn(animationSpec = tween(300)) },
                 exitTransition = { fadeOut(animationSpec = tween(300)) }
             ) { backStackEntry ->
@@ -233,7 +253,8 @@ fun MemoryNavHost(
                         }
                     },
                     googleCallbackUri = googleCallback,
-                    darkTheme = darkThemeEnabled
+                    darkTheme = darkThemeEnabled,
+                    viewModel = authViewModel
                 )
             }
 

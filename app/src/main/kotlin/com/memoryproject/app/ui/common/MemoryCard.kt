@@ -167,7 +167,7 @@ fun MemoryCard(
                                 contentDescription = "Edit",
                                 tint = if (editPressed) (if (isDark) DarkBronze else Bronze) else mutedText,
                                 modifier = Modifier
-                                    .size(18.dp)
+                                    .size(20.dp)
                                     .graphicsLayer { scaleX = editScale; scaleY = editScale }
                             )
                         }
@@ -188,7 +188,7 @@ fun MemoryCard(
                                 contentDescription = "Share",
                                 tint = if (sharePressed) (if (isDark) DarkBronze else Bronze) else mutedText,
                                 modifier = Modifier
-                                    .size(18.dp)
+                                    .size(20.dp)
                                     .graphicsLayer { scaleX = shareScale; scaleY = shareScale }
                             )
                         }
@@ -209,7 +209,7 @@ fun MemoryCard(
                                 contentDescription = "Delete",
                                 tint = if (deletePressed) ErrorRed else mutedText,
                                 modifier = Modifier
-                                    .size(18.dp)
+                                    .size(20.dp)
                                     .graphicsLayer { scaleX = deleteScale; scaleY = deleteScale }
                             )
                         }
@@ -227,44 +227,50 @@ fun MemoryCard(
                     modifier = Modifier.padding(vertical = 2.dp)
                 )
 
-                // Photo thumbnails
+                // Photo thumbnails — larger with more breathing room
                 if (memory.photo_urls.isNotEmpty()) {
-                    Spacer(modifier = Modifier.height(12.dp))
+                    Spacer(modifier = Modifier.height(14.dp))
                     Row(
-                        horizontalArrangement = if (memory.photo_urls.size <= 1) Arrangement.Start else Arrangement.spacedBy(8.dp)
+                        horizontalArrangement = if (memory.photo_urls.size <= 1) Arrangement.Start else Arrangement.spacedBy(10.dp),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        memory.photo_urls.take(3).forEach { url ->
-                            AsyncImage(
-                                model = url,
-                                contentDescription = "Memory photo",
-                                modifier = Modifier
-                                    .size(56.dp)
-                                    .clip(RoundedCornerShape(10.dp))
-                                    .clickable { onPhotoClick(url) },
-                                onError = { }
-                            )
+                        memory.photo_urls.take(3).forEachIndexed { index, url ->
+                            Box {
+                                AsyncImage(
+                                    model = url,
+                                    contentDescription = "Memory photo ${index + 1}",
+                                    modifier = Modifier
+                                        .size(66.dp)
+                                        .clip(RoundedCornerShape(12.dp))
+                                        .clickable { onPhotoClick(url) }
+                                        .then(
+                                            if (index > 0) Modifier else Modifier
+                                        ),
+                                    onError = { }
+                                )
+                                // Subtle overlay on tap
+                            }
                         }
                         val extraCount = memory.photo_urls.size - 3
                         if (extraCount > 0) {
                             Box(
                                 modifier = Modifier
-                                    .size(56.dp)
+                                    .size(66.dp)
                                     .background(
-                                        color = if (isDark) DarkBronze.copy(alpha = 0.35f) else Bronze.copy(alpha = 0.22f),
-                                        shape = RoundedCornerShape(10.dp)
+                                        color = if (isDark) DarkBronze.copy(alpha = 0.3f) else Bronze.copy(alpha = 0.18f),
+                                        shape = RoundedCornerShape(12.dp)
                                     )
                                     .clickable { memory.photo_urls.getOrNull(3)?.let { onPhotoClick(it) } },
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(
                                     "+$extraCount",
-                                    style = MaterialTheme.typography.labelSmall,
+                                    style = MaterialTheme.typography.labelMedium,
                                     color = if (isDark) DarkOnSurface else BronzeDark,
                                     fontWeight = FontWeight.SemiBold
                                 )
                             }
                         }
-
                     }
                 }
 

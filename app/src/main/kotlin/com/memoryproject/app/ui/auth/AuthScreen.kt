@@ -68,11 +68,12 @@ private fun GoogleButton(
             pressedElevation = 2.dp
         )
     ) {
-        // Google icon — colored "G" letter
+        // Google icon — colored "G" letter with subtle border for visibility on white background
         Box(
             modifier = Modifier
                 .size(24.dp)
-                .background(Color.White, RoundedCornerShape(6.dp)),
+                .background(Color.White, RoundedCornerShape(6.dp))
+                .border(1.dp, Color(0xFFDADCE0), RoundedCornerShape(6.dp)),
             contentAlignment = Alignment.Center
         ) {
             Text(
@@ -139,8 +140,11 @@ fun AuthScreen(
     }
 
     // Handle Google OAuth callback from deep link (navigated here with callback URI
-    // or set as pending in ViewModel by MainActivity's onNewIntent)
-    val effectiveCallback = googleCallbackUri ?: viewModel.pendingGoogleCallback
+    // or set as pending in ViewModel by MainActivity's onNewIntent).
+    // Watch pendingGoogleCallback StateFlow directly so this effect re-fires
+    // reactively when the callback is set, regardless of initial composition timing.
+    val pendingCallback by viewModel.pendingGoogleCallback.collectAsState()
+    val effectiveCallback = googleCallbackUri?.takeIf { it.isNotEmpty() } ?: pendingCallback
     LaunchedEffect(effectiveCallback) {
         val uri = effectiveCallback ?: return@LaunchedEffect
         viewModel.handleGoogleCallback(uri)
