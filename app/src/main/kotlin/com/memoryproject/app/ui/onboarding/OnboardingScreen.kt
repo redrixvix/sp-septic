@@ -88,7 +88,7 @@ private val PAGES = listOf(
     ),
     OnboardingPage(
         icon = Icons.Default.LocalLibrary,
-        title = "A keepsake\nyour family will keep",
+        title = "Preserved forever,\ntreasured always",
         subtitle = "Every story is beautifully preserved — a timeless keepsake your family will treasure for generations.",
         accentColor = BronzeLight
     )
