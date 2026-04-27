@@ -1,9 +1,4 @@
 package com.memoryproject.app.ui.home
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
-import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
-import androidx.compose.material3.pulltorefresh.pullToRefresh
-
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
@@ -51,6 +46,7 @@ private val HOME_PROMPTS = listOf(
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
+@Composable
 fun HomeScreen(
     onNavigateToBooks: () -> Unit,
     onNavigateToBook: (Int) -> Unit,
@@ -65,11 +61,6 @@ fun HomeScreen(
     val mutedText = if (darkTheme) DarkOnSurfaceVariant else CharcoalMuted
     val cardBg = if (darkTheme) DarkSurface else WarmWhite
 
-    val pullRefreshState = rememberPullToRefreshState(
-        isRefreshing = uiState.isLoading,
-        onRefresh = { viewModel.refresh() }
-    )
-
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -83,12 +74,7 @@ fun HomeScreen(
         }
         LazyColumn(
             modifier = Modifier
-                .fillMaxSize()
-                .pullToRefresh(
-                    state = pullRefreshState,
-                    isRefreshing = uiState.isLoading,
-                    onRefresh = { viewModel.refresh() }
-                ),
+                .fillMaxSize(),
             contentPadding = PaddingValues(bottom = 100.dp)
         ) {
             // Welcome header — always first
@@ -300,12 +286,6 @@ fun HomeScreen(
             }
         }
 
-        PullToRefreshContainer(
-            state = pullRefreshState,
-            modifier = Modifier.align(Alignment.TopCenter),
-            containerColor = if (darkTheme) DarkSurfaceVariant else Papaya,
-            contentColor = Bronze,
-        )
     }
 }
 

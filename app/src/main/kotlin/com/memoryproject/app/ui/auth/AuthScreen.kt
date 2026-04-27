@@ -1,8 +1,13 @@
 package com.memoryproject.app.ui.auth
 
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
@@ -12,9 +17,9 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.MenuBook
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.automirrored.filled.MenuBook
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
@@ -26,6 +31,7 @@ import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -40,12 +46,59 @@ import com.memoryproject.app.ui.theme.*
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
+private fun GoogleButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true
+) {
+    Button(
+        onClick = onClick,
+        modifier = modifier
+            .fillMaxWidth()
+            .height(50.dp),
+        enabled = enabled,
+        shape = RoundedCornerShape(12.dp),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = Color.White,
+            contentColor = Color(0xFF3c4043),
+        ),
+        elevation = ButtonDefaults.buttonElevation(
+            defaultElevation = 1.dp,
+            pressedElevation = 2.dp
+        )
+    ) {
+        // Google icon — colored "G" letter
+        Box(
+            modifier = Modifier
+                .size(20.dp)
+                .background(Color.White, RoundedCornerShape(4.dp)),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = "G",
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color(0xFF4285F4)
+            )
+        }
+        Spacer(modifier = Modifier.width(10.dp))
+        Text(
+            text = "Continue with Google",
+            style = MaterialTheme.typography.labelLarge,
+            fontWeight = FontWeight.Medium
+        )
+    }
+}
+
+@Composable
 fun AuthScreen(
     onLoginSuccess: () -> Unit,
+    googleCallbackUri: String? = null,
     darkTheme: Boolean = false,
     viewModel: AuthViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val context = LocalContext.current
     val focusManager = LocalFocusManager.current
 
     val isDark = darkTheme
@@ -77,6 +130,21 @@ fun AuthScreen(
         }
     }
 
+    // Launch Chrome Custom Tab when Google auth URL is ready
+    LaunchedEffect(uiState.googleAuthUrl) {
+        val authUrl = uiState.googleAuthUrl ?: return@LaunchedEffect
+        viewModel.clearGoogleAuthUrl()
+        launchCustomTab(context, Uri.parse(authUrl))
+    }
+
+    // Handle Google OAuth callback from deep link (navigated here with callback URI
+    // or set as pending in ViewModel by MainActivity's onNewIntent)
+    val effectiveCallback = googleCallbackUri ?: viewModel.pendingGoogleCallback
+    LaunchedEffect(effectiveCallback) {
+        val uri = effectiveCallback ?: return@LaunchedEffect
+        viewModel.handleGoogleCallback(uri)
+    }
+
     LaunchedEffect(uiState.isLoggedIn) {
         if (uiState.isLoggedIn) onLoginSuccess()
     }
@@ -99,7 +167,7 @@ fun AuthScreen(
         ) {
             Spacer(modifier = Modifier.height(80.dp))
 
-            // Brand mark — subtle, premium
+            // Brand mark
             Box(
                 modifier = Modifier
                     .size(72.dp)
@@ -121,7 +189,6 @@ fun AuthScreen(
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            // App name — confident, not shouty
             Text(
                 text = "Memory Project",
                 style = MaterialTheme.typography.displayMedium,
@@ -131,7 +198,6 @@ fun AuthScreen(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Tagline — warm, inviting
             Text(
                 text = "Preserve the moments that matter most.",
                 style = MaterialTheme.typography.bodyLarge,
@@ -141,7 +207,7 @@ fun AuthScreen(
 
             Spacer(modifier = Modifier.height(48.dp))
 
-            // Mode toggle — animated pill switch
+            // Mode toggle
             val isSignUp = uiState.isSignUp
             val indicatorOffset by animateFloatAsState(
                 targetValue = if (isSignUp) 1f else 0f,
@@ -158,7 +224,6 @@ fun AuthScreen(
                     )
                     .padding(4.dp)
             ) {
-                // Animated pill indicator — slides smoothly between positions
                 Box(
                     modifier = Modifier
                         .fillMaxHeight()
@@ -211,7 +276,7 @@ fun AuthScreen(
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            // Auth mode header — animated transition between Sign In and Create Account
+            // Auth mode header
             AnimatedContent(
                 targetState = uiState.isSignUp,
                 transitionSpec = {
@@ -239,7 +304,71 @@ fun AuthScreen(
                 }
             }
 
-            Spacer(modifier = Modifier.height(28.dp))
+            Spacer(modifier = Modifier.height(24.dp))
+
+            // Google sign-in button — always visible at top of form
+            GoogleButton(
+                onClick = {
+                    focusManager.clearFocus()
+                    viewModel.initiateGoogleLogin()
+                },
+                enabled = !uiState.isLoading && !uiState.isGoogleLoading
+            )
+
+            // Google loading state
+            if (uiState.isGoogleLoading) {
+                Spacer(modifier = Modifier.height(12.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(16.dp),
+                        strokeWidth = 2.dp,
+                        color = Bronze
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "Opening Google sign-in...",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = mutedText
+                    )
+                }
+            }
+
+            // Divider with "or"
+            if (!uiState.isGoogleLoading) {
+                Spacer(modifier = Modifier.height(16.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(1.dp)
+                            .background(if (isDark) DarkBorder else Border)
+                    )
+                    Spacer(modifier = Modifier.width(12.dp))
+                    Text(
+                        text = "or",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = mutedText
+                    )
+                    Spacer(modifier = Modifier.width(12.dp))
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(1.dp)
+                            .background(if (isDark) DarkBorder else Border)
+                    )
+                }
+            } else {
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+
+            Spacer(modifier = Modifier.height(20.dp))
 
             val emailBorderColor by animateColorAsState(
                 targetValue = when {
@@ -261,7 +390,7 @@ fun AuthScreen(
                 label = "passwordBorder"
             )
 
-            // Email field with inline validation
+            // Email field
             OutlinedTextField(
                 value = email,
                 onValueChange = {
@@ -301,7 +430,8 @@ fun AuthScreen(
                     errorBorderColor = ErrorRed,
                     errorLabelColor = ErrorRed
                 ),
-                textStyle = MaterialTheme.typography.bodyLarge
+                textStyle = MaterialTheme.typography.bodyLarge,
+                enabled = !uiState.isGoogleLoading
             )
 
             // Name field (sign up only)
@@ -340,14 +470,15 @@ fun AuthScreen(
                             unfocusedLabelColor = mutedText,
                             cursorColor = Bronze
                         ),
-                        textStyle = MaterialTheme.typography.bodyLarge
+                        textStyle = MaterialTheme.typography.bodyLarge,
+                        enabled = !uiState.isGoogleLoading
                     )
                 }
             }
 
             Spacer(modifier = Modifier.height(14.dp))
 
-            // Password field with visibility toggle
+            // Password field
             OutlinedTextField(
                 value = password,
                 onValueChange = {
@@ -363,27 +494,15 @@ fun AuthScreen(
                     )
                 },
                 trailingIcon = {
-                    IconButton(
-                        onClick = { showPassword = !showPassword },
-                        modifier = Modifier.size(48.dp),
-                        colors = IconButtonDefaults.iconButtonColors(
-                            containerColor = Color.Transparent
-                        )
-                    ) {
+                    IconButton(onClick = { showPassword = !showPassword }) {
                         Icon(
-                            imageVector = if (showPassword) Icons.Default.VisibilityOff else Icons.Default.Visibility,
+                            imageVector = if (showPassword) Icons.Filled.VisibilityOff else Icons.Filled.Visibility,
                             contentDescription = if (showPassword) "Hide password" else "Show password",
-                            tint = mutedText,
-                            modifier = Modifier.size(22.dp)
+                            tint = mutedText
                         )
                     }
                 },
                 isError = password.isNotEmpty() && uiState.error != null,
-                supportingText = {
-                    if (passwordHint != null) {
-                        Text(passwordHint, color = mutedText)
-                    }
-                },
                 visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
                 modifier = Modifier.fillMaxWidth(),
                 keyboardOptions = KeyboardOptions(
@@ -411,11 +530,11 @@ fun AuthScreen(
                     errorBorderColor = ErrorRed,
                     errorLabelColor = ErrorRed
                 ),
-                isError = uiState.error != null,
-                textStyle = MaterialTheme.typography.bodyLarge
+                textStyle = MaterialTheme.typography.bodyLarge,
+                enabled = !uiState.isGoogleLoading
             )
 
-            // Error message (from ViewModel — server-side errors)
+            // Error message
             AnimatedVisibility(
                 visible = uiState.error != null,
                 enter = fadeIn() + expandVertically(),
@@ -434,7 +553,7 @@ fun AuthScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = "⚠",
+                            text = "\u26A0",
                             fontSize = 14.sp
                         )
                         Spacer(modifier = Modifier.width(8.dp))
@@ -447,9 +566,9 @@ fun AuthScreen(
                 }
             }
 
-            Spacer(modifier = Modifier.height(28.dp))
+            Spacer(modifier = Modifier.height(24.dp))
 
-            // Primary action button — large, confident, inviting
+            // Primary action button
             val isFormValid = email.isNotBlank() && password.isNotBlank() &&
                 emailError == null && (!uiState.isSignUp || name.isNotBlank())
 
@@ -462,21 +581,20 @@ fun AuthScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp),
-                enabled = !uiState.isLoading && isFormValid,
+                enabled = !uiState.isLoading && !uiState.isGoogleLoading && isFormValid,
                 shape = RoundedCornerShape(14.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Bronze,
-                    contentColor = if (isDark) DarkOnSurface else WarmWhite,
-                    disabledContainerColor = Bronze.copy(alpha = 0.4f),
-                    disabledContentColor = if (isDark) DarkOnSurfaceVariant else WarmWhite.copy(alpha = 0.6f)
+                    containerColor = BronzeDark,
+                    contentColor = WarmWhite,
+                    disabledContainerColor = BronzeDark.copy(alpha = 0.4f),
+                    disabledContentColor = WarmWhite.copy(alpha = 0.5f)
                 ),
                 elevation = ButtonDefaults.buttonElevation(
-                    defaultElevation = 4.dp,
-                    pressedElevation = 8.dp
+                    defaultElevation = 6.dp,
+                    pressedElevation = 10.dp
                 )
             ) {
                 if (uiState.isLoading) {
-                    // Pulsing spinner — premium loading indicator
                     val infiniteTransition = rememberInfiniteTransition(label = "spinnerPulse")
                     val spinnerScale by infiniteTransition.animateFloat(
                         initialValue = 0.85f,
@@ -503,9 +621,9 @@ fun AuthScreen(
                 }
             }
 
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
-            // Forgot password link — shown only in sign-in mode
+            // Forgot password link
             AnimatedVisibility(visible = !uiState.isSignUp) {
                 Column {
                     TextButton(
@@ -514,7 +632,8 @@ fun AuthScreen(
                             viewModel.showForgotPassword()
                         },
                         modifier = Modifier.fillMaxWidth(),
-                        contentPadding = PaddingValues(vertical = 4.dp)
+                        contentPadding = PaddingValues(vertical = 4.dp),
+                        enabled = !uiState.isGoogleLoading
                     ) {
                         Text(
                             text = "Forgot your password?",
@@ -522,7 +641,6 @@ fun AuthScreen(
                             color = mutedText
                         )
                     }
-                    // Forgot password confirmation message
                     AnimatedVisibility(
                         visible = uiState.forgotPasswordMessage != null,
                         enter = fadeIn() + expandVertically(),
@@ -550,7 +668,7 @@ fun AuthScreen(
                 }
             }
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
             // Toggle mode link
             Row(
@@ -568,7 +686,8 @@ fun AuthScreen(
                         email = ""
                         password = ""
                     },
-                    contentPadding = PaddingValues(horizontal = 6.dp)
+                    contentPadding = PaddingValues(horizontal = 6.dp),
+                    enabled = !uiState.isGoogleLoading
                 ) {
                     Text(
                         text = if (uiState.isSignUp) "Sign in" else "Create account",
@@ -583,7 +702,7 @@ fun AuthScreen(
 
             // Footer trust message
             Text(
-                text = "🔒 Your data is always private",
+                text = "\uD83D\uDD12 Your data is always private",
                 style = MaterialTheme.typography.bodySmall,
                 color = mutedText,
                 textAlign = TextAlign.Center
@@ -591,5 +710,20 @@ fun AuthScreen(
 
             Spacer(modifier = Modifier.height(32.dp))
         }
+    }
+}
+
+private fun launchCustomTab(context: Context, uri: Uri) {
+    try {
+        val customTabsIntent = CustomTabsIntent.Builder()
+            .setShowTitle(true)
+            .build()
+        customTabsIntent.launchUrl(context, uri)
+    } catch (e: Exception) {
+        // Fallback: open in browser if Custom Tab fails
+        val browserIntent = Intent(Intent.ACTION_VIEW, uri).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        }
+        context.startActivity(browserIntent)
     }
 }

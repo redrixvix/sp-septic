@@ -54,6 +54,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.memoryproject.app.ui.theme.Bronze
 import com.memoryproject.app.ui.theme.BronzeLight
+import com.memoryproject.app.ui.theme.Charcoal
+import com.memoryproject.app.ui.theme.CharcoalMuted
 import com.memoryproject.app.ui.theme.Cornsilk
 import com.memoryproject.app.ui.theme.DarkBackground
 import com.memoryproject.app.ui.theme.DarkOnSurface
@@ -167,12 +169,12 @@ fun OnboardingScreen(
                         val isSelected = pagerState.currentPage == index
                         val size by animateDpAsState(
                             targetValue = if (isSelected) 10.dp else 6.dp,
-                            animationSpec = spring(stiffness = Spring.StiffnessHigh),
+                            animationSpec = spring(stiffness = 600f),
                             label = "dotSize"
                         )
                         val dotScale by animateFloatAsState(
                             targetValue = if (isSelected) 1.15f else 1f,
-                            animationSpec = spring(stiffness = Spring.StiffnessMedium),
+                            animationSpec = spring(stiffness = 300f),
                             label = "dotScale"
                         )
                         Box(

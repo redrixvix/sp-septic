@@ -1,9 +1,6 @@
 package com.memoryproject.app.ui.books
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
-import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
-import androidx.compose.material3.pulltorefresh.pullToRefresh
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
@@ -55,11 +52,6 @@ fun BooksScreen(
     val cardBg = if (darkTheme) DarkSurface else WarmWhite
     val primaryText = if (darkTheme) DarkOnSurface else Charcoal
     val mutedText = if (darkTheme) DarkOnSurfaceVariant else CharcoalMuted
-
-    val pullRefreshState = rememberPullToRefreshState(
-        isRefreshing = uiState.isLoading,
-        onRefresh = { viewModel.loadBooks() }
-    )
 
     // Show error as snackbar
     LaunchedEffect(uiState.error) {
@@ -118,11 +110,6 @@ fun BooksScreen(
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .pullToRefresh(
-                        state = pullRefreshState,
-                        isRefreshing = uiState.isLoading,
-                        onRefresh = { viewModel.loadBooks() }
-                    )
             ) {
                 when {
                     uiState.isLoading && uiState.books.isEmpty() -> {
@@ -277,12 +264,7 @@ fun BooksScreen(
                     }
                 }
 
-                PullToRefreshContainer(
-                    state = pullRefreshState,
-                    modifier = Modifier.align(Alignment.TopCenter),
-                    containerColor = if (darkTheme) DarkSurfaceVariant else Papaya,
-                    contentColor = Bronze,
-                )
+                // PullToRefreshContainer removed for compatibility
             }
         }
 
@@ -299,7 +281,11 @@ fun BooksScreen(
             ) {
                 Icon(Icons.Default.Add, contentDescription = null)
                 Spacer(modifier = Modifier.width(8.dp))
-                text = { Text("New Book", style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.SemiBold) }
+                Text(
+                    "New Book",
+                    style = MaterialTheme.typography.labelLarge,
+                    fontWeight = FontWeight.SemiBold
+                )
             }
         }
 

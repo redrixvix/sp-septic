@@ -17,7 +17,8 @@ data class ProfileUiState(
     val booksCount: Int = 0,
     val memoriesCount: Int = 0,
     val storageUsedBytes: Long = 0,
-    val message: String? = null
+    val message: String? = null,
+    val isLoading: Boolean = false
 )
 
 class ProfileViewModel(

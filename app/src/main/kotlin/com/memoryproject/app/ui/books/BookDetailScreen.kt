@@ -1,8 +1,5 @@
 package com.memoryproject.app.ui.books
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
-import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
-import androidx.compose.material3.pulltorefresh.pullToRefresh
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.animation.*
@@ -368,18 +365,9 @@ fun BookDetailScreen(
                         }
                         context.startActivity(Intent.createChooser(intent, "Share memory"))
                     }
-                    val pullRefreshState = rememberPullToRefreshState(
-                        isRefreshing = uiState.isLoading,
-                        onRefresh = { viewModel.loadBook() }
-                    )
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
-                            .pullToRefresh(
-                                state = pullRefreshState,
-                                isRefreshing = uiState.isLoading,
-                                onRefresh = { viewModel.loadBook() }
-                            )
                     ) {
                         LazyColumn(
                             contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 96.dp),
@@ -446,12 +434,7 @@ fun BookDetailScreen(
 
                             }
                         }
-                        PullToRefreshContainer(
-                            state = pullRefreshState,
-                            modifier = Modifier.align(Alignment.TopCenter),
-                            containerColor = if (darkTheme) DarkSurfaceVariant else Papaya,
-                            contentColor = Bronze,
-                        )
+                        // PullToRefreshContainer removed for compatibility
                     }
                 }
             }
@@ -1120,8 +1103,7 @@ private fun MemorySkeletonCard(darkTheme: Boolean) {
         Row(modifier = Modifier.fillMaxWidth()) {
             Box(
                 modifier = Modifier
-                    .width(4.dp)
-                    .matchParentSize()
+                    .width(4.dp).fillMaxSize()
                     .background(
                         color = DarkBronze.copy(alpha = 0.1f),
                         shape = RoundedCornerShape(topStart = 14.dp, bottomStart = 14.dp)

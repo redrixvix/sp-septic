@@ -1,5 +1,11 @@
 package com.memoryproject.app.ui.common
 
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -43,8 +49,8 @@ fun PremiumButton(
     val scale by animateFloatAsState(
         targetValue = if (isPressed) 0.97f else 1f,
         animationSpec = spring(
-            dampingRatio = Spring.DampingRatioMediumBouncy,
-            stiffness = Spring.StiffnessMedium
+            dampingRatio = 0.6f,
+            stiffness = 300f
         ),
         label = "btnScale"
     )
@@ -139,7 +145,7 @@ fun PremiumCard(
     val isPressed by interactionSource.collectIsPressedAsState()
     val animatedElevation by animateDpAsState(
         targetValue = if (isPressed) (elevation + 4).dp else elevation.dp,
-        animationSpec = spring(stiffness = Spring.StiffnessMedium),
+        animationSpec = spring(stiffness = 200f),
         label = "cardElevation"
     )
 
