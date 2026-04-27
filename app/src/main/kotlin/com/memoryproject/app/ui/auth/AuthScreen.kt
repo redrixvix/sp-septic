@@ -10,6 +10,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -43,8 +44,11 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.painterResource
 import com.memoryproject.app.ui.theme.*
 import org.koin.androidx.compose.koinViewModel
+import com.memoryproject.app.R
+import androidx.compose.foundation.Image
 
 @Composable
 private fun GoogleButton(
@@ -52,44 +56,41 @@ private fun GoogleButton(
     modifier: Modifier = Modifier,
     enabled: Boolean = true
 ) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val isPressed by interactionSource.collectIsPressedAsState()
+    val scale by animateFloatAsState(
+        targetValue = if (isPressed) 0.95f else 1f,
+        animationSpec = spring(dampingRatio = 0.6f, stiffness = 400f),
+        label = "googleBtnScale"
+    )
+
     Button(
         onClick = onClick,
         modifier = modifier
             .fillMaxWidth()
-            .height(52.dp),
+            .height(52.dp)
+            .scale(scale),
         enabled = enabled,
         shape = RoundedCornerShape(12.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = Color.White,
             contentColor = Color(0xFF3c4043),
             disabledContainerColor = Color.White,
-            disabledContentColor = Color(0xFF4285F4),
+            disabledContentColor = Color(0xFF3c4043),
         ),
         elevation = ButtonDefaults.buttonElevation(
             defaultElevation = 2.dp,
-            pressedElevation = 4.dp,
+            pressedElevation = 6.dp,
             disabledElevation = 0.dp
-        )
+        ),
+        interactionSource = interactionSource
     ) {
-        // Google icon — colored "G" letter with subtle border for visibility on white background
-        Box(
-            modifier = Modifier
-                .size(24.dp)
-                .background(Color.White, RoundedCornerShape(6.dp))
-                .border(
-                    width = if (enabled) 1.dp else 2.dp,
-                    color = if (enabled) Color(0xFFDADCE0) else Color(0xFF4285F4),
-                    shape = RoundedCornerShape(6.dp)
-                ),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = "G",
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color(0xFF4285F4)
-            )
-        }
+        // Official Google "G" logo
+        Image(
+            painter = painterResource(id = R.drawable.ic_google_g),
+            contentDescription = "Google logo",
+            modifier = Modifier.size(22.dp)
+        )
         Spacer(modifier = Modifier.width(10.dp))
         Text(
             text = "Continue with Google",
@@ -139,23 +140,7 @@ fun AuthScreen(
         }
     }
 
-    // Launch Chrome Custom Tab when Google auth URL is ready
-    LaunchedEffect(uiState.googleAuthUrl) {
-        val authUrl = uiState.googleAuthUrl ?: return@LaunchedEffect
-        viewModel.clearGoogleAuthUrl()
-        launchCustomTab(context, Uri.parse(authUrl))
-    }
-
-    // Handle Google OAuth callback from deep link (navigated here with callback URI
-    // or set as pending in ViewModel by MainActivity's onNewIntent).
-    // Watch pendingGoogleCallback StateFlow directly so this effect re-fires
-    // reactively when the callback is set, regardless of initial composition timing.
-    val pendingCallback by viewModel.pendingGoogleCallback.collectAsState()
-    val effectiveCallback = googleCallbackUri?.takeIf { it.isNotEmpty() } ?: pendingCallback
-    LaunchedEffect(effectiveCallback) {
-        val uri = effectiveCallback ?: return@LaunchedEffect
-        viewModel.handleGoogleCallback(uri)
-    }
+    // No pending callback — native Credential Manager handles the entire sign-in flow
 
     LaunchedEffect(uiState.isLoggedIn) {
         if (uiState.isLoggedIn) onLoginSuccess()
