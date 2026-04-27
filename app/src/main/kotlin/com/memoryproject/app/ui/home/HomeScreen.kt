@@ -1207,7 +1207,7 @@ private fun PromptCard(
                 modifier = Modifier
                     .size(32.dp)
                     .background(
-                        color = if (darkTheme) DarkBronze.copy(alpha = 0.2f) else Bronze.copy(alpha = 0.12f),
+                        color = if (darkTheme) DarkBronze.copy(alpha = 0.15f) else Bronze.copy(alpha = 0.08f),
                         shape = RoundedCornerShape(8.dp)
                     ),
                 contentAlignment = Alignment.Center
@@ -1215,7 +1215,7 @@ private fun PromptCard(
                 Icon(
                     imageVector = Icons.Default.Lightbulb,
                     contentDescription = null,
-                    tint = if (darkTheme) DarkBronze.copy(alpha = 0.6f) else Bronze.copy(alpha = 0.5f),
+                    tint = if (darkTheme) DarkBronze.copy(alpha = 0.5f) else Bronze.copy(alpha = 0.4f),
                     modifier = Modifier.size(14.dp)
                 )
             }

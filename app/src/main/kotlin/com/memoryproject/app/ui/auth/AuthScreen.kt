@@ -79,8 +79,8 @@ private fun GoogleButton(
             disabledContentColor = Color(0xFF3c4043),
         ),
         elevation = ButtonDefaults.buttonElevation(
-            defaultElevation = 2.dp,
-            pressedElevation = 6.dp,
+            defaultElevation = 4.dp,
+            pressedElevation = 8.dp,
             disabledElevation = 0.dp
         ),
         interactionSource = interactionSource
@@ -307,17 +307,17 @@ fun AuthScreen(
             ) { isSignUpNow ->
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
-                        text = if (isSignUpNow) "Create your account" else "Enter your credentials",
+                        text = if (isSignUpNow) "Create your account" else "Welcome back",
                         style = MaterialTheme.typography.headlineMedium,
                         color = primaryText,
-                        fontWeight = FontWeight.SemiBold
+                        fontWeight = FontWeight.Bold
                     )
                     Spacer(modifier = Modifier.height(6.dp))
                     Text(
                         text = if (isSignUpNow)
-                            "Start capturing your memories today"
+                            "Start preserving your family stories"
                         else
-                            "",
+                            "Sign in to continue your journey",
                         style = MaterialTheme.typography.bodyMedium,
                         color = mutedText
                     )
@@ -428,8 +428,9 @@ fun AuthScreen(
                 },
                 isError = emailError != null && email.isNotEmpty(),
                 supportingText = {
-                    if (emailError != null && email.isNotEmpty()) {
-                        Text(emailError, color = ErrorRed)
+                    when {
+                        emailError != null && email.isNotEmpty() -> Text(emailError, color = if (isDark) DarkError else ErrorRed)
+                        email.isNotEmpty() && email.contains("@") && email.contains(".") -> Text("Looks good!", color = if (isDark) DarkSuccess else SuccessGreen)
                     }
                 },
                 modifier = Modifier.fillMaxWidth(),
@@ -569,7 +570,7 @@ fun AuthScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .background(
-                                color = ErrorRed.copy(alpha = 0.08f),
+                                color = if (isDark) DarkError.copy(alpha = 0.12f) else ErrorRed.copy(alpha = 0.08f),
                                 shape = RoundedCornerShape(10.dp)
                             )
                             .padding(horizontal = 14.dp, vertical = 10.dp),
@@ -577,13 +578,14 @@ fun AuthScreen(
                     ) {
                         Text(
                             text = "\u26A0",
-                            fontSize = 14.sp
+                            fontSize = 14.sp,
+                            color = if (isDark) DarkOnSurface else Charcoal
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
                             text = uiState.error ?: "",
                             style = MaterialTheme.typography.bodyMedium,
-                            color = ErrorRed
+                            color = if (isDark) DarkOnSurface else ErrorRed
                         )
                     }
                 }

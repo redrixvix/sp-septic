@@ -203,7 +203,7 @@ fun BooksScreen(
                             }
                             Spacer(modifier = Modifier.height(28.dp))
                             Text(
-                                "Every great collection starts with one story",
+                                "Your family's stories are waiting",
                                 style = MaterialTheme.typography.headlineSmall,
                                 fontWeight = FontWeight.SemiBold,
                                 color = primaryText,
@@ -211,7 +211,7 @@ fun BooksScreen(
                             )
                             Spacer(modifier = Modifier.height(10.dp))
                             Text(
-                                "Create a book for yourself or a family member, then fill it with the moments worth remembering.",
+                                "Create a book to preserve your memories — one story at a time.",
                                 style = MaterialTheme.typography.bodyLarge,
                                 color = mutedText,
                                 textAlign = TextAlign.Center,

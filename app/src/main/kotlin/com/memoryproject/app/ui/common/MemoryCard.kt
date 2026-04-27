@@ -249,7 +249,6 @@ fun MemoryCard(
                                         ),
                                     onError = { }
                                 )
-                                // Subtle overlay on tap
                             }
                         }
                         val extraCount = memory.photo_urls.size - 3
