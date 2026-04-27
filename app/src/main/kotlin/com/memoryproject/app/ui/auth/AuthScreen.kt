@@ -62,10 +62,13 @@ private fun GoogleButton(
         colors = ButtonDefaults.buttonColors(
             containerColor = Color.White,
             contentColor = Color(0xFF3c4043),
+            disabledContainerColor = Color.White,
+            disabledContentColor = Color(0xFF4285F4),
         ),
         elevation = ButtonDefaults.buttonElevation(
             defaultElevation = 2.dp,
-            pressedElevation = 4.dp
+            pressedElevation = 4.dp,
+            disabledElevation = 0.dp
         )
     ) {
         // Google icon — colored "G" letter with subtle border for visibility on white background
@@ -73,7 +76,11 @@ private fun GoogleButton(
             modifier = Modifier
                 .size(24.dp)
                 .background(Color.White, RoundedCornerShape(6.dp))
-                .border(1.dp, Color(0xFFDADCE0), RoundedCornerShape(6.dp)),
+                .border(
+                    width = if (enabled) 1.dp else 2.dp,
+                    color = if (enabled) Color(0xFFDADCE0) else Color(0xFF4285F4),
+                    shape = RoundedCornerShape(6.dp)
+                ),
             contentAlignment = Alignment.Center
         ) {
             Text(

@@ -119,13 +119,15 @@ fun MemoryCard(
                     .padding(18.dp)
             ) {
                 // Header row: prompt label + share/delete actions
+                // Prompt label takes remaining space; icons are fixed-width companions
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Box(
                         modifier = Modifier
+                            .weight(1f, fill = false)
                             .background(
                                 brush = Brush.linearGradient(
                                     colors = if (isDark) {
@@ -144,8 +146,7 @@ fun MemoryCard(
                             color = promptLabelText,
                             fontWeight = FontWeight.Medium,
                             maxLines = 2,
-                            overflow = TextOverflow.Ellipsis,
-                            modifier = Modifier.widthIn(max = 200.dp)
+                            overflow = TextOverflow.Ellipsis
                         )
                     }
                     // Share + Delete + Edit icon buttons in header row

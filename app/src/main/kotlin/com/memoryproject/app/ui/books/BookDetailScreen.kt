@@ -134,11 +134,11 @@ fun BookDetailScreen(
         }
     }
 
-    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
     Scaffold(
         topBar = {
-            LargeTopAppBar(
+            TopAppBar(
                 scrollBehavior = scrollBehavior,
                 title = {
                     Column {
@@ -195,9 +195,8 @@ fun BookDetailScreen(
                         )
                     }
                 },
-                colors = TopAppBarDefaults.largeTopAppBarColors(
-                    containerColor = scaffoldBg,
-                    scrolledContainerColor = scaffoldBg
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = scaffoldBg
                 )
             )
         },

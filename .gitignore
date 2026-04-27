@@ -1,25 +1,20 @@
 # Build outputs
+.gradle/
 app/build/
 build/
-.gradle/
-local.properties
-
-# Android
 *.apk
 *.aab
-*.dex
-*.class
-*.jar
 
-# IDE
-.idea/
-*.iml
-captures/
-*.log
+# Screenshots
+screenshots/
 
 # OS
 .DS_Store
 Thumbs.db
 
-# Gradle wrapper (keep gradlew but not the local cache)
-gradle/wrapper/gradle-wrapper.jar
+# Logs
+*.log
+
+# Local config
+local.properties
+keystore.properties
