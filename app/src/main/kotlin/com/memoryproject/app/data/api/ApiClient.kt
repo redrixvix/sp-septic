@@ -172,6 +172,14 @@ class ApiClient {
 
     fun isLoggedIn(): Boolean = sessionCookie != null
 
+    /**
+     * Sets the session cookie, typically after a successful OAuth flow.
+     * The cookie string should be the raw cookie value (e.g., "session=abc123").
+     */
+    fun setSessionCookie(cookie: String) {
+        sessionCookie = cookie
+    }
+
     companion object {
         const val BASE_URL = "https://web-redrixvixs-projects.vercel.app"
     }

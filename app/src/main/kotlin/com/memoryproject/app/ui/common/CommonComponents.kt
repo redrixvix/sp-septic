@@ -13,6 +13,7 @@ import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.*
 import androidx.compose.material3.HorizontalDivider
@@ -419,4 +420,115 @@ object Spacing {
     val lg = 24.dp
     val xl = 32.dp
     val xxl = 48.dp
+}
+
+// ─── Settings Section (shared across Settings and Profile screens) ────────────────
+
+@Composable
+fun SettingsSection(
+    title: String,
+    cardBg: Color,
+    isDark: Boolean,
+    content: @Composable ColumnScope.() -> Unit
+) {
+    val sectionTitleColor = if (isDark) DarkOnSurfaceVariant else CharcoalMuted
+
+    Column {
+        Text(
+            text = title,
+            style = MaterialTheme.typography.labelMedium,
+            color = sectionTitleColor,
+            fontWeight = FontWeight.SemiBold,
+            modifier = Modifier.padding(start = 4.dp, bottom = 8.dp)
+        )
+        Card(
+            shape = RoundedCornerShape(14.dp),
+            colors = CardDefaults.cardColors(containerColor = cardBg),
+            elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+        ) {
+            Column(modifier = Modifier.fillMaxWidth()) {
+                content()
+            }
+        }
+    }
+}
+
+@Composable
+fun SettingsRow(
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    label: String,
+    value: String,
+    showChevron: Boolean = false,
+    showDivider: Boolean = false,
+    trailing: (@Composable () -> Unit)? = null,
+    onClick: () -> Unit = {},
+    bgColor: Color = WarmWhite,
+    isDark: Boolean
+) {
+    val iconBgColor = if (isDark) DarkSurfaceVariant else Bronze.copy(alpha = 0.1f)
+    val primaryText = if (isDark) DarkOnSurface else Charcoal
+    val mutedText = if (isDark) DarkOnSurfaceVariant else CharcoalMuted
+    val dividerColor = if (isDark) DarkDivider else Divider
+
+    Column {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(bgColor)
+                .clickable(onClick = onClick)
+                .padding(horizontal = 16.dp, vertical = 14.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(40.dp)
+                    .background(
+                        color = iconBgColor,
+                        shape = RoundedCornerShape(10.dp)
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    icon,
+                    contentDescription = label,
+                    tint = Bronze,
+                    modifier = Modifier.size(20.dp)
+                )
+            }
+
+            Spacer(modifier = Modifier.width(14.dp))
+
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = label,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = primaryText,
+                    fontWeight = FontWeight.Medium
+                )
+                Text(
+                    text = value,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = mutedText
+                )
+            }
+
+            if (trailing != null) {
+                trailing()
+            } else if (showChevron) {
+                Icon(
+                    Icons.Default.Edit,
+                    contentDescription = "Edit",
+                    tint = mutedText,
+                    modifier = Modifier.size(18.dp)
+                )
+            }
+        }
+        if (showDivider) {
+            HorizontalDivider(
+                modifier = Modifier.padding(start = 70.dp),
+                color = dividerColor,
+                thickness = 0.5.dp
+            )
+        }
+    }
 }

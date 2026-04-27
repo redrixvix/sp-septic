@@ -1,6 +1,7 @@
 package com.memoryproject.app.di
 
 import com.memoryproject.app.data.api.ApiClient
+import com.memoryproject.app.data.auth.WorkOSAuthService
 import com.memoryproject.app.data.preferences.PreferencesManager
 import com.memoryproject.app.data.repository.MemoryRepository
 import com.memoryproject.app.ui.onboarding.OnboardingViewModel
@@ -16,7 +17,7 @@ import org.koin.dsl.module
 
 val appModule = module {
     single { PreferencesManager(androidContext()) }
-    viewModel { AuthViewModel(get()) }
+    viewModel { AuthViewModel(get(), get(), get()) }
     viewModel { HomeViewModel(get()) }
     viewModel { OnboardingViewModel(get()) }
     viewModel { BooksViewModel(get(), get()) }
@@ -28,4 +29,6 @@ val appModule = module {
 val dataModule = module {
     single { ApiClient() }
     single { MemoryRepository(get()) }
+    single { androidContext().getSharedPreferences("oauth_auth_service", android.content.Context.MODE_PRIVATE) }
+    single { WorkOSAuthService(get()) }
 }

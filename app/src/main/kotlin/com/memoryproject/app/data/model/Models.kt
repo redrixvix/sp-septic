@@ -53,6 +53,32 @@ data class ErrorResponse(val error: String)
 data class LoginRequest(val email: String, val password: String)
 @Serializable
 data class SignupRequest(val email: String, val name: String, val password: String)
+
+// OAuth token response from WorkOS /oauth2/token
+@Serializable
+data class OAuthTokenResponse(
+    val access_token: String,
+    val token_type: String,
+    val expires_in: Int,
+    val refresh_token: String? = null,
+    val id_token: String? = null,
+    val presented_organization: String? = null
+)
+
+// WorkOS user profile from /sso/profile
+@Serializable
+data class WorkOSUser(
+    val id: String,
+    val email: String,
+    val first_name: String? = null,
+    val last_name: String? = null,
+    val profile_picture_url: String? = null
+)
+
+@Serializable
+data class WorkOSProfileResponse(
+    val user: WorkOSUser
+)
 @Serializable
 data class CreateBookRequest(val title: String, val description: String? = null)
 @Serializable

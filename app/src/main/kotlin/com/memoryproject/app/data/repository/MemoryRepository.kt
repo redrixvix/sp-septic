@@ -17,6 +17,12 @@ class MemoryRepository(private val api: ApiClient) {
 
     suspend fun signup(email: String, name: String, password: String): Result<User> = api.signup(email, name, password)
 
+    /**
+     * Verifies the current session after an OAuth flow.
+     * The session cookie should be set via ApiClient.setSessionCookie() before calling this.
+     */
+    suspend fun verifySession(): Result<User> = api.me()
+
     suspend fun logout(): Result<Unit> = api.logout()
 
     suspend fun getCurrentUser(): Result<User> = api.me()

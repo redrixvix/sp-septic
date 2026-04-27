@@ -38,6 +38,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.memoryproject.app.data.preferences.PreferencesManager
 import com.memoryproject.app.ui.auth.AuthScreen
+import com.memoryproject.app.ui.auth.AuthViewModel
 import com.memoryproject.app.ui.books.BookDetailScreen
 import com.memoryproject.app.ui.books.BooksScreen
 import com.memoryproject.app.ui.home.HomeScreen
@@ -46,6 +47,7 @@ import com.memoryproject.app.ui.onboarding.OnboardingScreen
 import com.memoryproject.app.ui.screens.ProfileScreen
 import com.memoryproject.app.ui.settings.SettingsScreen
 import com.memoryproject.app.ui.theme.*
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 sealed class BottomNavItem(
     val route: String,
@@ -59,6 +61,9 @@ sealed class BottomNavItem(
 }
 
 class MainActivity : ComponentActivity() {
+
+    private val authViewModel: AuthViewModel by viewModel()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -84,6 +89,28 @@ class MainActivity : ComponentActivity() {
                     }
                 )
             }
+        }
+
+        // Handle OAuth callback deep link if app was launched with one
+        handleIntent(intent)
+    }
+
+    override fun onNewIntent(intent: android.content.Intent) {
+        super.onNewIntent(intent)
+        handleIntent(intent)
+    }
+
+    private fun handleIntent(intent: android.content.Intent) {
+        val data = intent.data ?: return
+        val scheme = data.scheme ?: return
+
+        if (scheme == "memoryproject" && data.host == "oauth" && data.path == "/callback") {
+            // Google OAuth callback — set pending callback in ViewModel and navigate to auth
+            authViewModel.setPendingGoogleCallback(data.toString())
+            // Navigation will route to auth screen via intent-filter
+            // (handled by Navigation's NavHost deep link matching)
+        } else if (scheme == "memoryproject" && data.host == "invite") {
+            // Existing invite deep link — handled by Navigation deep link
         }
     }
 }
@@ -119,7 +146,10 @@ fun MemoryNavHost(
                 NavigationBar(
                     containerColor = navBg,
                     contentColor = if (isDark) DarkOnSurface else Charcoal,
-                    tonalElevation = 0.dp
+                    tonalElevation = 4.dp,
+                    modifier = Modifier
+                        .padding(horizontal = 24.dp, vertical = 10.dp)
+                        .height(72.dp)
                 ) {
                     bottomNavItems.forEach { item ->
                         val selected = currentDestination?.hierarchy?.any { it.route == item.route } == true
@@ -135,10 +165,12 @@ fun MemoryNavHost(
                                 }
                             },
                             icon = {
-                                Icon(
-                                    imageVector = if (selected) item.selectedIcon else item.unselectedIcon,
-                                    contentDescription = item.title
-                                )
+                                Box(contentAlignment = Alignment.Center) {
+                                    Icon(
+                                        imageVector = if (selected) item.selectedIcon else item.unselectedIcon,
+                                        contentDescription = item.title
+                                    )
+                                }
                             },
                             label = {
                                 Text(
@@ -152,7 +184,7 @@ fun MemoryNavHost(
                                 selectedTextColor = selectedColor,
                                 unselectedIconColor = unselectedColor,
                                 unselectedTextColor = unselectedColor,
-                                indicatorColor = if (isDark) DarkSurfaceVariant else Bronze.copy(alpha = 0.12f)
+                                indicatorColor = if (isDark) DarkBronze.copy(alpha = 0.18f) else Bronze.copy(alpha = 0.15f)
                             )
                         )
                     }
@@ -173,7 +205,7 @@ fun MemoryNavHost(
                 OnboardingScreen(
                     onComplete = {
                         onOnboardingComplete()
-                        navController.navigate("auth") {
+                        navController.navigate("auth?google_callback=") {
                             popUpTo("onboarding") { inclusive = true }
                         }
                     },
@@ -182,16 +214,25 @@ fun MemoryNavHost(
             }
 
             composable(
-                "auth",
+                route = "auth?google_callback={google_callback}",
+                arguments = listOf(
+                    navArgument("google_callback") {
+                        type = NavType.StringType
+                        nullable = true
+                        defaultValue = null
+                    }
+                ),
                 enterTransition = { fadeIn(animationSpec = tween(300)) },
                 exitTransition = { fadeOut(animationSpec = tween(300)) }
-            ) {
+            ) { backStackEntry ->
+                val googleCallback = backStackEntry.arguments?.getString("google_callback")
                 AuthScreen(
                     onLoginSuccess = {
                         navController.navigate("home") {
                             popUpTo("auth") { inclusive = true }
                         }
                     },
+                    googleCallbackUri = googleCallback,
                     darkTheme = darkThemeEnabled
                 )
             }

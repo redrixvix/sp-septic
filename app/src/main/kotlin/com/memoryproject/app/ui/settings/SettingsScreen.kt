@@ -4,7 +4,6 @@ import android.content.Intent
 import android.net.Uri
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
-import com.memoryproject.app.BuildConfig
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -28,6 +27,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import com.memoryproject.app.BuildConfig
+import com.memoryproject.app.ui.common.SettingsSection
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.memoryproject.app.ui.theme.*
@@ -347,46 +348,6 @@ fun SettingsScreen(
             },
             shape = RoundedCornerShape(20.dp)
         )
-    }
-}
-
-@Composable
-private fun SettingsSection(
-    title: String,
-    cardBg: androidx.compose.ui.graphics.Color,
-    isDark: Boolean,
-    content: @Composable ColumnScope.() -> Unit
-) {
-    val sectionTitleColor = if (isDark) DarkOnSurfaceVariant else CharcoalMuted
-
-    Column {
-        Text(
-            text = title,
-            style = MaterialTheme.typography.labelMedium,
-            color = sectionTitleColor,
-            fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold,
-            modifier = Modifier.padding(start = 4.dp, bottom = 8.dp)
-        )
-        // Subtle warm divider above each section card
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(1.dp)
-                .padding(horizontal = 4.dp)
-                .background(
-                    color = if (isDark) DarkDivider.copy(alpha = 0.5f) else Border.copy(alpha = 0.5f)
-                )
-        )
-        Spacer(modifier = Modifier.height(6.dp))
-        Card(
-            shape = RoundedCornerShape(14.dp),
-            colors = CardDefaults.cardColors(containerColor = cardBg),
-            elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
-        ) {
-            Column(modifier = Modifier.fillMaxWidth()) {
-                content()
-            }
-        }
     }
 }
 

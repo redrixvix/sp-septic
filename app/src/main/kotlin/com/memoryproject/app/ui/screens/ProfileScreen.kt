@@ -26,6 +26,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.memoryproject.app.ui.theme.*
 import com.memoryproject.app.ui.common.EmptyState
+import com.memoryproject.app.ui.common.SettingsSection
+import com.memoryproject.app.ui.common.SettingsRow
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import androidx.compose.runtime.rememberCoroutineScope
@@ -384,7 +386,8 @@ fun ProfileScreen(
             // Usage stats section
             SettingsSection(title = "Your Library", cardBg = cardBg, isDark = isDark) {
                 Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 16.dp)) {
-                    if (uiState.isLoading) {
+                    when {
+                        uiState.isLoading -> {
                             Box(
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -398,8 +401,7 @@ fun ProfileScreen(
                                 )
                             }
                         }
-
-                        if (!uiState.isLoading && uiState.userName.isBlank() && uiState.userEmail.isBlank()) {
+                        uiState.userName.isBlank() && uiState.userEmail.isBlank() -> {
                             EmptyState(
                                 emoji = "👤",
                                 title = "Your profile",
@@ -407,61 +409,64 @@ fun ProfileScreen(
                                 isDark = isDark
                             )
                         }
-
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceEvenly
-                        ) {
-                        StatItem(
-                            value = "${uiState.booksCount}",
-                            label = if (uiState.booksCount == 1) "Book" else "Books",
-                            highlight = uiState.booksCount > 0,
-                            isDark = isDark
-                        )
-                        Box(
-                            modifier = Modifier
-                                .width(1.dp)
-                                .height(40.dp)
-                                .background(if (isDark) DarkDivider else Divider)
-                        )
-                        StatItem(
-                            value = "${uiState.memoriesCount}",
-                            label = if (uiState.memoriesCount == 1) "Memory" else "Memories",
-                            highlight = uiState.memoriesCount > 0,
-                            isDark = isDark
-                        )
-                        Box(
-                            modifier = Modifier
-                                .width(1.dp)
-                                .height(40.dp)
-                                .background(if (isDark) DarkDivider else Divider)
-                        )
-                        StatItem(
-                            value = if (uiState.storageUsedBytes > 0) formatStorage(uiState.storageUsedBytes) else "Free",
-                            label = "Plan",
-                            highlight = uiState.storageUsedBytes > 0,
-                            isDark = isDark
-                        )
-                    }
-                    if (uiState.userCreatedAt.isNotBlank()) {
-                        Spacer(modifier = Modifier.height(16.dp))
-                        Text(
-                            text = uiState.userCreatedAt,
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = if (isDark) DarkOnSurfaceVariant else CharcoalMuted,
-                            modifier = Modifier.fillMaxWidth(),
-                            textAlign = TextAlign.Center
-                        )
-                    }
-                    if (uiState.storageUsedBytes > 0) {
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(
-                            text = "${formatStorage(uiState.storageUsedBytes)} used",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = if (isDark) DarkOnSurfaceVariant else CharcoalMuted,
-                            modifier = Modifier.fillMaxWidth(),
-                            textAlign = TextAlign.Center
-                        )
+                        else -> {
+                            // Stats row — only shown when user is loaded
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceEvenly
+                            ) {
+                                StatItem(
+                                    value = "${uiState.booksCount}",
+                                    label = if (uiState.booksCount == 1) "Book" else "Books",
+                                    highlight = uiState.booksCount > 0,
+                                    isDark = isDark
+                                )
+                                Box(
+                                    modifier = Modifier
+                                        .width(1.dp)
+                                        .height(40.dp)
+                                        .background(if (isDark) DarkDivider else Divider)
+                                )
+                                StatItem(
+                                    value = "${uiState.memoriesCount}",
+                                    label = if (uiState.memoriesCount == 1) "Memory" else "Memories",
+                                    highlight = uiState.memoriesCount > 0,
+                                    isDark = isDark
+                                )
+                                Box(
+                                    modifier = Modifier
+                                        .width(1.dp)
+                                        .height(40.dp)
+                                        .background(if (isDark) DarkDivider else Divider)
+                                )
+                                StatItem(
+                                    value = if (uiState.storageUsedBytes > 0) formatStorage(uiState.storageUsedBytes) else "Free",
+                                    label = "Plan",
+                                    highlight = uiState.storageUsedBytes > 0,
+                                    isDark = isDark
+                                )
+                            }
+                            if (uiState.userCreatedAt.isNotBlank()) {
+                                Spacer(modifier = Modifier.height(16.dp))
+                                Text(
+                                    text = uiState.userCreatedAt,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = if (isDark) DarkOnSurfaceVariant else CharcoalMuted,
+                                    modifier = Modifier.fillMaxWidth(),
+                                    textAlign = TextAlign.Center
+                                )
+                            }
+                            if (uiState.storageUsedBytes > 0) {
+                                Spacer(modifier = Modifier.height(8.dp))
+                                Text(
+                                    text = "${formatStorage(uiState.storageUsedBytes)} used",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = if (isDark) DarkOnSurfaceVariant else CharcoalMuted,
+                                    modifier = Modifier.fillMaxWidth(),
+                                    textAlign = TextAlign.Center
+                                )
+                            }
+                        }
                     }
                 }
             }
@@ -508,101 +513,6 @@ private fun StatItem(value: String, label: String, highlight: Boolean = false, i
             style = MaterialTheme.typography.bodySmall,
             color = mutedTextColor
         )
-    }
-}
-
-@Composable
-private fun SettingsSection(
-    title: String,
-    cardBg: androidx.compose.ui.graphics.Color,
-    isDark: Boolean,
-    content: @Composable ColumnScope.() -> Unit
-) {
-    val sectionTitleColor = if (isDark) DarkOnSurfaceVariant else CharcoalMuted
-
-    Column {
-        Text(
-            text = title,
-            style = MaterialTheme.typography.labelMedium,
-            color = sectionTitleColor,
-            fontWeight = FontWeight.SemiBold,
-            modifier = Modifier.padding(start = 4.dp, bottom = 8.dp)
-        )
-        Card(
-            shape = RoundedCornerShape(14.dp),
-            colors = CardDefaults.cardColors(containerColor = cardBg),
-            elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
-        ) {
-            Column(modifier = Modifier.fillMaxWidth()) {
-                content()
-            }
-        }
-    }
-}
-
-@Composable
-private fun SettingsRow(
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
-    label: String,
-    value: String,
-    showChevron: Boolean = false,
-    onClick: () -> Unit = {},
-    bgColor: androidx.compose.ui.graphics.Color = WarmWhite,
-    isDark: Boolean
-) {
-    val iconBgColor = if (isDark) DarkSurfaceVariant else Bronze.copy(alpha = 0.1f)
-    val primaryText = if (isDark) DarkOnSurface else Charcoal
-    val mutedText = if (isDark) DarkOnSurfaceVariant else CharcoalMuted
-
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(bgColor)
-            .clickable(onClick = onClick)
-            .padding(horizontal = 16.dp, vertical = 14.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Box(
-            modifier = Modifier
-                .size(40.dp)
-                .background(
-                    color = iconBgColor,
-                    shape = RoundedCornerShape(10.dp)
-                ),
-            contentAlignment = Alignment.Center
-        ) {
-            Icon(
-                icon,
-                contentDescription = label,
-                tint = Bronze,
-                modifier = Modifier.size(20.dp)
-            )
-        }
-
-        Spacer(modifier = Modifier.width(14.dp))
-
-        Column(modifier = Modifier.weight(1f)) {
-            Text(
-                text = label,
-                style = MaterialTheme.typography.bodyLarge,
-                color = primaryText,
-                fontWeight = FontWeight.Medium
-            )
-            Text(
-                text = value,
-                style = MaterialTheme.typography.bodySmall,
-                color = mutedText
-            )
-        }
-
-        if (showChevron) {
-            Icon(
-                Icons.Default.Edit,
-                contentDescription = "Edit",
-                tint = mutedText,
-                modifier = Modifier.size(18.dp)
-            )
-        }
     }
 }
 

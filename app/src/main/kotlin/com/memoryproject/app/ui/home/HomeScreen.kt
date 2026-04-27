@@ -790,6 +790,19 @@ private fun RecentMemoryCard(
     primaryText: Color,
     mutedText: Color
 ) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val isPressed by interactionSource.collectIsPressedAsState()
+    val elevation by animateDpAsState(
+        targetValue = if (isPressed) 4.dp else 1.dp,
+        animationSpec = spring(stiffness = Spring.StiffnessMedium),
+        label = "recentCardElevation"
+    )
+    val cardScale by animateFloatAsState(
+        targetValue = if (isPressed) 0.98f else 1f,
+        animationSpec = spring(stiffness = Spring.StiffnessMedium),
+        label = "recentCardScale"
+    )
+
     val accentColors = listOf(CardAccentBronze, CardAccentTea, CardAccentPapaya)
     val accentColor = accentColors[accentIndex % accentColors.size]
     val promptLabelBg = if (darkTheme) DarkSurfaceVariant else Papaya.copy(alpha = 0.8f)
@@ -799,10 +812,11 @@ private fun RecentMemoryCard(
         onClick = onClick,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 6.dp),
+            .padding(horizontal = 16.dp, vertical = 6.dp)
+            .scale(cardScale),
         shape = RoundedCornerShape(14.dp),
         colors = CardDefaults.cardColors(containerColor = cardBg),
-        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = elevation)
     ) {
         Row(modifier = Modifier.fillMaxWidth()) {
             Box(
@@ -883,14 +897,28 @@ private fun BookMiniCard(
     primaryText: Color,
     mutedText: Color
 ) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val isPressed by interactionSource.collectIsPressedAsState()
+    val elevation by animateDpAsState(
+        targetValue = if (isPressed) 6.dp else 2.dp,
+        animationSpec = spring(stiffness = Spring.StiffnessMedium),
+        label = "miniBookElevation"
+    )
+    val cardScale by animateFloatAsState(
+        targetValue = if (isPressed) 0.97f else 1f,
+        animationSpec = spring(stiffness = Spring.StiffnessMedium),
+        label = "miniBookScale"
+    )
+
     Card(
         onClick = onClick,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 6.dp),
+            .padding(horizontal = 16.dp, vertical = 6.dp)
+            .scale(cardScale),
         shape = RoundedCornerShape(14.dp),
         colors = CardDefaults.cardColors(containerColor = cardBg),
-        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = elevation)
     ) {
         Row(
             modifier = Modifier
