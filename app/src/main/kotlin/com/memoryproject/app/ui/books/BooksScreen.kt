@@ -71,7 +71,9 @@ fun BooksScreen(
             // Top app bar
             TopAppBar(
                 title = {
-                    Column {
+                    Column(
+                        modifier = Modifier.padding(horizontal = 4.dp)
+                    ) {
                         Text(
                             "My Books",
                             style = MaterialTheme.typography.headlineLarge,
@@ -582,7 +584,11 @@ private fun BookCard(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = (book.memories_count ?: 0).toString() + " " + (if ((book.memories_count ?: 0) == 1) "memory" else "memories"),
+                        text = if ((book.memories_count ?: 0) > 0) {
+                            "${book.memories_count} ${if ((book.memories_count ?: 0) == 1) "story" else "stories"} captured"
+                        } else {
+                            "Waiting for its first story"
+                        },
                         style = MaterialTheme.typography.bodySmall,
                         color = mutedText
                     )

@@ -4,6 +4,7 @@
     <color name="dark_background">#1A1814</color>
     <color name="dark_splash">#1A1814</color>
     <string name="app_name">Memory Project</string>
+    <string name="google_server_client_id">client_01KPTJ9V6VTS6BEPNHFAKBJQB1</string>
     <style name="Theme.MemoryProject" parent="android:Theme.Material.Light.NoActionBar">
         <item name="android:statusBarColor">#FEFAE0</item>
         <item name="android:navigationBarColor">#FEFAE0</item>
@@ -12,7 +13,8 @@
     </style>
     <style name="Theme.MemoryProject.Splash" parent="android:Theme.Material.Light.NoActionBar">
         <item name="android:windowBackground">@drawable/splash_background</item>
-        <item name="android:statusBarColor">#1A1814</item>
-        <item name="android:navigationBarColor">#1A1814</item>
+        <item name="android:statusBarColor">#FEFAE0</item>
+        <item name="android:navigationBarColor">#FEFAE0</item>
+        <item name="android:windowLightStatusBar">true</item>
     </style>
 </resources>

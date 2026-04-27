@@ -154,4 +154,37 @@ class WorkOSAuthService(private val prefs: SharedPreferences) {
         clearStoredAuth()
         sessionCookie
     }
+
+    /**
+     * Exchanges a Google ID token (from native Credential Manager) for a session cookie
+     * via the backend mobile callback endpoint.
+     */
+    suspend fun exchangeIdTokenForSession(idToken: String, backendBaseUrl: String): Result<String> = runCatching {
+        val callbackUrl = "$backendBaseUrl/api/auth/callback/mobile?id_token=${java.net.URLEncoder.encode(idToken, "UTF-8")}"
+
+        val response: HttpResponse = client.get(callbackUrl)
+        val bodyText = response.bodyAsText()
+
+
+        if (response.status != HttpStatusCode.OK) {
+            val errorJson = try {
+                Json.decodeFromString<Map<String, String>>(bodyText)
+            } catch (_: Exception) {
+                mapOf("error" to bodyText.take(100))
+            }
+            throw Exception(errorJson["error"] ?: "ID token auth failed with status ${response.status.value}")
+        }
+
+
+        val sessionCookie = response.headers[HttpHeaders.SetCookie]
+            ?.split(";")
+            ?.firstOrNull { cookie ->
+                cookie.contains("session", ignoreCase = true) ||
+                cookie.contains("token", ignoreCase = true)
+            }
+            ?: throw Exception("No session cookie in callback response")
+
+
+        sessionCookie
+    }
 }

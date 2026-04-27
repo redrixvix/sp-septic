@@ -6,14 +6,22 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.automirrored.filled.MenuBook
 import androidx.compose.material.icons.filled.AutoStories
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
@@ -24,8 +32,9 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -107,11 +116,8 @@ class MainActivity : ComponentActivity() {
         val scheme = data.scheme ?: return
 
         if (scheme == "memoryproject" && data.host == "oauth" && data.path == "/callback") {
-            // Google OAuth callback — store pending callback in ViewModel.
-            // MemoryNavHost's LaunchedEffect watches pendingGoogleCallback and
-            // performs the navigation to auth screen from inside the composable,
-            // ensuring the NavController is available.
-            authViewModel.setPendingGoogleCallback(data.toString())
+            // Old OAuth callback — no longer used with native Credential Manager.
+            //Kept for backwards compatibility with any existing installs.
         } else if (scheme == "memoryproject" && data.host == "invite") {
             // Existing invite deep link — handled by Navigation deep link
         }
@@ -142,15 +148,10 @@ fun MemoryNavHost(
     val selectedColor = if (isDark) DarkBronze else Bronze
     val unselectedColor = if (isDark) DarkOnSurfaceVariant else CharcoalMuted
 
-    // Watch pending Google OAuth callback set by handleIntent (from onNewIntent).
-    // When set, navigate to auth screen from inside the composable so NavController is available.
+    // Watch pending Google OAuth callback — no-op now but kept for migration
     val pendingGoogleCallback by authViewModel.pendingGoogleCallback.collectAsState()
     LaunchedEffect(pendingGoogleCallback) {
-        pendingGoogleCallback ?: return@LaunchedEffect
-        navController.navigate("auth?google_callback=") {
-            popUpTo("auth") { inclusive = true }
-            launchSingleTop = true
-        }
+        // No action — native Credential Manager handles sign-in inline
     }
 
     Scaffold(
@@ -161,13 +162,24 @@ fun MemoryNavHost(
                 NavigationBar(
                     containerColor = navBg,
                     contentColor = if (isDark) DarkOnSurface else Charcoal,
-                    tonalElevation = 4.dp,
+                    tonalElevation = 3.dp,
                     modifier = Modifier
-                        .padding(horizontal = 24.dp, vertical = 10.dp)
-                        .height(72.dp)
+                        .padding(horizontal = 16.dp, vertical = 6.dp)
+                        .height(64.dp)
                 ) {
                     bottomNavItems.forEach { item ->
                         val selected = currentDestination?.hierarchy?.any { it.route == item.route } == true
+                        val pressInteraction = remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
+                        val isPressed by pressInteraction.collectIsPressedAsState()
+                        val iconScale by animateFloatAsState(
+                            targetValue = when {
+                                isPressed -> 0.82f
+                                selected -> 1.08f
+                                else -> 1f
+                            },
+                            animationSpec = spring(dampingRatio = 0.6f, stiffness = 400f),
+                            label = "navIconScale"
+                        )
                         NavigationBarItem(
                             selected = selected,
                             onClick = {
@@ -179,13 +191,13 @@ fun MemoryNavHost(
                                     restoreState = true
                                 }
                             },
+                            interactionSource = pressInteraction,
                             icon = {
-                                Box(contentAlignment = Alignment.Center) {
-                                    Icon(
-                                        imageVector = if (selected) item.selectedIcon else item.unselectedIcon,
-                                        contentDescription = item.title
-                                    )
-                                }
+                                Icon(
+                                    imageVector = if (selected) item.selectedIcon else item.unselectedIcon,
+                                    contentDescription = item.title,
+                                    modifier = Modifier.scale(iconScale)
+                                )
                             },
                             label = {
                                 Text(

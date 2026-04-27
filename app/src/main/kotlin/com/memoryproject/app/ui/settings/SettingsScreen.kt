@@ -377,7 +377,7 @@ private fun SettingsItem(
                 Icon(
                     icon,
                     contentDescription = title,
-                    tint = Bronze,
+                    tint = if (isDark) DarkBronze else Bronze,
                     modifier = Modifier.size(20.dp)
                 )
             }

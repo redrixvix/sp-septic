@@ -1,10 +1,11 @@
 package com.memoryproject.app.ui.auth
 
-import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.memoryproject.app.data.api.ApiClient
 import com.memoryproject.app.data.auth.WorkOSAuthService
+import com.memoryproject.app.data.auth.googleid.GoogleSignInException
+import com.memoryproject.app.data.auth.googleid.GoogleSignInHelper
 import com.memoryproject.app.data.model.User
 import com.memoryproject.app.data.repository.MemoryRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,18 +20,26 @@ data class AuthUiState(
     val error: String? = null,
     val isSignUp: Boolean = false,
     val forgotPasswordMessage: String? = null,
-    val googleAuthUrl: String? = null,
     val isGoogleLoading: Boolean = false
 )
 
 class AuthViewModel(
     private val repository: MemoryRepository,
     private val apiClient: ApiClient,
-    private val workOSAuthService: WorkOSAuthService
+    private val workOSAuthService: WorkOSAuthService,
+    private val googleSignInHelper: GoogleSignInHelper
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(AuthUiState())
     val uiState: StateFlow<AuthUiState> = _uiState.asStateFlow()
+
+    // Kept for MainActivity compatibility — not used in new native Credential Manager flow
+    private val _pendingGoogleCallback = MutableStateFlow<String?>(null)
+    val pendingGoogleCallback: StateFlow<String?> = _pendingGoogleCallback.asStateFlow()
+
+    fun setPendingGoogleCallback(uri: String) {
+        // No-op — kept for backwards compatibility with MainActivity
+    }
 
     init {
         checkAuth()
@@ -39,13 +48,17 @@ class AuthViewModel(
     private fun checkAuth() {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true)
-            repository.getCurrentUser()
-                .onSuccess { user ->
-                    _uiState.value = AuthUiState(isLoggedIn = true, user = user, isGoogleLoading = false)
-                }
-                .onFailure {
-                    _uiState.value = AuthUiState(isLoggedIn = false, isGoogleLoading = false)
-                }
+            try {
+                repository.getCurrentUser()
+                    .onSuccess { user ->
+                        _uiState.value = AuthUiState(isLoggedIn = true, user = user, isGoogleLoading = false)
+                    }
+                    .onFailure {
+                        _uiState.value = AuthUiState(isLoggedIn = false, isGoogleLoading = false)
+                    }
+            } catch (e: Exception) {
+                _uiState.value = AuthUiState(isLoggedIn = false, isGoogleLoading = false)
+            }
         }
     }
 
@@ -90,95 +103,63 @@ class AuthViewModel(
     }
 
     /**
-     * Initiates Google OAuth by generating the auth URL and returning it.
-     * The caller (AuthScreen) should open this URL in a Chrome Custom Tab.
+     * Initiates native Google sign-in via AndroidX Credential Manager.
+     * Shows the native Google bottom sheet — no browser involved.
      */
     fun initiateGoogleLogin() {
-        val authUrl = workOSAuthService.initiateAuth()
-        _uiState.value = _uiState.value.copy(googleAuthUrl = authUrl, isGoogleLoading = true)
-    }
-
-    /**
-     * Clears the stored Google auth URL (after Custom Tab is launched).
-     */
-    fun clearGoogleAuthUrl() {
-        _uiState.value = _uiState.value.copy(googleAuthUrl = null)
-    }
-
-    private val _pendingGoogleCallback = MutableStateFlow<String?>(null)
-    val pendingGoogleCallback: StateFlow<String?> = _pendingGoogleCallback.asStateFlow()
-
-    /**
-     * Sets a pending Google OAuth callback URI to be processed when the auth screen is ready.
-     * Called from MainActivity's onNewIntent before Navigation has routed to auth.
-     */
-    fun setPendingGoogleCallback(uri: String) {
-        _pendingGoogleCallback.value = uri
-    }
-
-    /**
-     * Handles the OAuth callback from the Custom Tab deep link.
-     *
-     * WorkOS redirects to memoryproject://oauth/callback?code=...&state=...
-     * We exchange the code for a session cookie via the backend mobile callback.
-     */
-    fun handleGoogleCallback(callbackUri: String) {
-        _pendingGoogleCallback.value = null
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(isLoading = true, googleAuthUrl = null, isGoogleLoading = false)
+            _uiState.value = _uiState.value.copy(isLoading = true, isGoogleLoading = true, error = null)
 
-            val uri = Uri.parse(callbackUri)
-            val error = uri.getQueryParameter("error")
-
-            if (error != null) {
-                workOSAuthService.clearStoredAuth()
-                _uiState.value = _uiState.value.copy(
-                    isLoading = false,
-                    isGoogleLoading = false,
-                    error = "Google login failed: $error"
-                )
-                return@launch
-            }
-
-            val code = uri.getQueryParameter("code")
-            if (code == null) {
-                workOSAuthService.clearStoredAuth()
-                _uiState.value = _uiState.value.copy(
-                    isLoading = false,
-                    isGoogleLoading = false,
-                    error = "Google login failed: no authorization code"
-                )
-                return@launch
-            }
-
-            // Exchange code for session cookie via the backend's mobile callback endpoint
-            val backendBaseUrl = ApiClient.BASE_URL
-            val result = workOSAuthService.exchangeCodeForSession(code, backendBaseUrl)
+            val result = googleSignInHelper.signIn()
 
             result
-                .onSuccess { sessionCookie ->
-                    apiClient.setSessionCookie(sessionCookie)
-                    repository.verifySession()
-                        .onSuccess { user ->
-                            _uiState.value = AuthUiState(isLoggedIn = true, user = user)
-                        }
-                        .onFailure { e ->
-                            workOSAuthService.clearStoredAuth()
-                            _uiState.value = _uiState.value.copy(
-                                isLoading = false,
-                                error = e.message ?: "Failed to verify session"
-                            )
-                        }
+                .onSuccess { credential ->
+                    val idToken = credential.idToken
+                    if (idToken != null) {
+                        exchangeIdTokenForSession(idToken)
+                    } else {
+                        _uiState.value = _uiState.value.copy(
+                            isLoading = false,
+                            isGoogleLoading = false,
+                            error = "Google sign-in failed: no ID token received"
+                        )
+                    }
                 }
                 .onFailure { e ->
-                    workOSAuthService.clearStoredAuth()
+                    val userMessage = if (e is GoogleSignInException) e.userMessage else null
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
                         isGoogleLoading = false,
-                        error = "Google login failed: ${e.message}"
+                        error = userMessage ?: "Google sign-in failed: ${e.message}"
                     )
                 }
         }
+    }
+
+    private suspend fun exchangeIdTokenForSession(idToken: String) {
+        val result = workOSAuthService.exchangeIdTokenForSession(idToken, ApiClient.BASE_URL)
+
+        result
+            .onSuccess { sessionCookie ->
+                apiClient.setSessionCookie(sessionCookie)
+                repository.verifySession()
+                    .onSuccess { user ->
+                        _uiState.value = AuthUiState(isLoggedIn = true, user = user)
+                    }
+                    .onFailure { e ->
+                        _uiState.value = _uiState.value.copy(
+                            isLoading = false,
+                            error = e.message ?: "Failed to verify session"
+                        )
+                    }
+            }
+            .onFailure { e ->
+                _uiState.value = _uiState.value.copy(
+                    isLoading = false,
+                    isGoogleLoading = false,
+                    error = "Google login failed: ${e.message}"
+                )
+            }
     }
 
     fun showForgotPassword() {

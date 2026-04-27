@@ -93,8 +93,13 @@ dependencies {
     implementation("io.insert-koin:koin-android:3.5.3")
     implementation("io.insert-koin:koin-androidx-compose:3.5.3")
 
-    // Chrome Custom Tabs for OAuth
+    // Chrome Custom Tabs (kept for non-Google links only)
     implementation("androidx.browser:browser:1.8.0")
+
+    // AndroidX Credential Manager (Google Sign-In bottom sheet)
+    implementation("androidx.credentials:credentials:1.3.0")
+    implementation("androidx.credentials:credentials-play-services-auth:1.3.0")
+    implementation("com.google.android.libraries.identity.googleid:googleid:1.1.0")
 
     // Security for cookie storage
     implementation("androidx.security:security-crypto:1.1.0-alpha06")

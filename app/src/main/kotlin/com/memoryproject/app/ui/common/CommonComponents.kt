@@ -180,11 +180,10 @@ fun ShimmerBox(
 ) {
     val shimmerAlpha = remember { Animatable(0.3f) }
     LaunchedEffect(Unit) {
-        repeat(2) {
+        while (true) {
             shimmerAlpha.animateTo(0.7f, animationSpec = tween(900, easing = FastOutSlowInEasing))
             shimmerAlpha.animateTo(0.3f, animationSpec = tween(900, easing = FastOutSlowInEasing))
         }
-        shimmerAlpha.animateTo(0.3f)
     }
     val shimmerBrush = remember(shimmerAlpha.value, baseColor, highlightColor) {
         Brush.linearGradient(listOf(baseColor, highlightColor.copy(alpha = shimmerAlpha.value), baseColor))
@@ -205,11 +204,10 @@ fun SkeletonCard(modifier: Modifier = Modifier, isDark: Boolean = false) {
 
     val shimmerAlpha = remember { Animatable(0.3f) }
     LaunchedEffect(Unit) {
-        repeat(2) {
+        while (true) {
             shimmerAlpha.animateTo(0.7f, animationSpec = tween(800, easing = FastOutSlowInEasing))
             shimmerAlpha.animateTo(0.3f, animationSpec = tween(800, easing = FastOutSlowInEasing))
         }
-        shimmerAlpha.animateTo(0.3f)
     }
     val shimmerBrush = remember(shimmerAlpha.value, base, highlight) {
         Brush.linearGradient(listOf(base, highlight.copy(alpha = shimmerAlpha.value), base))
@@ -491,7 +489,7 @@ fun SettingsRow(
                 Icon(
                     icon,
                     contentDescription = label,
-                    tint = Bronze,
+                    tint = if (isDark) DarkBronze else Bronze,
                     modifier = Modifier.size(20.dp)
                 )
             }

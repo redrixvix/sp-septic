@@ -3,10 +3,12 @@ local
 color cornsilk
 color dark_background
 color dark_splash
+drawable ic_google_g
 drawable ic_launcher_background
 drawable ic_launcher_foreground
 drawable splash_background
 mipmap ic_launcher
 string app_name
+string google_server_client_id
 style Theme.MemoryProject
 style Theme.MemoryProject.Splash

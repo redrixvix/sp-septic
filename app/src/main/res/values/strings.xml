@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Memory Project</string>
+    <string name="google_server_client_id">client_01KPTJ9V6VTS6BEPNHFAKBJQB1</string>
 </resources>

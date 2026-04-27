@@ -150,14 +150,30 @@ fun BookDetailScreen(
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
-                        uiState.book?.description?.takeIf { it.isNotBlank() }?.let { desc ->
-                            Text(
-                                desc,
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = if (darkTheme) DarkOnSurfaceVariant else CharcoalMuted,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
-                            )
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(6.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            val memCount = uiState.memories.size.coerceAtLeast(uiState.book?.memories_count ?: 0)
+                            if (memCount > 0) {
+                                Text(
+                                    "$memCount ${if (memCount == 1) "story" else "stories"}",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = if (darkTheme) DarkOnSurfaceVariant else CharcoalMuted
+                                )
+                            }
+                            uiState.book?.description?.takeIf { it.isNotBlank() }?.let { desc ->
+                                if (memCount > 0) {
+                                    Text("·", style = MaterialTheme.typography.bodySmall, color = if (darkTheme) DarkOnSurfaceVariant else CharcoalMuted)
+                                }
+                                Text(
+                                    desc,
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = if (darkTheme) DarkOnSurfaceVariant else CharcoalMuted,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                            }
                         }
                     }
                 },

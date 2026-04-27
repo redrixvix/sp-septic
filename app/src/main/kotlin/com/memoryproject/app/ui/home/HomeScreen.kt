@@ -486,7 +486,7 @@ private fun StatCard(
         modifier = modifier,
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = cardBg),
-        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Row(
             modifier = Modifier
@@ -520,8 +520,8 @@ private fun StatCard(
             Column {
                 Text(
                     text = value,
-                    style = MaterialTheme.typography.displayMedium,
-                    color = accentColor,
+                    style = MaterialTheme.typography.headlineMedium,
+                    color = if (darkTheme) DarkOnSurface else Charcoal,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
