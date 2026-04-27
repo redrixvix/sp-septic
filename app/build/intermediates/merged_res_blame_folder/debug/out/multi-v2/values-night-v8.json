@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.memoryproject.app-mergeDebugResources-60:/values-night-v8/values-night-v8.xml",
+            "outputFile": "com.memoryproject.app-mergeDebugResources-61:/values-night-v8/values-night-v8.xml",
             "map": [
                 {
                     "source": "/home/rixvix/.openclaw/workspace/memory-project/kmp/app/src/main/res/values-night/themes.xml",

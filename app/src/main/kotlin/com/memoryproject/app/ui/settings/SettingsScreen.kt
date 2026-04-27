@@ -3,7 +3,6 @@ package com.memoryproject.app.ui.settings
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.animation.*
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -163,11 +162,6 @@ fun SettingsScreen(
                                 darkModeActivePill()
                                 Spacer(modifier = Modifier.width(8.dp))
                             }
-                            val darkModeTrackColor by animateColorAsState(
-                                targetValue = if (uiState.isDarkMode) Bronze else if (isDark) DarkBorder else Border,
-                                animationSpec = tween(durationMillis = 300),
-                                label = "darkModeTrack"
-                            )
                             Switch(
                                 checked = uiState.isDarkMode,
                                 onCheckedChange = {
@@ -176,9 +170,9 @@ fun SettingsScreen(
                                 },
                                 colors = SwitchDefaults.colors(
                                     checkedThumbColor = WarmWhite,
-                                    checkedTrackColor = darkModeTrackColor,
+                                    checkedTrackColor = if (uiState.isDarkMode) Bronze else if (isDark) DarkBorder else Border,
                                     uncheckedThumbColor = WarmWhite,
-                                    uncheckedTrackColor = darkModeTrackColor
+                                    uncheckedTrackColor = if (isDark) DarkOnSurfaceVariant.copy(alpha = 0.3f) else CharcoalMuted.copy(alpha = 0.25f)
                                 )
                             )
                         }
@@ -199,19 +193,14 @@ fun SettingsScreen(
                     title = "Reminders",
                     subtitle = "Get gentle reminders to add memories",
                     trailing = {
-                        val notifTrackColor by animateColorAsState(
-                            targetValue = if (uiState.notificationsEnabled) Bronze else if (isDark) DarkBorder else Border,
-                            animationSpec = tween(durationMillis = 300),
-                            label = "notifTrack"
-                        )
                         Switch(
                             checked = uiState.notificationsEnabled,
                             onCheckedChange = { viewModel.toggleNotifications() },
                             colors = SwitchDefaults.colors(
                                 checkedThumbColor = WarmWhite,
-                                checkedTrackColor = notifTrackColor,
+                                checkedTrackColor = if (uiState.notificationsEnabled) Bronze else if (isDark) DarkBorder else Border,
                                 uncheckedThumbColor = WarmWhite,
-                                uncheckedTrackColor = notifTrackColor
+                                uncheckedTrackColor = if (isDark) DarkOnSurfaceVariant.copy(alpha = 0.3f) else CharcoalMuted.copy(alpha = 0.25f)
                             )
                         )
                     },

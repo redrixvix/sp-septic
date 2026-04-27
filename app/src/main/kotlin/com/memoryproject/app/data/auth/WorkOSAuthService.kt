@@ -41,7 +41,7 @@ class WorkOSAuthService(private val prefs: SharedPreferences) {
     companion object {
         private const val WORKOS_CLIENT_ID = "client_01KPTJ9V6VTS6BEPNHFAKBJQB1"
         private const val CALLBACK_URL = "memoryproject://oauth/callback"
-        private const val WORKOS_API_BASE = "https://auth.workos.com"
+        private const val WORKOS_API_BASE = "https://api.workos.com"
 
         private const val KEY_CODE_VERIFIER = "oauth_code_verifier"
         private const val KEY_STATE = "oauth_state"
@@ -76,7 +76,7 @@ class WorkOSAuthService(private val prefs: SharedPreferences) {
             "$key=${java.net.URLEncoder.encode(value, "UTF-8")}"
         }
 
-        return "$WORKOS_API_BASE/oauth2/authorize?$queryParams"
+        return "$WORKOS_API_BASE/user_management/authorize?$queryParams"
     }
 
     /**

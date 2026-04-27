@@ -40,6 +40,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.memoryproject.app.ui.theme.*
@@ -70,13 +71,13 @@ private fun GoogleButton(
         // Google icon — colored "G" letter
         Box(
             modifier = Modifier
-                .size(20.dp)
-                .background(Color.White, RoundedCornerShape(4.dp)),
+                .size(24.dp)
+                .background(Color.White, RoundedCornerShape(6.dp)),
             contentAlignment = Alignment.Center
         ) {
             Text(
                 text = "G",
-                fontSize = 14.sp,
+                fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color(0xFF4285F4)
             )
@@ -102,7 +103,7 @@ fun AuthScreen(
     val focusManager = LocalFocusManager.current
 
     val isDark = darkTheme
-    val backgroundGradient = if (isDark) listOf(DarkBackground, DarkSurfaceVariant) else listOf(Cornsilk, Papaya.copy(alpha = 0.5f))
+    val backgroundGradient = if (isDark) listOf(DarkBackground, DarkSurfaceVariant) else listOf(Cornsilk, Papaya.copy(alpha = 0.35f), Cornsilk)
     val cardBg = if (isDark) DarkSurface else WarmWhite
     val primaryText = if (isDark) DarkOnSurface else Charcoal
     val mutedText = if (isDark) DarkOnSurfaceVariant else CharcoalMuted
@@ -158,6 +159,23 @@ fun AuthScreen(
                 )
             )
     ) {
+        // Subtle warm radial glow behind content — premium depth
+        if (!isDark) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(480.dp)
+                    .align(Alignment.TopCenter)
+                    .background(
+                        brush = Brush.radialGradient(
+                            colors = listOf(
+                                Papaya.copy(alpha = 0.3f),
+                                Color.Transparent
+                            )
+                        )
+                    )
+            )
+        }
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -234,6 +252,12 @@ fun AuthScreen(
                             val pillWidth = totalWidth / 2f
                             translationX = indicatorOffset * (totalWidth - pillWidth)
                         }
+                        .shadow(
+                            elevation = 3.dp,
+                            shape = RoundedCornerShape(8.dp),
+                            ambientColor = Bronze.copy(alpha = 0.3f),
+                            spotColor = Bronze.copy(alpha = 0.2f)
+                        )
                         .background(
                             color = Bronze,
                             shape = RoundedCornerShape(8.dp)
@@ -347,7 +371,7 @@ fun AuthScreen(
                     Box(
                         modifier = Modifier
                             .weight(1f)
-                            .height(1.dp)
+                            .height(1.5.dp)
                             .background(if (isDark) DarkBorder else Border)
                     )
                     Spacer(modifier = Modifier.width(12.dp))
@@ -360,7 +384,7 @@ fun AuthScreen(
                     Box(
                         modifier = Modifier
                             .weight(1f)
-                            .height(1.dp)
+                            .height(1.5.dp)
                             .background(if (isDark) DarkBorder else Border)
                     )
                 }
@@ -402,7 +426,8 @@ fun AuthScreen(
                     Icon(
                         Icons.Default.Email,
                         contentDescription = null,
-                        tint = mutedText
+                        tint = mutedText,
+                        modifier = Modifier.size(20.dp)
                     )
                 },
                 isError = emailError != null && email.isNotEmpty(),
@@ -490,15 +515,17 @@ fun AuthScreen(
                     Icon(
                         Icons.Default.Lock,
                         contentDescription = null,
-                        tint = mutedText
+                        tint = mutedText,
+                        modifier = Modifier.size(20.dp)
                     )
                 },
                 trailingIcon = {
-                    IconButton(onClick = { showPassword = !showPassword }) {
+                    IconButton(onClick = { showPassword = !showPassword }, modifier = Modifier.size(36.dp)) {
                         Icon(
                             imageVector = if (showPassword) Icons.Filled.VisibilityOff else Icons.Filled.Visibility,
                             contentDescription = if (showPassword) "Hide password" else "Show password",
-                            tint = mutedText
+                            tint = mutedText,
+                            modifier = Modifier.size(20.dp)
                         )
                     }
                 },
@@ -584,14 +611,15 @@ fun AuthScreen(
                 enabled = !uiState.isLoading && !uiState.isGoogleLoading && isFormValid,
                 shape = RoundedCornerShape(14.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = BronzeDark,
+                    containerColor = if (isDark) DarkBronze.copy(alpha = 0.95f) else BronzeDark,
                     contentColor = WarmWhite,
-                    disabledContainerColor = BronzeDark.copy(alpha = 0.4f),
-                    disabledContentColor = WarmWhite.copy(alpha = 0.5f)
+                    disabledContainerColor = if (isDark) DarkBronze.copy(alpha = 0.5f) else Color(0xFFD4A373).copy(alpha = 0.65f),
+                    disabledContentColor = if (isDark) DarkOnSurface.copy(alpha = 0.7f) else Charcoal.copy(alpha = 0.65f)
                 ),
                 elevation = ButtonDefaults.buttonElevation(
-                    defaultElevation = 6.dp,
-                    pressedElevation = 10.dp
+                    defaultElevation = if (isDark) 2.dp else 8.dp,
+                    pressedElevation = if (isDark) 4.dp else 12.dp,
+                    disabledElevation = 0.dp
                 )
             ) {
                 if (uiState.isLoading) {

@@ -32,6 +32,7 @@
         <activity
             android:name="com.memoryproject.app.MainActivity"
             android:exported="true"
+            android:launchMode="singleTop"
             android:theme="@style/Theme.MemoryProject.Splash" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -46,6 +47,18 @@
 
                 <data
                     android:host="invite"
+                    android:scheme="memoryproject" />
+            </intent-filter>
+            <!-- Google OAuth callback -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="oauth"
+                    android:pathPrefix="/callback"
                     android:scheme="memoryproject" />
             </intent-filter>
         </activity>

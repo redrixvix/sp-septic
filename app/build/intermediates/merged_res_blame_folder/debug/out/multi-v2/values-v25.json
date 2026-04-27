@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.memoryproject.app-mergeDebugResources-60:/values-v25/values-v25.xml",
+            "outputFile": "com.memoryproject.app-mergeDebugResources-61:/values-v25/values-v25.xml",
             "map": [
                 {
                     "source": "/home/rixvix/.gradle/caches/transforms-4/1eda4860fc9a1adf31647352cc14f286/transformed/appcompat-1.6.1/res/values-v25/values-v25.xml",
