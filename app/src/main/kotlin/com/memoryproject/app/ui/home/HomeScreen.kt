@@ -14,6 +14,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.Book
 import androidx.compose.material.icons.filled.CameraAlt
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Lightbulb
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -459,7 +460,7 @@ private fun QuickStats(
             icon = "memory",
             value = memoriesCount.toString(),
             label = if (memoriesCount == 1) "Memory" else "Memories",
-            accentColor = if (darkTheme) DarkBronze else CardAccentTea,
+            accentColor = if (darkTheme) DarkBronze else TeaGreen,
             darkTheme = darkTheme,
             cardBg = cardBg,
             primaryText = primaryText,
@@ -500,9 +501,9 @@ private fun StatCard(
                     .background(
                         brush = Brush.linearGradient(
                             colors = if (darkTheme) {
-                                listOf(DarkBronze.copy(alpha = 0.4f), DarkSurfaceVariant)
+                                listOf(DarkBronze.copy(alpha = 0.45f), DarkSurfaceVariant)
                             } else {
-                                listOf(Bronze.copy(alpha = 0.25f), Papaya.copy(alpha = 0.8f))
+                                listOf(Bronze.copy(alpha = 0.3f), Papaya.copy(alpha = 0.8f))
                             }
                         ),
                         shape = RoundedCornerShape(12.dp)
@@ -1011,10 +1012,11 @@ private fun BookMiniCard(
                         color = mutedText
                     )
                 }
-                Text(
-                    "→",
-                    style = MaterialTheme.typography.titleMedium,
-                    color = mutedText
+                Icon(
+                    Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                    contentDescription = null,
+                    tint = mutedText,
+                    modifier = Modifier.size(22.dp)
                 )
             }
         }
@@ -1224,9 +1226,11 @@ private fun PromptCard(
                 color = primaryText,
                 modifier = Modifier.weight(1f)
             )
-            Text(
-                "→",
-                color = mutedText
+            Icon(
+                Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                contentDescription = null,
+                tint = mutedText,
+                modifier = Modifier.size(18.dp)
             )
         }
     }

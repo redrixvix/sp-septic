@@ -56,7 +56,7 @@ private fun GoogleButton(
         onClick = onClick,
         modifier = modifier
             .fillMaxWidth()
-            .height(50.dp),
+            .height(52.dp),
         enabled = enabled,
         shape = RoundedCornerShape(12.dp),
         colors = ButtonDefaults.buttonColors(
@@ -64,8 +64,8 @@ private fun GoogleButton(
             contentColor = Color(0xFF3c4043),
         ),
         elevation = ButtonDefaults.buttonElevation(
-            defaultElevation = 1.dp,
-            pressedElevation = 2.dp
+            defaultElevation = 2.dp,
+            pressedElevation = 4.dp
         )
     ) {
         // Google icon — colored "G" letter with subtle border for visibility on white background
@@ -315,7 +315,7 @@ fun AuthScreen(
             ) { isSignUpNow ->
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
-                        text = if (isSignUpNow) "Create your account" else "Welcome back",
+                        text = if (isSignUpNow) "Create your account" else "Enter your credentials",
                         style = MaterialTheme.typography.headlineMedium,
                         color = primaryText,
                         fontWeight = FontWeight.SemiBold
@@ -325,7 +325,7 @@ fun AuthScreen(
                         text = if (isSignUpNow)
                             "Start capturing your memories today"
                         else
-                            "Sign in to continue your story",
+                            "",
                         style = MaterialTheme.typography.bodyMedium,
                         color = mutedText
                     )

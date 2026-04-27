@@ -119,20 +119,16 @@ class AuthViewModel(
     /**
      * Handles the OAuth callback from the Custom Tab deep link.
      *
-     * The backend's mobile callback (/api/auth/callback/mobile) processes the OAuth code,
-     * creates a session, and redirects to memoryproject://oauth/callback?session=...
-     *
-     * @param callbackUri The full callback URI (memoryproject://oauth/callback?session=...&error=...)
+     * WorkOS redirects to memoryproject://oauth/callback?code=...&state=...
+     * We exchange the code for a session cookie via the backend mobile callback.
      */
     fun handleGoogleCallback(callbackUri: String) {
-        // Clear the pending callback immediately so it is not processed twice
         _pendingGoogleCallback.value = null
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true, googleAuthUrl = null, isGoogleLoading = false)
 
             val uri = Uri.parse(callbackUri)
             val error = uri.getQueryParameter("error")
-            val sessionParam = uri.getQueryParameter("session")
 
             if (error != null) {
                 workOSAuthService.clearStoredAuth()
@@ -144,27 +140,42 @@ class AuthViewModel(
                 return@launch
             }
 
-            if (sessionParam == null) {
+            val code = uri.getQueryParameter("code")
+            if (code == null) {
                 workOSAuthService.clearStoredAuth()
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
                     isGoogleLoading = false,
-                    error = "Google login failed: no session in callback"
+                    error = "Google login failed: no authorization code"
                 )
                 return@launch
             }
 
-            // Store the session cookie and verify with backend
-            apiClient.setSessionCookie(sessionParam)
-            repository.verifySession()
-                .onSuccess { user ->
-                    _uiState.value = AuthUiState(isLoggedIn = true, user = user)
+            // Exchange code for session cookie via the backend's mobile callback endpoint
+            val backendBaseUrl = ApiClient.BASE_URL
+            val result = workOSAuthService.exchangeCodeForSession(code, backendBaseUrl)
+
+            result
+                .onSuccess { sessionCookie ->
+                    apiClient.setSessionCookie(sessionCookie)
+                    repository.verifySession()
+                        .onSuccess { user ->
+                            _uiState.value = AuthUiState(isLoggedIn = true, user = user)
+                        }
+                        .onFailure { e ->
+                            workOSAuthService.clearStoredAuth()
+                            _uiState.value = _uiState.value.copy(
+                                isLoading = false,
+                                error = e.message ?: "Failed to verify session"
+                            )
+                        }
                 }
                 .onFailure { e ->
                     workOSAuthService.clearStoredAuth()
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
-                        error = e.message ?: "Failed to verify session"
+                        isGoogleLoading = false,
+                        error = "Google login failed: ${e.message}"
                     )
                 }
         }
