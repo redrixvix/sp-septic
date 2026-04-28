@@ -1,5 +1,9 @@
 package com.memoryproject.app.ui.common
 
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.Spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -9,32 +13,25 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.*
-import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.spring
-import androidx.compose.animation.core.Spring
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.memoryproject.app.data.model.Memory
-import androidx.compose.ui.platform.LocalContext
 import com.memoryproject.app.ui.theme.*
 
 @Composable
@@ -144,7 +141,6 @@ fun MemoryCard(
                     .padding(18.dp)
             ) {
                 // Header row: prompt label + share/delete actions
-                // Prompt label takes remaining space; icons are fixed-width companions
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -168,31 +164,43 @@ fun MemoryCard(
                             overflow = TextOverflow.Ellipsis
                         )
                     }
-                // Action menu: share + delete
-                var showMenu by remember { mutableStateOf(false) }
-                Box {
-                    IconButton(
-                        onClick = { showMenu = true },
-                        modifier = Modifier.size(44.dp).padding(4.dp)
-                    ) {
-                        Icon(Icons.Default.MoreVert, "More options", tint = mutedText, modifier = Modifier.size(22.dp))
-                    }
-                    DropdownMenu(
-                        expanded = showMenu,
-                        onDismissRequest = { showMenu = false },
-                        modifier = Modifier.background(color = if (isDark) DarkSurface else WarmWhite, shape = RoundedCornerShape(12.dp))
-                    ) {
-                        DropdownMenuItem(
-                            text = { Row(verticalAlignment = Alignment.CenterVertically) { Icon(Icons.Default.Share, null, tint = if (isDark) DarkOnSurface else Charcoal, modifier = Modifier.size(18.dp)); Spacer(Modifier.width(12.dp)); Text("Share", color = if (isDark) DarkOnSurface else Charcoal) } },
-                            onClick = { showMenu = false; onShareClick() }
-                        )
-                        DropdownMenuItem(
-                            text = { Row(verticalAlignment = Alignment.CenterVertically) { Icon(Icons.Default.Delete, null, tint = ErrorRed, modifier = Modifier.size(18.dp)); Spacer(Modifier.width(12.dp)); Text("Delete", color = ErrorRed) } },
-                            onClick = { showMenu = false; onDelete() }
-                        )
+                    // Action menu: share + delete
+                    var showMenu by remember { mutableStateOf(false) }
+                    Box {
+                        IconButton(
+                            onClick = { showMenu = true },
+                            modifier = Modifier.size(44.dp).padding(4.dp)
+                        ) {
+                            Icon(Icons.Default.MoreVert, "More options", tint = mutedText, modifier = Modifier.size(22.dp))
+                        }
+                        DropdownMenu(
+                            expanded = showMenu,
+                            onDismissRequest = { showMenu = false },
+                            modifier = Modifier.background(color = if (isDark) DarkSurface else WarmWhite, shape = RoundedCornerShape(12.dp))
+                        ) {
+                            DropdownMenuItem(
+                                text = {
+                                    Row(verticalAlignment = Alignment.CenterVertically) {
+                                        Icon(Icons.Default.Share, null, tint = if (isDark) DarkOnSurface else Charcoal, modifier = Modifier.size(18.dp))
+                                        Spacer(Modifier.width(12.dp))
+                                        Text("Share", color = if (isDark) DarkOnSurface else Charcoal)
+                                    }
+                                },
+                                onClick = { showMenu = false; onShareClick() }
+                            )
+                            DropdownMenuItem(
+                                text = {
+                                    Row(verticalAlignment = Alignment.CenterVertically) {
+                                        Icon(Icons.Default.Delete, null, tint = ErrorRed, modifier = Modifier.size(18.dp))
+                                        Spacer(Modifier.width(12.dp))
+                                        Text("Delete", color = ErrorRed)
+                                    }
+                                },
+                                onClick = { showMenu = false; onDelete() }
+                            )
+                        }
                     }
                 }
-            }
 
                 Spacer(modifier = Modifier.height(12.dp))
 
@@ -205,7 +213,7 @@ fun MemoryCard(
                     modifier = Modifier.padding(vertical = 2.dp)
                 )
 
-                // Photo thumbnails — clean 3-up grid with natural spacing
+                // Photo thumbnails — clean 4-up grid with badge for overflow
                 if (memory.photo_urls.isNotEmpty()) {
                     Spacer(modifier = Modifier.height(12.dp))
                     Row(
@@ -222,7 +230,7 @@ fun MemoryCard(
                                         .clip(RoundedCornerShape(10.dp))
                                         .clickable { onPhotoClick(url) }
                                 )
-                                // Subtle rounded overlay for photo count badge if more than 4
+                                // Overflow badge if more than 4 photos
                                 if (index == 3 && memory.photo_urls.size > 4) {
                                     Box(
                                         modifier = Modifier
