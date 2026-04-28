@@ -12,6 +12,10 @@ import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.int
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 
 class ApiClient {
 
@@ -132,7 +136,21 @@ class ApiClient {
         if (!resp.status.isSuccess()) throw ApiException("Logout failed")
     }
 
-    suspend fun me(): Result<User> = getRequest<UserResponse>("/api/auth/me").map { it.user }
+    suspend fun me(): Result<User> {
+        val fullUrl = ApiClient.BASE_URL + "/api/auth/me"
+        val resp: HttpResponse = client.get("/api/auth/me") {
+            url { takeFrom(fullUrl) }
+            if (sessionCookie != null) header(HttpHeaders.Cookie, sessionCookie)
+        }
+        sessionCookie = sessionCookie ?: resp.headers[HttpHeaders.SetCookie]?.split(";")?.firstOrNull()
+        return handleResponse(resp) { text ->
+            try {
+                parseUserResponse(text)
+            } catch (e: Exception) {
+                throw ApiException("Parse error: ${e.message}")
+            }
+        }
+    }
 
     suspend fun getBooks(): Result<List<Book>> =
         getRequest<BooksResponse>("/api/books")
@@ -180,6 +198,27 @@ class ApiClient {
      */
     fun setSessionCookie(cookie: String) {
         sessionCookie = cookie
+    }
+
+    private fun parseUserResponse(text: String): User {
+        val root = json.parseToJsonElement(text).jsonObject
+        val user = root["user"]?.jsonObject
+            ?: throw ApiException("Missing user in response")
+        return parseUser(user)
+    }
+
+    private fun parseUser(user: JsonObject): User {
+        return User(
+            id = user["id"]?.jsonPrimitive?.int
+                ?: throw ApiException("Missing user id"),
+            email = user["email"]?.jsonPrimitive?.content
+                ?: throw ApiException("Missing user email"),
+            name = user["name"]?.jsonPrimitive?.content
+                ?: throw ApiException("Missing user name"),
+            created_at = user["created_at"]?.jsonPrimitive?.content ?: "",
+            profileImageUrl = user["profileImageUrl"]?.jsonPrimitive?.content,
+            profilelmageUrl = user["profilelmageUrl"]?.jsonPrimitive?.content,
+        )
     }
 
     companion object {

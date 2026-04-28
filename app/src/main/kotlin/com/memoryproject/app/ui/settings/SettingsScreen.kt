@@ -218,16 +218,36 @@ fun SettingsScreen(
                     title = "Reminders",
                     subtitle = "Get gentle reminders to add memories",
                     trailing = {
-                        Switch(
-                            checked = uiState.notificationsEnabled,
-                            onCheckedChange = { viewModel.toggleNotifications() },
-                            colors = SwitchDefaults.colors(
-                                checkedThumbColor = WarmWhite,
-                                checkedTrackColor = if (uiState.notificationsEnabled) Bronze else if (isDark) DarkBorder else Border,
-                                uncheckedThumbColor = WarmWhite,
-                                uncheckedTrackColor = if (isDark) DarkOnSurfaceVariant.copy(alpha = 0.3f) else CharcoalMuted.copy(alpha = 0.25f)
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            if (uiState.notificationsEnabled) {
+                                Box(
+                                    modifier = Modifier
+                                        .background(
+                                            color = if (isDark) DarkBronze.copy(alpha = 0.25f) else Bronze.copy(alpha = 0.15f),
+                                            shape = RoundedCornerShape(8.dp)
+                                        )
+                                        .padding(horizontal = 10.dp, vertical = 5.dp)
+                                ) {
+                                    Text(
+                                        text = "Active",
+                                        style = MaterialTheme.typography.labelSmall,
+                                        color = if (isDark) DarkBronze else BronzeDark,
+                                        fontWeight = FontWeight.SemiBold
+                                    )
+                                }
+                                Spacer(modifier = Modifier.width(8.dp))
+                            }
+                            Switch(
+                                checked = uiState.notificationsEnabled,
+                                onCheckedChange = { viewModel.toggleNotifications() },
+                                colors = SwitchDefaults.colors(
+                                    checkedThumbColor = WarmWhite,
+                                    checkedTrackColor = if (uiState.notificationsEnabled) Bronze else if (isDark) DarkBorder else Border,
+                                    uncheckedThumbColor = WarmWhite,
+                                    uncheckedTrackColor = if (isDark) DarkOnSurfaceVariant.copy(alpha = 0.3f) else CharcoalMuted.copy(alpha = 0.25f)
+                                )
                             )
-                        )
+                        }
                     },
                     onClick = { viewModel.toggleNotifications() },
                     bgColor = cardBg,

@@ -10,6 +10,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.*
 import androidx.compose.animation.core.animateDpAsState
@@ -153,72 +154,89 @@ fun MemoryCard(
                             overflow = TextOverflow.Ellipsis
                         )
                     }
-                    // Share + Delete + Edit icon buttons in header row
-                    Row {
-                        val editInteraction = remember { MutableInteractionSource() }
-                        val editPressed by editInteraction.collectIsPressedAsState()
-                        val editScale by animateFloatAsState(
-                            targetValue = if (editPressed) 1.15f else 1f,
-                            animationSpec = spring(dampingRatio = 0.6f, stiffness = Spring.StiffnessMedium),
-                            label = "editScale"
+                // Action menu: share + delete, triggered via a cleaner overflow trigger
+                // Only show overflow (3-dot) as explicit affordance — tap-to-edit still works on card
+                var showMenu by remember { mutableStateOf(false) }
+                Box {
+                    IconButton(
+                        onClick = { showMenu = true },
+                        modifier = Modifier.size(40.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.MoreVert,
+                            contentDescription = "More options",
+                            tint = mutedText,
+                            modifier = Modifier.size(22.dp)
                         )
-                        IconButton(
-                            onClick = onEdit,
-                            modifier = Modifier.size(40.dp),
-                            interactionSource = editInteraction
-                        ) {
-                            Icon(
-                                Icons.Default.Edit,
-                                contentDescription = "Edit",
-                                tint = if (editPressed) (if (isDark) DarkBronze else Bronze) else mutedText,
-                                modifier = Modifier
-                                    .size(22.dp)
-                                    .graphicsLayer { scaleX = editScale; scaleY = editScale }
-                            )
-                        }
-                        val shareInteraction = remember { MutableInteractionSource() }
-                        val sharePressed by shareInteraction.collectIsPressedAsState()
-                        val shareScale by animateFloatAsState(
-                            targetValue = if (sharePressed) 1.15f else 1f,
-                            animationSpec = spring(dampingRatio = 0.6f, stiffness = Spring.StiffnessMedium),
-                            label = "shareScale"
-                        )
-                        IconButton(
-                            onClick = onShareClick,
-                            modifier = Modifier.size(40.dp),
-                            interactionSource = shareInteraction
-                        ) {
-                            Icon(
-                                Icons.Default.Share,
-                                contentDescription = "Share",
-                                tint = if (sharePressed) (if (isDark) DarkBronze else Bronze) else mutedText,
-                                modifier = Modifier
-                                    .size(22.dp)
-                                    .graphicsLayer { scaleX = shareScale; scaleY = shareScale }
-                            )
-                        }
-                        val deleteInteraction = remember { MutableInteractionSource() }
-                        val deletePressed by deleteInteraction.collectIsPressedAsState()
-                        val deleteScale by animateFloatAsState(
-                            targetValue = if (deletePressed) 1.15f else 1f,
-                            animationSpec = spring(dampingRatio = 0.6f, stiffness = Spring.StiffnessMedium),
-                            label = "deleteScale"
-                        )
-                        IconButton(
-                            onClick = onDelete,
-                            modifier = Modifier.size(40.dp),
-                            interactionSource = deleteInteraction
-                        ) {
-                            Icon(
-                                Icons.Default.Delete,
-                                contentDescription = "Delete",
-                                tint = if (deletePressed) ErrorRed else mutedText,
-                                modifier = Modifier
-                                    .size(22.dp)
-                                    .graphicsLayer { scaleX = deleteScale; scaleY = deleteScale }
-                            )
-                        }
                     }
+                    DropdownMenu(
+                        expanded = showMenu,
+                        onDismissRequest = { showMenu = false },
+                        modifier = Modifier.background(
+                            color = if (isDark) DarkSurface else WarmWhite,
+                            shape = RoundedCornerShape(12.dp)
+                        )
+                    ) {
+                        DropdownMenuItem(
+                            text = {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Icon(
+                                        Icons.Default.Edit,
+                                        contentDescription = null,
+                                        tint = if (isDark) DarkOnSurface else Charcoal,
+                                        modifier = Modifier.size(18.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(12.dp))
+                                    Text("Edit", color = if (isDark) DarkOnSurface else Charcoal)
+                                }
+                            },
+                            onClick = {
+                                showMenu = false
+                                onEdit()
+                            }
+                        )
+                        DropdownMenuItem(
+                            text = {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Icon(
+                                        Icons.Default.Share,
+                                        contentDescription = null,
+                                        tint = if (isDark) DarkOnSurface else Charcoal,
+                                        modifier = Modifier.size(18.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(12.dp))
+                                    Text("Share", color = if (isDark) DarkOnSurface else Charcoal)
+                                }
+                            },
+                            onClick = {
+                                showMenu = false
+                                onShareClick()
+                            }
+                        )
+                        HorizontalDivider(
+                            modifier = Modifier.padding(vertical = 4.dp),
+                            color = if (isDark) DarkDivider else Divider
+                        )
+                        DropdownMenuItem(
+                            text = {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Icon(
+                                        Icons.Default.Delete,
+                                        contentDescription = null,
+                                        tint = ErrorRed,
+                                        modifier = Modifier.size(18.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(12.dp))
+                                    Text("Delete", color = ErrorRed)
+                                }
+                            },
+                            onClick = {
+                                showMenu = false
+                                onDelete()
+                            }
+                        )
+                    }
+                }
                 }
 
                 Spacer(modifier = Modifier.height(12.dp))
@@ -240,14 +258,35 @@ fun MemoryCard(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         memory.photo_urls.take(4).forEachIndexed { index, url ->
-                            AsyncImage(
-                                model = url,
-                                contentDescription = "Memory photo ${index + 1}",
-                                modifier = Modifier
-                                    .size(64.dp)
-                                    .clip(RoundedCornerShape(10.dp))
-                                    .clickable { onPhotoClick(url) }
-                            )
+                            Box {
+                                AsyncImage(
+                                    model = url,
+                                    contentDescription = "Memory photo ${index + 1}",
+                                    modifier = Modifier
+                                        .size(72.dp)
+                                        .clip(RoundedCornerShape(10.dp))
+                                        .clickable { onPhotoClick(url) }
+                                )
+                                // Subtle rounded overlay for photo count badge if more than 4
+                                if (index == 3 && memory.photo_urls.size > 4) {
+                                    Box(
+                                        modifier = Modifier
+                                            .size(72.dp)
+                                            .background(
+                                                Color.Black.copy(alpha = 0.45f),
+                                                shape = RoundedCornerShape(10.dp)
+                                            ),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Text(
+                                            "+${memory.photo_urls.size - 4}",
+                                            style = MaterialTheme.typography.labelMedium,
+                                            color = Color.White,
+                                            fontWeight = FontWeight.SemiBold
+                                        )
+                                    }
+                                }
+                            }
                         }
                     }
                 }

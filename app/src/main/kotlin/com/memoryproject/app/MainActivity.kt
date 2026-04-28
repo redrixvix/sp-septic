@@ -354,7 +354,8 @@ fun MemoryNavHost(
                     bookId = bookId,
                     onBack = { navController.popBackStack() },
                     darkTheme = darkThemeEnabled,
-                    startPrompt = startPrompt
+                    startPrompt = startPrompt,
+                    onShareBook = { /* TODO: implement book sharing */ }
                 )
             }
 
@@ -368,7 +369,8 @@ fun MemoryNavHost(
                 BookDetailScreen(
                     bookId = bookId,
                     onBack = { navController.popBackStack() },
-                    darkTheme = darkThemeEnabled
+                    darkTheme = darkThemeEnabled,
+                    onShareBook = { /* TODO: implement book sharing */ }
                 )
             }
 

@@ -28,6 +28,8 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Lightbulb
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -59,6 +61,7 @@ import com.memoryproject.app.ui.theme.*
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 import org.koin.compose.koinInject
+import com.memoryproject.app.data.model.Book
 import com.memoryproject.app.data.model.BookMember
 import androidx.compose.foundation.text.KeyboardActions
 import kotlinx.coroutines.launch
@@ -84,6 +87,7 @@ fun BookDetailScreen(
     onBack: () -> Unit,
     darkTheme: Boolean,
     startPrompt: String? = null,
+    onShareBook: (com.memoryproject.app.data.model.Book) -> Unit = {},
     viewModel: BookDetailViewModel = koinViewModel { parametersOf(bookId) }
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -222,6 +226,74 @@ fun BookDetailScreen(
                     }
                 },
                 actions = {
+                    // Overflow menu for book-level actions
+                    var showBookMenu by remember { mutableStateOf(false) }
+                    val book = uiState.book
+                    val canManage = book?.role == "owner"
+                    Box {
+                        IconButton(
+                            onClick = { showBookMenu = true },
+                            modifier = Modifier
+                                .size(44.dp)
+                                .background(
+                                    color = if (darkTheme) DarkSurface else WarmWhite,
+                                    shape = RoundedCornerShape(12.dp)
+                                )
+                        ) {
+                            Icon(
+                                Icons.Default.MoreVert,
+                                contentDescription = "More options",
+                                tint = if (darkTheme) DarkOnSurface else Charcoal
+                            )
+                        }
+                        DropdownMenu(
+                            expanded = showBookMenu,
+                            onDismissRequest = { showBookMenu = false },
+                            modifier = Modifier.background(
+                                color = if (darkTheme) DarkSurface else WarmWhite,
+                                shape = RoundedCornerShape(12.dp)
+                            )
+                        ) {
+                            DropdownMenuItem(
+                                text = {
+                                    Row(verticalAlignment = Alignment.CenterVertically) {
+                                        Icon(
+                                            Icons.Default.Share,
+                                            contentDescription = null,
+                                            tint = if (darkTheme) DarkOnSurface else Charcoal,
+                                            modifier = Modifier.size(18.dp)
+                                        )
+                                        Spacer(modifier = Modifier.width(12.dp))
+                                        Text("Share", color = if (darkTheme) DarkOnSurface else Charcoal)
+                                    }
+                                },
+                                onClick = {
+                                    showBookMenu = false
+                                    book?.let { onShareBook(it) }
+                                }
+                            )
+                            if (canManage) {
+                                DropdownMenuItem(
+                                    text = {
+                                        Row(verticalAlignment = Alignment.CenterVertically) {
+                                            Icon(
+                                                Icons.Default.Edit,
+                                                contentDescription = null,
+                                                tint = if (darkTheme) DarkOnSurface else Charcoal,
+                                                modifier = Modifier.size(18.dp)
+                                            )
+                                            Spacer(modifier = Modifier.width(12.dp))
+                                            Text("Edit Book", color = if (darkTheme) DarkOnSurface else Charcoal)
+                                        }
+                                    },
+                                    onClick = {
+                                        showBookMenu = false
+                                        // Future: show edit book dialog
+                                    }
+                                )
+                            }
+                        }
+                    }
                     IconButton(
                         onClick = { showMembersSheet = true },
                         modifier = Modifier
@@ -344,6 +416,7 @@ fun BookDetailScreen(
                             .padding(horizontal = 40.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
+                        // Warm illustrated card with layered depth — premium empty state
                         Box(
                             modifier = Modifier
                                 .size(100.dp)
@@ -352,17 +425,53 @@ fun BookDetailScreen(
                                         colors = if (darkTheme) listOf(DarkSurfaceVariant, DarkSurfaceVariant) else listOf(Papaya, Beige)
                                     ),
                                     shape = RoundedCornerShape(24.dp)
-                                ),
+                                )
+                                .padding(6.dp),
                             contentAlignment = Alignment.Center
                         ) {
-                            Icon(
-                                imageVector = Icons.Default.AutoAwesome,
-                                contentDescription = null,
-                                tint = Bronze,
-                                modifier = Modifier.size(48.dp)
-                            )
+                            Box(
+                                modifier = Modifier
+                                    .size(88.dp)
+                                    .background(
+                                        brush = Brush.linearGradient(
+                                            colors = if (darkTheme) {
+                                                listOf(DarkSurfaceVariant.copy(alpha = 0.6f), DarkSurface.copy(alpha = 0.4f))
+                                            } else {
+                                                listOf(Papaya.copy(alpha = 0.7f), Cornsilk.copy(alpha = 0.5f))
+                                            }
+                                        ),
+                                        shape = RoundedCornerShape(22.dp)
+                                    )
+                                    .padding(4.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(80.dp)
+                                        .background(
+                                            brush = Brush.radialGradient(
+                                                colors = if (darkTheme) {
+                                                    listOf(DarkBronze.copy(alpha = 0.22f), DarkSurface.copy(alpha = 0.0f))
+                                                } else {
+                                                    listOf(Bronze.copy(alpha = 0.18f), Beige.copy(alpha = 0.0f))
+                                                }
+                                            ),
+                                            shape = RoundedCornerShape(18.dp)
+                                        ),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.AutoAwesome,
+                                        contentDescription = null,
+                                        tint = if (darkTheme) DarkBronze else Bronze,
+                                        modifier = Modifier.size(42.dp)
+                                    )
+                                }
+                            }
                         }
+
                         Spacer(modifier = Modifier.height(28.dp))
+
                         Text(
                             "Your story starts here",
                             style = MaterialTheme.typography.headlineSmall,
@@ -379,11 +488,17 @@ fun BookDetailScreen(
                         Spacer(modifier = Modifier.height(32.dp))
                         Button(
                             onClick = { viewModel.showAddMemory() },
-                            modifier = Modifier.height(52.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(52.dp),
                             shape = RoundedCornerShape(14.dp),
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = Bronze,
                                 contentColor = WarmWhite
+                            ),
+                            elevation = ButtonDefaults.buttonElevation(
+                                defaultElevation = 4.dp,
+                                pressedElevation = 8.dp
                             )
                         ) {
                             Icon(Icons.Default.Add, contentDescription = "Add your first memory")
@@ -756,13 +871,12 @@ private fun PhotoViewer(
                     indication = null,
                     onClick = onDismiss
                 )
-                .then(swipeDownModifier),
+                .then(doubleTapModifier),
             contentAlignment = Alignment.Center
         ) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .then(doubleTapModifier)
                     .graphicsLayer {
                         scaleX = contentScale
                         scaleY = contentScale
@@ -785,68 +899,69 @@ private fun PhotoViewer(
                     contentScale = ContentScale.Fit
                 )
             }
-
-            // Zoom level badge — shown when zoomed in
-            AnimatedVisibility(
-                visible = scale > 1f,
-                enter = scaleIn(animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessMedium)) + fadeIn(),
-                modifier = Modifier
-                    .align(Alignment.TopCenter)
-                    .padding(top = 48.dp)
-            ) {
-                Box(
-                    modifier = Modifier
-                        .background(
-                            color = Color.Black.copy(alpha = 0.5f),
-                            shape = RoundedCornerShape(16.dp)
-                        )
-                        .padding(horizontal = 12.dp, vertical = 6.dp)
-                ) {
-                    Text(
-                        "${scale.toInt()}x",
-                        style = MaterialTheme.typography.labelMedium,
-                        color = Color.White,
-                        fontWeight = FontWeight.SemiBold
-                    )
-                }
-            }
-
-            // Close button
-            IconButton(
-                onClick = onDismiss,
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .padding(24.dp)
-                    .size(44.dp)
-                    .background(
-                        color = Color.Black.copy(alpha = 0.5f),
-                        shape = CircleShape
-                    )
-            ) {
-                Icon(
-                    Icons.Default.Close,
-                    contentDescription = "Close",
-                    tint = Color.White
-                )
-            }
-
-            // Swipe down hint — shown briefly
-            var showHint by remember { mutableStateOf(true) }
-            LaunchedEffect(Unit) {
-                delay(2500)
-                showHint = false
-            }
-            if (showHint) {
-                Text(
-                    "Swipe down or double-tap to zoom",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = Color.White.copy(alpha = 0.45f),
-                    modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .padding(bottom = 32.dp)
-                )
-            }
         }
+
+          // Zoom level badge — shown when zoomed in
+          AnimatedVisibility(
+              visible = scale > 1f,
+              enter = scaleIn(animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessMedium)) + fadeIn(),
+              modifier = Modifier
+                  .align(Alignment.TopCenter)
+                  .padding(top = 48.dp)
+          ) {
+              Box(
+                  modifier = Modifier
+                      .background(
+                          color = Color.Black.copy(alpha = 0.5f),
+                          shape = RoundedCornerShape(16.dp)
+                      )
+                      .padding(horizontal = 12.dp, vertical = 6.dp)
+              ) {
+                  Text(
+                      "${scale.toInt()}x",
+                      style = MaterialTheme.typography.labelMedium,
+                      color = Color.White,
+                      fontWeight = FontWeight.SemiBold
+                  )
+              }
+          }
+
+          // Close button
+          IconButton(
+              onClick = onDismiss,
+              modifier = Modifier
+                  .align(Alignment.TopEnd)
+                  .padding(24.dp)
+                  .size(44.dp)
+                  .background(
+                      color = Color.Black.copy(alpha = 0.5f),
+                      shape = CircleShape
+                  )
+          ) {
+              Icon(
+                  Icons.Default.Close,
+                  contentDescription = "Close",
+                  tint = Color.White
+              )
+          }
+
+          // Swipe down hint — shown briefly
+          var showHint by remember { mutableStateOf(true) }
+          LaunchedEffect(Unit) {
+              delay(2500)
+              showHint = false
+          }
+          if (showHint) {
+              Text(
+                  "Swipe down or double-tap to zoom",
+                  style = MaterialTheme.typography.bodySmall,
+                  color = Color.White.copy(alpha = 0.45f),
+                  modifier = Modifier
+                      .align(Alignment.BottomCenter)
+                      .padding(bottom = 32.dp)
+              )
+          }
+      }
     }
 }
 
