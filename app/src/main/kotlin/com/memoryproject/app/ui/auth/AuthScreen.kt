@@ -1,9 +1,5 @@
 package com.memoryproject.app.ui.auth
 
-import android.content.Context
-import android.content.Intent
-import android.net.Uri
-import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
@@ -32,7 +28,6 @@ import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -103,12 +98,10 @@ private fun GoogleButton(
 @Composable
 fun AuthScreen(
     onLoginSuccess: () -> Unit,
-    googleCallbackUri: String? = null,
     darkTheme: Boolean = false,
     viewModel: AuthViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val context = LocalContext.current
     val focusManager = LocalFocusManager.current
 
     val isDark = darkTheme
@@ -732,20 +725,5 @@ fun AuthScreen(
 
             Spacer(modifier = Modifier.height(32.dp))
         }
-    }
-}
-
-private fun launchCustomTab(context: Context, uri: Uri) {
-    try {
-        val customTabsIntent = CustomTabsIntent.Builder()
-            .setShowTitle(true)
-            .build()
-        customTabsIntent.launchUrl(context, uri)
-    } catch (e: Exception) {
-        // Fallback: open in browser if Custom Tab fails
-        val browserIntent = Intent(Intent.ACTION_VIEW, uri).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK
-        }
-        context.startActivity(browserIntent)
     }
 }

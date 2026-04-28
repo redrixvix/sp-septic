@@ -4,8 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.memoryproject.app.data.api.ApiClient
 import com.memoryproject.app.data.auth.WorkOSAuthService
-import com.memoryproject.app.data.auth.googleid.GoogleSignInException
-import com.memoryproject.app.data.auth.googleid.GoogleSignInHelper
 import com.memoryproject.app.data.model.User
 import com.memoryproject.app.data.repository.MemoryRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,18 +25,20 @@ class AuthViewModel(
     private val repository: MemoryRepository,
     private val apiClient: ApiClient,
     private val workOSAuthService: WorkOSAuthService,
-    private val googleSignInHelper: GoogleSignInHelper
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(AuthUiState())
     val uiState: StateFlow<AuthUiState> = _uiState.asStateFlow()
 
-    // Kept for MainActivity compatibility — not used in new native Credential Manager flow
-    private val _pendingGoogleCallback = MutableStateFlow<String?>(null)
-    val pendingGoogleCallback: StateFlow<String?> = _pendingGoogleCallback.asStateFlow()
+    private val _workOSAuthorizationUrl = MutableStateFlow<String?>(null)
+    val workOSAuthorizationUrl: StateFlow<String?> = _workOSAuthorizationUrl.asStateFlow()
 
     fun setPendingGoogleCallback(uri: String) {
-        // No-op — kept for backwards compatibility with MainActivity
+        handleWorkOSCallback(uri)
+    }
+
+    fun consumeWorkOSAuthorizationUrl() {
+        _workOSAuthorizationUrl.value = null
     }
 
     init {
@@ -48,17 +48,13 @@ class AuthViewModel(
     private fun checkAuth() {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true)
-            try {
-                repository.getCurrentUser()
-                    .onSuccess { user ->
-                        _uiState.value = AuthUiState(isLoggedIn = true, user = user, isGoogleLoading = false)
-                    }
-                    .onFailure {
-                        _uiState.value = AuthUiState(isLoggedIn = false, isGoogleLoading = false)
-                    }
-            } catch (e: Exception) {
-                _uiState.value = AuthUiState(isLoggedIn = false, isGoogleLoading = false)
-            }
+            repository.getCurrentUser()
+                .onSuccess { user ->
+                    _uiState.value = AuthUiState(isLoggedIn = true, user = user)
+                }
+                .onFailure {
+                    _uiState.value = AuthUiState(isLoggedIn = false)
+                }
         }
     }
 
@@ -71,7 +67,7 @@ class AuthViewModel(
             _uiState.value = _uiState.value.copy(isLoading = true, error = null)
             repository.login(email, password)
                 .onSuccess { user ->
-                    _uiState.value = AuthUiState(isLoggedIn = true, user = user, isGoogleLoading = false)
+                    _uiState.value = AuthUiState(isLoggedIn = true, user = user)
                 }
                 .onFailure { e ->
                     _uiState.value = _uiState.value.copy(
@@ -91,7 +87,7 @@ class AuthViewModel(
             _uiState.value = _uiState.value.copy(isLoading = true, error = null)
             repository.signup(email, name, password)
                 .onSuccess { user ->
-                    _uiState.value = AuthUiState(isLoggedIn = true, user = user, isGoogleLoading = false)
+                    _uiState.value = AuthUiState(isLoggedIn = true, user = user)
                 }
                 .onFailure { e ->
                     _uiState.value = _uiState.value.copy(
@@ -102,44 +98,66 @@ class AuthViewModel(
         }
     }
 
-    /**
-     * Initiates native Google sign-in via AndroidX Credential Manager.
-     * Shows the native Google bottom sheet — no browser involved.
-     */
     fun initiateGoogleLogin() {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true, isGoogleLoading = true, error = null)
-
-            val result = googleSignInHelper.signIn()
-
-            result
-                .onSuccess { credential ->
-                    val idToken = credential.idToken
-                    if (idToken != null) {
-                        exchangeIdTokenForSession(idToken)
-                    } else {
-                        _uiState.value = _uiState.value.copy(
-                            isLoading = false,
-                            isGoogleLoading = false,
-                            error = "Google sign-in failed: no ID token received"
-                        )
-                    }
+            workOSAuthService.initiateAuth(ApiClient.BASE_URL)
+                .onSuccess { authorizationUrl ->
+                    _workOSAuthorizationUrl.value = authorizationUrl
                 }
                 .onFailure { e ->
-                    val userMessage = if (e is GoogleSignInException) e.userMessage else null
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
                         isGoogleLoading = false,
-                        error = userMessage ?: "Google sign-in failed: ${e.message}"
+                        error = "Google login failed: ${e.message}"
                     )
                 }
         }
     }
 
-    private suspend fun exchangeIdTokenForSession(idToken: String) {
-        val result = workOSAuthService.exchangeIdTokenForSession(idToken, ApiClient.BASE_URL)
+    private fun handleWorkOSCallback(uri: String) {
+        viewModelScope.launch {
+            val parsedUri = android.net.Uri.parse(uri)
+            val error = parsedUri.getQueryParameter("error")
+            if (error != null) {
+                workOSAuthService.clearStoredAuth()
+                _uiState.value = _uiState.value.copy(
+                    isLoading = false,
+                    isGoogleLoading = false,
+                    error = parsedUri.getQueryParameter("error_description") ?: error
+                )
+                return@launch
+            }
 
-        result
+            val code = parsedUri.getQueryParameter("code")
+            val returnedState = parsedUri.getQueryParameter("state")
+            if (code.isNullOrBlank()) {
+                workOSAuthService.clearStoredAuth()
+                _uiState.value = _uiState.value.copy(
+                    isLoading = false,
+                    isGoogleLoading = false,
+                    error = "Google login failed: missing authorization code"
+                )
+                return@launch
+            }
+
+            val storedState = runCatching { workOSAuthService.getStoredState() }.getOrNull()
+            if (returnedState == null || returnedState != storedState) {
+                workOSAuthService.clearStoredAuth()
+                _uiState.value = _uiState.value.copy(
+                    isLoading = false,
+                    isGoogleLoading = false,
+                    error = "Google login failed: invalid OAuth state"
+                )
+                return@launch
+            }
+
+            exchangeCodeForSession(code, returnedState)
+        }
+    }
+
+    private suspend fun exchangeCodeForSession(code: String, state: String) {
+        workOSAuthService.exchangeCodeForSession(code, state, ApiClient.BASE_URL)
             .onSuccess { sessionCookie ->
                 apiClient.setSessionCookie(sessionCookie)
                 repository.verifySession()
@@ -149,6 +167,7 @@ class AuthViewModel(
                     .onFailure { e ->
                         _uiState.value = _uiState.value.copy(
                             isLoading = false,
+                            isGoogleLoading = false,
                             error = e.message ?: "Failed to verify session"
                         )
                     }
@@ -175,7 +194,7 @@ class AuthViewModel(
     fun logout() {
         viewModelScope.launch {
             repository.logout()
-            _uiState.value = AuthUiState(isLoggedIn = false, isGoogleLoading = false)
+            _uiState.value = AuthUiState(isLoggedIn = false)
         }
     }
 

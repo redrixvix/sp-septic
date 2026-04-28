@@ -1,30 +1,23 @@
 package com.memoryproject.app.data.auth
 
-import android.content.Context
 import android.content.SharedPreferences
-import com.memoryproject.app.data.model.WorkOSProfileResponse
-import io.ktor.client.*
-import io.ktor.client.call.*
-import io.ktor.client.engine.android.*
-import io.ktor.client.plugins.contentnegotiation.*
-import io.ktor.client.plugins.logging.*
-import io.ktor.client.request.*
-import io.ktor.client.statement.*
-import io.ktor.http.*
-import io.ktor.serialization.kotlinx.json.*
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.android.Android
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.logging.LogLevel
+import io.ktor.client.plugins.logging.Logging
+import io.ktor.client.request.header
+import io.ktor.client.request.post
+import io.ktor.client.request.setBody
+import io.ktor.client.statement.HttpResponse
+import io.ktor.client.statement.bodyAsText
+import io.ktor.http.ContentType
+import io.ktor.http.HttpHeaders
+import io.ktor.http.HttpStatusCode
+import io.ktor.serialization.kotlinx.json.json
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 
-/**
- * WorkOS Google OAuth service using raw REST API via Ktor.
- *
- * Flow for Android (PKCE, no cookies shared with Custom Tab):
- *  1. [initiateAuth] — generates PKCE verifier/challenge, builds auth URL, stores verifier in prefs
- *  2. [getStoredVerifier] — returns the stored verifier for use in callback
- *  3. [exchangeCodeForSession] — calls backend mobile callback with code+verifier to get session cookie
- *
- * The backend [/api/auth/callback/mobile] endpoint handles the actual WorkOS token exchange
- * and returns the session cookie for the app to store.
- */
 class WorkOSAuthService(private val prefs: SharedPreferences) {
 
     private val client = HttpClient(Android) {
@@ -39,152 +32,96 @@ class WorkOSAuthService(private val prefs: SharedPreferences) {
     }
 
     companion object {
-        private const val WORKOS_CLIENT_ID = "client_01KPTJ9V6VTS6BEPNHFAKBJQB1"
-        private const val CALLBACK_URL = "memoryproject://oauth/callback"
-        private const val WORKOS_API_BASE = "https://api.workos.com"
-
-        private const val KEY_CODE_VERIFIER = "oauth_code_verifier"
-        private const val KEY_STATE = "oauth_state"
+        private const val KEY_FLOW_ID = "workos_mobile_flow_id"
+        private const val KEY_STATE = "workos_mobile_state"
     }
 
-    /**
-     * Initiates Google OAuth by building the authorization URL with PKCE.
-     * The returned URL should be opened in a Chrome Custom Tab.
-     *
-     * @return The authorization URL to open in a Custom Tab
-     */
-    fun initiateAuth(): String {
-        val codeVerifier = PKCEUtil.generateCodeVerifier()
-        val state = PKCEUtil.generateState()
-        val codeChallenge = PKCEUtil.generateCodeChallenge(codeVerifier)
+    suspend fun initiateAuth(backendBaseUrl: String): Result<String> = runCatching {
+        val response: HttpResponse = client.post("$backendBaseUrl/api/auth/mobile/google/start") {
+            header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+        }
+        val bodyText = response.bodyAsText()
 
-        // Store for callback exchange
+        if (response.status != HttpStatusCode.OK) {
+            throw Exception(readError(bodyText, "Failed to start Google login"))
+        }
+
+        val startResponse = Json.decodeFromString<MobileAuthStartResponse>(bodyText)
+        val state = android.net.Uri.parse(startResponse.authorizationUrl).getQueryParameter("state")
+            ?: throw Exception("WorkOS authorization URL did not include state")
+
         prefs.edit()
-            .putString(KEY_CODE_VERIFIER, codeVerifier)
+            .putString(KEY_FLOW_ID, startResponse.flowId)
             .putString(KEY_STATE, state)
             .apply()
 
-        val queryParams = listOf(
-            "client_id" to WORKOS_CLIENT_ID,
-            "redirect_uri" to CALLBACK_URL,
-            "response_type" to "code",
-            "provider" to "GoogleOAuth",
-            "state" to state,
-            "code_challenge" to codeChallenge,
-            "code_challenge_method" to "S256"
-        ).joinToString("&") { (key, value) ->
-            "$key=${java.net.URLEncoder.encode(value, "UTF-8")}"
-        }
-
-        return "$WORKOS_API_BASE/user_management/authorize?$queryParams"
+        startResponse.authorizationUrl
     }
 
-    /**
-     * Returns the PKCE code verifier stored by [initiateAuth].
-     * @throws IllegalStateException if no auth was initiated
-     */
-    fun getStoredVerifier(): String {
-        return prefs.getString(KEY_CODE_VERIFIER, null)
-            ?: throw IllegalStateException("No PKCE verifier — call initiateAuth() first")
-    }
-
-    /**
-     * Returns the state parameter stored by [initiateAuth].
-     * @throws IllegalStateException if no auth was initiated
-     */
     fun getStoredState(): String {
         return prefs.getString(KEY_STATE, null)
-            ?: throw IllegalStateException("No state stored — call initiateAuth() first")
+            ?: throw IllegalStateException("No WorkOS state stored - call initiateAuth() first")
     }
 
-    /**
-     * Clears stored PKCE data. Call after successful auth or on error.
-     */
     fun clearStoredAuth() {
         prefs.edit()
-            .remove(KEY_CODE_VERIFIER)
+            .remove(KEY_FLOW_ID)
             .remove(KEY_STATE)
             .apply()
     }
 
-    /**
-     * Exchanges the OAuth authorization code (from the callback URI) for a session cookie
-     * by calling the backend mobile callback endpoint.
-     *
-     * @param code The authorization code from the callback URI
-     * @param backendBaseUrl Base URL of the backend API (e.g., https://web-redrixvixs-projects.vercel.app)
-     * @return Result containing the raw session cookie string on success
-     */
-    suspend fun exchangeCodeForSession(code: String, backendBaseUrl: String): Result<String> = runCatching {
-        val codeVerifier = getStoredVerifier()
-        val state = getStoredState()
+    suspend fun exchangeCodeForSession(
+        code: String,
+        state: String,
+        backendBaseUrl: String,
+    ): Result<String> = runCatching {
+        val flowId = prefs.getString(KEY_FLOW_ID, null)
+            ?: throw IllegalStateException("No WorkOS flow stored - call initiateAuth() first")
 
-        val callbackUrl = listOf(
-            "code" to code,
-            "state" to state,
-            "code_verifier" to codeVerifier
-        ).joinToString("&") { (key, value) ->
-            "$key=${java.net.URLEncoder.encode(value, "UTF-8")}"
+        val response: HttpResponse = client.post("$backendBaseUrl/api/auth/mobile/google/finish") {
+            header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+            setBody(MobileAuthFinishRequest(flowId = flowId, code = code, state = state))
         }
-
-        val mobileCallbackUrl = "$backendBaseUrl/api/auth/callback/mobile?$callbackUrl"
-
-        val response: HttpResponse = client.get(mobileCallbackUrl)
-
         val bodyText = response.bodyAsText()
 
         if (response.status != HttpStatusCode.OK) {
-            val errorJson = try {
-                Json.decodeFromString<Map<String, String>>(bodyText)
-            } catch (_: Exception) {
-                mapOf("error" to bodyText.take(100))
-            }
-            throw Exception(errorJson["error"] ?: "OAuth callback failed with status ${response.status.value}")
+            throw Exception(readError(bodyText, "Google login failed with status ${response.status.value}"))
         }
 
-        // Extract session cookie from Set-Cookie header
-        val sessionCookie = response.headers[HttpHeaders.SetCookie]
-            ?.split(";")
+        val sessionCookie = response.headers.getAll(HttpHeaders.SetCookie)
+            ?.asSequence()
+            ?.flatMap { it.split(";").asSequence() }
             ?.firstOrNull { cookie ->
                 cookie.contains("session", ignoreCase = true) ||
-                cookie.contains("token", ignoreCase = true)
+                    cookie.contains("token", ignoreCase = true)
             }
-            ?: throw Exception("No session cookie in callback response")
+            ?: throw Exception("No session cookie in mobile auth response")
 
         clearStoredAuth()
         sessionCookie
     }
 
-    /**
-     * Exchanges a Google ID token (from native Credential Manager) for a session cookie
-     * via the backend mobile callback endpoint.
-     */
-    suspend fun exchangeIdTokenForSession(idToken: String, backendBaseUrl: String): Result<String> = runCatching {
-        val callbackUrl = "$backendBaseUrl/api/auth/callback/mobile?id_token=${java.net.URLEncoder.encode(idToken, "UTF-8")}"
-
-        val response: HttpResponse = client.get(callbackUrl)
-        val bodyText = response.bodyAsText()
-
-
-        if (response.status != HttpStatusCode.OK) {
-            val errorJson = try {
-                Json.decodeFromString<Map<String, String>>(bodyText)
-            } catch (_: Exception) {
-                mapOf("error" to bodyText.take(100))
-            }
-            throw Exception(errorJson["error"] ?: "ID token auth failed with status ${response.status.value}")
+    private fun readError(bodyText: String, fallback: String): String {
+        return try {
+            Json.decodeFromString<ErrorResponse>(bodyText).error
+        } catch (_: Exception) {
+            bodyText.take(160).ifBlank { fallback }
         }
-
-
-        val sessionCookie = response.headers[HttpHeaders.SetCookie]
-            ?.split(";")
-            ?.firstOrNull { cookie ->
-                cookie.contains("session", ignoreCase = true) ||
-                cookie.contains("token", ignoreCase = true)
-            }
-            ?: throw Exception("No session cookie in callback response")
-
-
-        sessionCookie
     }
 }
+
+@Serializable
+private data class MobileAuthStartResponse(
+    val authorizationUrl: String,
+    val flowId: String,
+)
+
+@Serializable
+private data class MobileAuthFinishRequest(
+    val flowId: String,
+    val code: String,
+    val state: String,
+)
+
+@Serializable
+private data class ErrorResponse(val error: String)

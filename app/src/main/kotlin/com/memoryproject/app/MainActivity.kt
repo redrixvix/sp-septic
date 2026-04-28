@@ -2,10 +2,13 @@ package com.memoryproject.app
 
 import android.app.NotificationManager
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
@@ -107,21 +110,34 @@ class MainActivity : ComponentActivity() {
         handleIntent(intent)
     }
 
-    override fun onNewIntent(intent: android.content.Intent) {
+    override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         handleIntent(intent)
     }
 
-    private fun handleIntent(intent: android.content.Intent) {
+    private fun handleIntent(intent: Intent) {
         val data = intent.data ?: return
         val scheme = data.scheme ?: return
 
         if (scheme == "memoryproject" && data.host == "oauth" && data.path == "/callback") {
-            // Old OAuth callback — no longer used with native Credential Manager.
-            //Kept for backwards compatibility with any existing installs.
+            authViewModel.setPendingGoogleCallback(data.toString())
         } else if (scheme == "memoryproject" && data.host == "invite") {
             // Existing invite deep link — handled by Navigation deep link
         }
+    }
+}
+
+private fun launchCustomTab(context: Context, uri: Uri) {
+    try {
+        CustomTabsIntent.Builder()
+            .setShowTitle(true)
+            .build()
+            .launchUrl(context, uri)
+    } catch (e: Exception) {
+        val browserIntent = Intent(Intent.ACTION_VIEW, uri).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        }
+        context.startActivity(browserIntent)
     }
 }
 
@@ -149,10 +165,12 @@ fun MemoryNavHost(
     val selectedColor = if (isDark) DarkBronze else Bronze
     val unselectedColor = if (isDark) DarkOnSurfaceVariant else CharcoalMuted
 
-    // Watch pending Google OAuth callback — no-op now but kept for migration
-    val pendingGoogleCallback by authViewModel.pendingGoogleCallback.collectAsState()
-    LaunchedEffect(pendingGoogleCallback) {
-        // No action — native Credential Manager handles sign-in inline
+    val context = androidx.compose.ui.platform.LocalContext.current
+    val workOSAuthorizationUrl by authViewModel.workOSAuthorizationUrl.collectAsState()
+    LaunchedEffect(workOSAuthorizationUrl) {
+        val url = workOSAuthorizationUrl ?: return@LaunchedEffect
+        launchCustomTab(context, Uri.parse(url))
+        authViewModel.consumeWorkOSAuthorizationUrl()
     }
 
     Scaffold(
@@ -263,15 +281,13 @@ fun MemoryNavHost(
                 ),
                 enterTransition = { fadeIn(animationSpec = tween(300)) },
                 exitTransition = { fadeOut(animationSpec = tween(300)) }
-            ) { backStackEntry ->
-                val googleCallback = backStackEntry.arguments?.getString("google_callback")
+            ) {
                 AuthScreen(
                     onLoginSuccess = {
                         navController.navigate("home") {
                             popUpTo("auth") { inclusive = true }
                         }
                     },
-                    googleCallbackUri = googleCallback,
                     darkTheme = darkThemeEnabled,
                     viewModel = authViewModel
                 )
