@@ -192,9 +192,9 @@ fun AuthScreen(
 
             Text(
                 text = "Memory Project",
-                style = MaterialTheme.typography.headlineMedium,
+                style = MaterialTheme.typography.titleLarge,
                 color = primaryText,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.SemiBold
             )
 
             Spacer(modifier = Modifier.height(4.dp))

@@ -72,7 +72,7 @@ fun ProfileScreen(
             title = {
                 Text(
                     "Edit Display Name",
-                    style = MaterialTheme.typography.headlineSmall,
+                    style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.SemiBold
                 )
             },
@@ -123,7 +123,7 @@ fun ProfileScreen(
             title = {
                 Text(
                     "Invite a Family Member",
-                    style = MaterialTheme.typography.headlineSmall,
+                    style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.SemiBold
                 )
             },
@@ -203,7 +203,7 @@ fun ProfileScreen(
             title = {
                 Text(
                     "Love The Memory Project?",
-                    style = MaterialTheme.typography.headlineSmall,
+                    style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.SemiBold,
                     textAlign = TextAlign.Center
                 )
@@ -265,8 +265,8 @@ fun ProfileScreen(
                         }
                         Text(
                             "Profile",
-                            style = MaterialTheme.typography.headlineMedium,
-                            fontWeight = FontWeight.Bold,
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.SemiBold,
                             color = primaryText
                         )
                     }
@@ -380,7 +380,7 @@ fun ProfileScreen(
                         // Name — warm, confident
                         Text(
                             text = uiState.userName.ifBlank { "Your Story" },
-                            style = MaterialTheme.typography.headlineMedium,
+                            style = MaterialTheme.typography.headlineSmall,
                             color = primaryText,
                             fontWeight = FontWeight.SemiBold,
                             textAlign = TextAlign.Center
@@ -553,7 +553,7 @@ private fun StatItem(value: String, label: String, highlight: Boolean = false, i
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
             text = value,
-            style = MaterialTheme.typography.headlineMedium,
+            style = MaterialTheme.typography.headlineLarge,
             color = if (highlight) if (isDark) DarkBronze else Bronze else mutedTextColor,
             fontWeight = FontWeight.Bold
         )

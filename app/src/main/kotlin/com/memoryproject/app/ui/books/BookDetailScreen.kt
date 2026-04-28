@@ -180,8 +180,8 @@ fun BookDetailScreen(
                         Column {
                             Text(
                                 uiState.book?.title ?: "Book",
-                                style = MaterialTheme.typography.headlineMedium,
-                                fontWeight = FontWeight.Bold,
+                                style = MaterialTheme.typography.titleLarge,
+                                fontWeight = FontWeight.SemiBold,
                                 color = topBarTitleColor,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis
@@ -395,7 +395,7 @@ fun BookDetailScreen(
                         Spacer(modifier = Modifier.height(16.dp))
                         Text(
                             "Couldn't load this book",
-                            style = MaterialTheme.typography.headlineSmall,
+                            style = MaterialTheme.typography.titleMedium,
                             color = if (darkTheme) DarkOnSurface else Charcoal
                         )
                         Spacer(modifier = Modifier.height(8.dp))
@@ -480,7 +480,7 @@ fun BookDetailScreen(
 
                         Text(
                             "Your story starts here",
-                            style = MaterialTheme.typography.headlineSmall,
+                            style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.SemiBold,
                             color = if (darkTheme) DarkOnSurface else Charcoal
                         )
@@ -667,7 +667,7 @@ fun BookDetailScreen(
             title = {
                 Text(
                     "Delete this memory?",
-                    style = MaterialTheme.typography.headlineSmall,
+                    style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.SemiBold
                 )
             },
@@ -1117,7 +1117,7 @@ private fun MemoryDialog(
                     Column {
                         Text(
                             title,
-                            style = MaterialTheme.typography.headlineSmall,
+                            style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.SemiBold,
                             color = textColor
                         )

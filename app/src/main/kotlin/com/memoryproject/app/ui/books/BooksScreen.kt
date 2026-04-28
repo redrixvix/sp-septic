@@ -111,8 +111,8 @@ fun BooksScreen(
                         Column {
                             Text(
                                 "My Books",
-                                style = MaterialTheme.typography.headlineLarge,
-                                fontWeight = FontWeight.Bold,
+                                style = MaterialTheme.typography.titleLarge,
+                                fontWeight = FontWeight.SemiBold,
                                 color = primaryText
                             )
                             if (uiState.books.isNotEmpty()) {

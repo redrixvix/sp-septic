@@ -94,8 +94,8 @@ fun SettingsScreen(
                         }
                         Text(
                             "Settings",
-                            style = MaterialTheme.typography.headlineMedium,
-                            fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold,
                             color = primaryText
                         )
                     }

@@ -117,8 +117,8 @@ fun HomeScreen(
                                 )
                             }
                             Text(
-                                text = "Memory Project",
-                                style = MaterialTheme.typography.titleMedium,
+                                "Memory Project",
+                                style = MaterialTheme.typography.titleLarge,
                                 color = primaryText,
                                 fontWeight = FontWeight.SemiBold
                             )

@@ -19,6 +19,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -162,7 +163,6 @@ fun MemoryNavHost(
 
     val isDark = darkThemeEnabled
     val scaffoldBg = if (isDark) DarkBackground else Cornsilk
-    val navBg = if (isDark) DarkSurface else WarmWhite
     val selectedColor = if (isDark) DarkBronze else Bronze
     val unselectedColor = if (isDark) DarkOnSurfaceVariant else CharcoalMuted
 
@@ -179,72 +179,75 @@ fun MemoryNavHost(
         containerColor = scaffoldBg,
         bottomBar = {
             if (showBottomNav) {
-                NavigationBar(
-                    containerColor = navBg,
-                    contentColor = if (isDark) DarkOnSurface else Charcoal,
-                    tonalElevation = 0.dp,
-                    modifier = Modifier
-                        .padding(horizontal = 8.dp)
-                        .navigationBarsPadding()
-                        .border(
-                            width = 1.dp,
-                            color = if (isDark) DarkBorder else Border,
-                            shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp)
-                        )
-                ) {
-                    bottomNavItems.forEach { item ->
-                        val selected = currentDestination?.hierarchy?.any { it.route == item.route } == true
-                        val pressInteraction = remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
-                        val isPressed by pressInteraction.collectIsPressedAsState()
-                        val haptic = androidx.compose.ui.platform.LocalHapticFeedback.current
-                        val iconScale by animateFloatAsState(
-                            targetValue = when {
-                                isPressed -> 0.82f
-                                selected -> 1.08f
-                                else -> 1f
-                            },
-                            animationSpec = spring(dampingRatio = 0.6f, stiffness = 400f),
-                            label = "navIconScale"
-                        )
-                        LaunchedEffect(isPressed) {
-                            if (isPressed) haptic.performHapticFeedback(androidx.compose.ui.hapticfeedback.HapticFeedbackType.LongPress)
-                        }
-                        NavigationBarItem(
-                            selected = selected,
-                            onClick = {
-                                navController.navigate(item.route) {
-                                    popUpTo(navController.graph.findStartDestination().id) {
-                                        saveState = true
-                                    }
-                                    launchSingleTop = true
-                                    restoreState = true
-                                }
-                            },
-                            interactionSource = pressInteraction,
-                            icon = {
-                                Icon(
-                                    imageVector = if (selected) item.selectedIcon else item.unselectedIcon,
-                                    contentDescription = item.title,
-                                    modifier = Modifier
-                                        .scale(iconScale)
-                                        .size(26.dp)
-                                )
-                            },
-                            label = {
-                                Text(
-                                    text = item.title,
-                                    style = MaterialTheme.typography.labelMedium,
-                                    fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Normal
-                                )
-                            },
-                            colors = NavigationBarItemDefaults.colors(
-                                selectedIconColor = selectedColor,
-                                selectedTextColor = selectedColor,
-                                unselectedIconColor = unselectedColor,
-                                unselectedTextColor = unselectedColor,
-                                indicatorColor = if (isDark) DarkBronze.copy(alpha = 0.18f) else Bronze.copy(alpha = 0.15f)
+                // Wrapping Box gives us full-width with proper rounded corners
+                Box(modifier = Modifier.fillMaxWidth().navigationBarsPadding()) {
+                    NavigationBar(
+                        containerColor = if (isDark) DarkSurface.copy(alpha = 0.95f) else WarmWhite.copy(alpha = 0.95f),
+                        contentColor = if (isDark) DarkOnSurface else Charcoal,
+                        tonalElevation = 0.dp,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 8.dp, vertical = 8.dp)
+                            .border(
+                                width = 1.dp,
+                                color = if (isDark) DarkBorder.copy(alpha = 0.6f) else Border.copy(alpha = 0.5f),
+                                shape = RoundedCornerShape(24.dp)
                             )
-                        )
+                    ) {
+                        bottomNavItems.forEach { item ->
+                            val selected = currentDestination?.hierarchy?.any { it.route == item.route } == true
+                            val pressInteraction = remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
+                            val isPressed by pressInteraction.collectIsPressedAsState()
+                            val haptic = androidx.compose.ui.platform.LocalHapticFeedback.current
+                            val iconScale by animateFloatAsState(
+                                targetValue = when {
+                                    isPressed -> 0.82f
+                                    selected -> 1.12f
+                                    else -> 1f
+                                },
+                                animationSpec = spring(dampingRatio = 0.6f, stiffness = 400f),
+                                label = "navIconScale"
+                            )
+                            LaunchedEffect(isPressed) {
+                                if (isPressed) haptic.performHapticFeedback(androidx.compose.ui.hapticfeedback.HapticFeedbackType.LongPress)
+                            }
+                            NavigationBarItem(
+                                selected = selected,
+                                onClick = {
+                                    navController.navigate(item.route) {
+                                        popUpTo(navController.graph.findStartDestination().id) {
+                                            saveState = true
+                                        }
+                                        launchSingleTop = true
+                                        restoreState = true
+                                    }
+                                },
+                                interactionSource = pressInteraction,
+                                icon = {
+                                    Icon(
+                                        imageVector = if (selected) item.selectedIcon else item.unselectedIcon,
+                                        contentDescription = item.title,
+                                        modifier = Modifier
+                                            .scale(iconScale)
+                                            .size(26.dp)
+                                    )
+                                },
+                                label = {
+                                    Text(
+                                        text = item.title,
+                                        style = MaterialTheme.typography.labelSmall,
+                                        fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Normal
+                                    )
+                                },
+                                colors = NavigationBarItemDefaults.colors(
+                                    selectedIconColor = selectedColor,
+                                    selectedTextColor = selectedColor,
+                                    unselectedIconColor = unselectedColor,
+                                    unselectedTextColor = unselectedColor,
+                                    indicatorColor = if (isDark) DarkBronze.copy(alpha = 0.15f) else Bronze.copy(alpha = 0.12f)
+                                )
+                            )
+                        }
                     }
                 }
             }

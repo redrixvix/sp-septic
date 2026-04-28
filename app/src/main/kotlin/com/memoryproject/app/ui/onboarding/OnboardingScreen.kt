@@ -327,9 +327,9 @@ private fun OnboardingPageContent(
         // Title — scaled for mobile
         Text(
             text = page.title,
-            style = MaterialTheme.typography.headlineSmall,
+            style = MaterialTheme.typography.titleLarge,
             color = primaryText,
-            fontWeight = FontWeight.Bold,
+            fontWeight = FontWeight.SemiBold,
             textAlign = TextAlign.Center,
             lineHeight = 30.sp
         )

@@ -157,7 +157,7 @@ fun InviteScreen(
                     ) {
                         Text(
                             "You've been invited",
-                            style = MaterialTheme.typography.headlineMedium,
+                            style = MaterialTheme.typography.titleLarge,
                             color = primaryText,
                             fontWeight = FontWeight.SemiBold,
                             textAlign = TextAlign.Center
@@ -339,7 +339,7 @@ fun InviteScreen(
 
                         Text(
                             "You're in!",
-                            style = MaterialTheme.typography.headlineMedium,
+                            style = MaterialTheme.typography.titleLarge,
                             color = primaryText,
                             fontWeight = FontWeight.SemiBold
                         )
@@ -376,7 +376,7 @@ fun InviteScreen(
 
                         Text(
                             "Invite unavailable",
-                            style = MaterialTheme.typography.headlineSmall,
+                            style = MaterialTheme.typography.titleMedium,
                             color = primaryText,
                             fontWeight = FontWeight.SemiBold,
                             textAlign = TextAlign.Center
@@ -400,7 +400,7 @@ fun InviteScreen(
                     ) {
                         Text(
                             "Sign in to accept",
-                            style = MaterialTheme.typography.headlineSmall,
+                            style = MaterialTheme.typography.titleMedium,
                             color = primaryText,
                             fontWeight = FontWeight.SemiBold,
                             textAlign = TextAlign.Center
