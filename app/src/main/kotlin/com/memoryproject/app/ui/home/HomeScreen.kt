@@ -62,11 +62,17 @@ fun HomeScreen(
     val mutedText = if (darkTheme) DarkOnSurfaceVariant else CharcoalMuted
     val cardBg = if (darkTheme) DarkSurface else WarmWhite
 
-    // Warm ambient top glow in light mode — premium page depth
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(scaffoldBg)
+    ) {
+        // Warm ambient top glow in light mode — premium page depth
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(240.dp)
+                .align(Alignment.TopCenter)
                 .background(
                     brush = Brush.verticalGradient(
                         colors = if (darkTheme) {
@@ -333,8 +339,8 @@ fun HomeScreen(
                 }
             }
         }
-
     }
+}
 }
 
 @Composable
@@ -1075,13 +1081,23 @@ private fun HomeSkeletonCard(darkTheme: Boolean) {
     val shimmerBase = if (darkTheme) DarkDivider else Divider
     val shimmerHighlight = if (darkTheme) DarkOnSurface.copy(alpha = 0.06f) else Divider.copy(alpha = 0.5f)
 
-    // Single-pass shimmer — plays once on load then settles
-    val shimmerAlpha = remember { Animatable(0.3f) }
-    LaunchedEffect(Unit) {
-        shimmerAlpha.animateTo(0.65f, animationSpec = tween(durationMillis = 1200, easing = FastOutSlowInEasing))
-    }
-    val shimmerBrush = remember(shimmerAlpha.value, shimmerBase, shimmerHighlight) {
-        Brush.linearGradient(listOf(shimmerBase, shimmerHighlight.copy(alpha = shimmerAlpha.value), shimmerBase))
+    // Continuous shimmer sweep — premium loading feel
+    val infiniteTransition = rememberInfiniteTransition(label = "homeSkeletonShimmer")
+    val shimmerOffset by infiniteTransition.animateFloat(
+        initialValue = -300f,
+        targetValue = 600f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(1600, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart
+        ),
+        label = "homeShimmerOffset"
+    )
+    val shimmerBrush = remember(shimmerOffset, shimmerBase, shimmerHighlight) {
+        Brush.linearGradient(
+            colors = listOf(shimmerBase, shimmerHighlight.copy(alpha = 0.4f), shimmerBase.copy(alpha = 0.6f)),
+            start = androidx.compose.ui.geometry.Offset(shimmerOffset, 0f),
+            end = androidx.compose.ui.geometry.Offset(shimmerOffset + 200f, 0f)
+        )
     }
 
     val cardBg = if (darkTheme) DarkSurface else WarmWhite

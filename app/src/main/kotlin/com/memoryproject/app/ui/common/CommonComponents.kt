@@ -29,8 +29,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.memoryproject.app.ui.theme.*
-import org.koin.compose.koinInject
-import com.memoryproject.app.data.preferences.PreferencesManager
 import androidx.compose.foundation.BorderStroke
 
 // ─── Premium Button ────────────────────────────────────────────────────────────
@@ -61,12 +59,7 @@ fun PremiumButton(
         modifier = modifier
             .height(52.dp)
             .fillMaxWidth()
-            .graphicsLayer { scaleX = scale; scaleY = scale }
-            .clickable(
-                interactionSource = interactionSource,
-                indication = null,
-                onClick = onClick
-            ),
+            .graphicsLayer { scaleX = scale; scaleY = scale },
         enabled = enabled && !isLoading,
         shape = RoundedCornerShape(14.dp),
         colors = ButtonDefaults.buttonColors(
@@ -78,7 +71,8 @@ fun PremiumButton(
         elevation = ButtonDefaults.buttonElevation(
             defaultElevation = if (isPrimary) 4.dp else 1.dp,
             pressedElevation = if (isPrimary) 8.dp else 4.dp
-        )
+        ),
+        interactionSource = interactionSource
     ) {
         if (isLoading) {
             CircularProgressIndicator(

@@ -229,6 +229,11 @@ fun AuthScreen(
                         color = cardBg,
                         shape = RoundedCornerShape(12.dp)
                     )
+                    .border(
+                        width = 1.dp,
+                        color = if (isDark) DarkBorder.copy(alpha = 0.5f) else Border.copy(alpha = 0.6f),
+                        shape = RoundedCornerShape(12.dp)
+                    )
                     .padding(4.dp)
             ) {
                 Box(
@@ -361,7 +366,7 @@ fun AuthScreen(
                         modifier = Modifier
                             .weight(1f)
                             .height(1.5.dp)
-                            .background(if (isDark) DarkBorder else Border)
+                            .background(if (isDark) DarkBorder else Bronze.copy(alpha = 0.35f))
                     )
                     Spacer(modifier = Modifier.width(12.dp))
                     Text(
@@ -374,7 +379,7 @@ fun AuthScreen(
                         modifier = Modifier
                             .weight(1f)
                             .height(1.5.dp)
-                            .background(if (isDark) DarkBorder else Border)
+                            .background(if (isDark) DarkBorder else Bronze.copy(alpha = 0.35f))
                     )
                 }
             } else {

@@ -671,14 +671,22 @@ private fun BooksSkeletonCard(darkTheme: Boolean) {
     val shimmerBase = if (darkTheme) DarkDivider else Divider
     val shimmerHighlight = if (darkTheme) DarkOnSurface.copy(alpha = 0.06f) else Divider.copy(alpha = 0.5f)
 
-    var shimmerAlpha by remember { mutableFloatStateOf(0.3f) }
-    LaunchedEffect(Unit) {
-        shimmerAlpha = 0.7f
-        delay(800)
-        shimmerAlpha = 0.3f
-    }
-    val shimmerBrush = remember(shimmerAlpha, shimmerBase, shimmerHighlight) {
-        Brush.linearGradient(listOf(shimmerBase, shimmerHighlight.copy(alpha = shimmerAlpha), shimmerBase))
+    val infiniteTransition = rememberInfiniteTransition(label = "bookSkeletonShimmer")
+    val shimmerProgress by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 1f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(1400, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart
+        ),
+        label = "bookShimmerProgress"
+    )
+    val shimmerBrush = remember(shimmerProgress, shimmerBase, shimmerHighlight) {
+        Brush.linearGradient(
+            colors = listOf(shimmerBase, shimmerHighlight.copy(alpha = 0.3f + shimmerProgress * 0.5f), shimmerBase),
+            start = androidx.compose.ui.geometry.Offset(shimmerProgress * 1000f, 0f),
+            end = androidx.compose.ui.geometry.Offset(shimmerProgress * 1000f + 300f, 0f)
+        )
     }
 
     val cardBg = if (darkTheme) DarkSurface else WarmWhite
