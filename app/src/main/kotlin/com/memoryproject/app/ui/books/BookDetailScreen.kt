@@ -969,7 +969,7 @@ private fun MemoryDialog(
                     ),
                     supportingText = {
                         if (promptInput.isBlank()) {
-                            Text("Or pick a prompt below to get started", color = mutedTextColor, style = MaterialTheme.typography.bodySmall)
+                            Text("Tip: pick a prompt below to get started", color = mutedTextColor, style = MaterialTheme.typography.bodySmall)
                         }
                     }
                 )
@@ -1048,9 +1048,10 @@ private fun MemoryDialog(
                     placeholder = { Text("Write freely — this is yours.") },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .heightIn(min = 140.dp),
+                        .heightIn(min = 140.dp, max = 320.dp),
                     shape = RoundedCornerShape(12.dp),
                     minLines = 5,
+                    maxLines = 12,
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                     keyboardActions = KeyboardActions(
                         onDone = {

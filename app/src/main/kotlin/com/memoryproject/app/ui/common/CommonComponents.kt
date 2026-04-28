@@ -431,13 +431,13 @@ fun SettingsSection(
 ) {
     val sectionTitleColor = if (isDark) DarkOnSurfaceVariant else CharcoalMuted
 
-    Column {
+    Column(modifier = Modifier.padding(bottom = 4.dp)) {
         Text(
             text = title,
             style = MaterialTheme.typography.labelMedium,
             color = sectionTitleColor,
             fontWeight = FontWeight.SemiBold,
-            modifier = Modifier.padding(start = 4.dp, bottom = 8.dp)
+            modifier = Modifier.padding(start = 4.dp, bottom = 10.dp)
         )
         Card(
             shape = RoundedCornerShape(14.dp),
@@ -475,7 +475,7 @@ fun SettingsRow(
                 .fillMaxWidth()
                 .background(bgColor)
                 .clickable(onClick = onClick)
-                .padding(horizontal = 16.dp, vertical = 20.dp),
+                .padding(horizontal = 16.dp, vertical = 18.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             // Left accent strip — warm bronze brand marker

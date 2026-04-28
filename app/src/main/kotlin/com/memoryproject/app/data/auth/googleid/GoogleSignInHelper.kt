@@ -25,28 +25,18 @@ class GoogleSignInHelper(
     private val serverClientId: String,
 ) {
     /**
-     * Signs in using SIWG option (native Google-branded bottom sheet).
-     * Falls back to GetGoogleIdOption if SIWG is unavailable.
+     * Signs in using Sign In With Google (SIWG) — native Google-branded bottom sheet.
+     * No browser, no account picker dialog — just the branded Google experience.
      */
     suspend fun signIn(): Result<GoogleIdTokenCredential> {
         val credentialManager = CredentialManager.create(context)
 
-        // Try SIWG option first — this is the modern "Sign in with Google" bottom sheet
+        // SIWG shows the branded Google bottom sheet — single dialog, no extra picker
         val siwgOption = GetSignInWithGoogleOption.Builder(serverClientId).build()
-        val siwgRequest = Builder().addCredentialOption(siwgOption).build()
+        val request = Builder().addCredentialOption(siwgOption).build()
 
         return runCatching {
-            credentialManager.getCredential(context, siwgRequest).credential.let { cred ->
-                extractCredential(cred)
-            }
-        }.recoverCatching {
-            // SIWG failed — try GetGoogleIdOption as fallback
-            val googleIdOption = GetGoogleIdOption.Builder()
-                .setFilterByAuthorizedAccounts(false)
-                .setServerClientId(serverClientId)
-                .build()
-            val fallbackRequest = Builder().addCredentialOption(googleIdOption).build()
-            credentialManager.getCredential(context, fallbackRequest).credential.let { cred ->
+            credentialManager.getCredential(context, request).credential.let { cred ->
                 extractCredential(cred)
             }
         }.recoverCatching { e ->
@@ -55,22 +45,18 @@ class GoogleSignInHelper(
     }
 
     private fun extractCredential(credential: androidx.credentials.Credential): GoogleIdTokenCredential {
-        return when (credential) {
-            is GoogleIdTokenCredential -> credential
-            is CustomCredential -> {
-                val type = credential.type
-                if (type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL ||
-                    type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_SIWG_CREDENTIAL
-                ) {
-                    GoogleIdTokenCredential.createFrom(credential.data)
-                } else {
-                    throw GoogleSignInException.InvalidCredentialType("Unexpected credential type: $type")
-                }
+        // Handle GoogleIdTokenCredential directly (from SIWG) or CustomCredential (from other Google flows)
+        if (credential is GoogleIdTokenCredential) return credential
+        if (credential is CustomCredential) {
+            val type = credential.type
+            // TYPE_GOOGLE_ID_TOKEN_CREDENTIAL covers both SIWG and GetGoogleIdOption credential types
+            if (type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
+                return GoogleIdTokenCredential.createFrom(credential.data)
             }
-            else -> throw GoogleSignInException.InvalidCredentialType(
-                "Unexpected credential type: ${credential::class.java.name}"
-            )
         }
+        throw GoogleSignInException.InvalidCredentialType(
+            "Unexpected credential type: ${credential::class.java.name}"
+        )
     }
 
     private fun mapToSignInException(e: Throwable): GoogleSignInException {
@@ -78,7 +64,7 @@ class GoogleSignInHelper(
             is GetCredentialCancellationException -> GoogleSignInException.UserCancelled
             is NoCredentialException -> GoogleSignInException.NoGoogleAccountsFound
             is GetCredentialException -> GoogleSignInException.GetCredentialError(
-                errorType = e::class.java.simpleName,
+                errorType = e.type,
                 detail = e.message ?: "Unknown"
             )
             is GoogleSignInException -> e

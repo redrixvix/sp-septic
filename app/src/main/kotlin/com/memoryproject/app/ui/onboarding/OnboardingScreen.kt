@@ -5,6 +5,9 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.size
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -77,19 +80,19 @@ private val PAGES = listOf(
     OnboardingPage(
         icon = Icons.AutoMirrored.Filled.MenuBook,
         title = "Your family's stories\ndeserve to live forever",
-        subtitle = "Gather the moments, stories, and wisdom that make your family who they are — and preserve them forever.",
+        subtitle = "Gather the moments, stories, and wisdom that make your family who they are.",
         accentColor = Bronze
     ),
     OnboardingPage(
         icon = Icons.Default.AutoAwesome,
         title = "Write in your own\nwords, your own time",
-        subtitle = "Answer guided prompts or write freely — your stories, in your voice, on your own time.",
+        subtitle = "Answer guided prompts or write freely — your stories, in your voice.",
         accentColor = TeaGreen
     ),
     OnboardingPage(
         icon = Icons.Default.LocalLibrary,
         title = "Preserved forever,\ntreasured always",
-        subtitle = "Every story is beautifully preserved — a timeless keepsake your family will treasure for generations.",
+        subtitle = "Every story is beautifully preserved — a timeless keepsake for generations.",
         accentColor = BronzeLight
     )
 )
@@ -159,7 +162,7 @@ fun OnboardingScreen(
                     .padding(horizontal = 32.dp, vertical = 24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // Dots
+                // Dots — tappable for direct page navigation
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalAlignment = Alignment.CenterVertically
@@ -178,14 +181,32 @@ fun OnboardingScreen(
                         )
                         Box(
                             modifier = Modifier
-                                .size(size)
+                                .size(28.dp) // generous touch target
                                 .scale(dotScale)
                                 .clip(CircleShape)
-                                .background(
-                                    if (isSelected) PAGES[index].accentColor else mutedText.copy(alpha = 0.3f),
-                                    shape = CircleShape
-                                )
-                        )
+                                .background(Color.Transparent)
+                                .pointerInput(index) {
+                                    detectTapGestures(
+                                        onTap = {
+                                            coroutineScope.launch {
+                                                pagerState.animateScrollToPage(index)
+                                            }
+                                        }
+                                    )
+                                },
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(size)
+                                    .scale(dotScale)
+                                    .clip(CircleShape)
+                                    .background(
+                                        if (isSelected) PAGES[index].accentColor else mutedText.copy(alpha = 0.3f),
+                                        shape = CircleShape
+                                    )
+                            )
+                        }
                     }
                 }
 

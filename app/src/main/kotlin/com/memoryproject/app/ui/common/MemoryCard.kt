@@ -160,7 +160,7 @@ fun MemoryCard(
                         )
                         IconButton(
                             onClick = onEdit,
-                            modifier = Modifier.size(36.dp),
+                            modifier = Modifier.size(40.dp),
                             interactionSource = editInteraction
                         ) {
                             Icon(
@@ -168,7 +168,7 @@ fun MemoryCard(
                                 contentDescription = "Edit",
                                 tint = if (editPressed) (if (isDark) DarkBronze else Bronze) else mutedText,
                                 modifier = Modifier
-                                    .size(20.dp)
+                                    .size(22.dp)
                                     .graphicsLayer { scaleX = editScale; scaleY = editScale }
                             )
                         }
@@ -181,7 +181,7 @@ fun MemoryCard(
                         )
                         IconButton(
                             onClick = onShareClick,
-                            modifier = Modifier.size(36.dp),
+                            modifier = Modifier.size(40.dp),
                             interactionSource = shareInteraction
                         ) {
                             Icon(
@@ -189,7 +189,7 @@ fun MemoryCard(
                                 contentDescription = "Share",
                                 tint = if (sharePressed) (if (isDark) DarkBronze else Bronze) else mutedText,
                                 modifier = Modifier
-                                    .size(20.dp)
+                                    .size(22.dp)
                                     .graphicsLayer { scaleX = shareScale; scaleY = shareScale }
                             )
                         }
@@ -202,7 +202,7 @@ fun MemoryCard(
                         )
                         IconButton(
                             onClick = onDelete,
-                            modifier = Modifier.size(36.dp),
+                            modifier = Modifier.size(40.dp),
                             interactionSource = deleteInteraction
                         ) {
                             Icon(
@@ -210,7 +210,7 @@ fun MemoryCard(
                                 contentDescription = "Delete",
                                 tint = if (deletePressed) ErrorRed else mutedText,
                                 modifier = Modifier
-                                    .size(20.dp)
+                                    .size(22.dp)
                                     .graphicsLayer { scaleX = deleteScale; scaleY = deleteScale }
                             )
                         }
@@ -243,10 +243,7 @@ fun MemoryCard(
                                     modifier = Modifier
                                         .size(80.dp)
                                         .clip(RoundedCornerShape(12.dp))
-                                        .clickable { onPhotoClick(url) }
-                                        .then(
-                                            if (index > 0) Modifier else Modifier
-                                        ),
+                                        .clickable { onPhotoClick(url) },
                                     onError = { }
                                 )
                             }

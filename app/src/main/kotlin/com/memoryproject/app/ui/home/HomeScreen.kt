@@ -85,7 +85,8 @@ fun HomeScreen(
                     title = {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            modifier = Modifier.padding(horizontal = 4.dp)
                         ) {
                             // Compact brand icon badge
                             Box(
@@ -116,8 +117,7 @@ fun HomeScreen(
                     },
                     colors = TopAppBarDefaults.topAppBarColors(
                         containerColor = Color.Transparent
-                    ),
-                    modifier = Modifier.padding(horizontal = 4.dp)
+                    )
                 )
             }
         ) { padding ->
@@ -172,9 +172,7 @@ fun HomeScreen(
             if (uiState.booksCount > 0) {
                 item(key = "memory_prompts") {
                     MemoryPromptsSection(
-                        books = uiState.books,
                         darkTheme = darkTheme,
-                        cardBg = cardBg,
                         primaryText = primaryText,
                         mutedText = mutedText,
                         modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
@@ -1126,9 +1124,7 @@ private fun HomeSkeletonCard(darkTheme: Boolean) {
 
 @Composable
 private fun MemoryPromptsSection(
-    books: List<Book>,
     darkTheme: Boolean,
-    cardBg: Color,
     primaryText: Color,
     mutedText: Color,
     modifier: Modifier = Modifier,
@@ -1138,14 +1134,14 @@ private fun MemoryPromptsSection(
         HOME_PROMPTS.shuffled().take(3)
     }
     // Distinctive card background — warm Papaya card that stands out from the page
-    val cardBg = if (darkTheme) DarkSurfaceVariant else Papaya
+    val sectionCardBg = if (darkTheme) DarkSurfaceVariant else Papaya
     val accentColor = if (darkTheme) DarkBronze else Bronze
     val promptItemBg = if (darkTheme) DarkSurface else WarmWhite
 
     Card(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(18.dp),
-        colors = CardDefaults.cardColors(containerColor = cardBg),
+        colors = CardDefaults.cardColors(containerColor = sectionCardBg),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Row(modifier = Modifier.fillMaxWidth()) {
