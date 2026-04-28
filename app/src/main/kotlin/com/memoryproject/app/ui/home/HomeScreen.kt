@@ -475,12 +475,12 @@ private fun rememberGreeting(): String {
 @Composable
 private fun rememberWarmGreeting(userName: String): String {
     val hour = java.util.Calendar.getInstance().get(java.util.Calendar.HOUR_OF_DAY)
-    val namePart = if (userName.isNotBlank()) ", $userName" else ""
-    return remember(userName) {
+    val suffix = if (userName.isNotBlank()) ", $userName" else ""
+    return remember(userName, hour) {
         when {
-            hour < 12 -> "Good morning$namePart"
-            hour < 17 -> "Good afternoon$namePart"
-            else -> "Good evening$namePart"
+            hour < 12 -> "Good morning$suffix"
+            hour < 17 -> "Good afternoon$suffix"
+            else -> "Good evening$suffix"
         }
     }
 }

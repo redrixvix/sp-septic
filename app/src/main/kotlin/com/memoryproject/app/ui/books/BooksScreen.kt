@@ -12,7 +12,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Logout
+
 import androidx.compose.material.icons.automirrored.filled.MenuBook
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Book
@@ -45,7 +45,6 @@ fun BooksScreen(
     val uiState by viewModel.uiState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
     var showCreateDialog by remember { mutableStateOf(false) }
-    var showLogoutDialog by remember { mutableStateOf(false) }
     var newBookTitle by remember { mutableStateOf("") }
     var newBookDescription by remember { mutableStateOf("") }
 
@@ -441,59 +440,6 @@ fun BooksScreen(
         )
     }
 
-    // Logout Dialog
-    if (showLogoutDialog) {
-        AlertDialog(
-            onDismissRequest = { showLogoutDialog = false },
-            icon = {
-                Icon(
-                    Icons.AutoMirrored.Filled.Logout,
-                    contentDescription = "Sign out",
-                    tint = CharcoalMuted,
-                    modifier = Modifier.size(24.dp)
-                )
-            },
-            title = {
-                Text(
-                    "Sign out?",
-                    style = MaterialTheme.typography.headlineSmall,
-                    fontWeight = FontWeight.SemiBold
-                )
-            },
-            text = {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(
-                        "Everything you've captured will still be here when you get back.",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = mutedText,
-                        textAlign = TextAlign.Center
-                    )
-                }
-            },
-            confirmButton = {
-                Button(
-                    onClick = {
-                        showLogoutDialog = false
-                        viewModel.logout()
-                        onLogout()
-                    },
-                    shape = RoundedCornerShape(12.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = ErrorRed,
-                        contentColor = WarmWhite
-                    )
-                ) {
-                    Text("Sign Out", fontWeight = FontWeight.SemiBold)
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showLogoutDialog = false }) {
-                    Text("Cancel", color = mutedText)
-                }
-            },
-            shape = RoundedCornerShape(20.dp)
-        )
-    }
 }
 
 @Composable

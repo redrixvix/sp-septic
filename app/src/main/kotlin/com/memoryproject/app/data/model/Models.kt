@@ -7,7 +7,9 @@ data class User(
     val id: Int,
     val email: String,
     val name: String,
-    val created_at: String = ""
+    val created_at: String = "",
+    val profileImageUrl: String? = null,
+    val profilelmageUrl: String? = null
 )
 
 @Serializable

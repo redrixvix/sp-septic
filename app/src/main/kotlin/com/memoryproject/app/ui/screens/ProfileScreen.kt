@@ -417,6 +417,13 @@ fun ProfileScreen(
                     icon = Icons.Default.Email,
                     label = "Email",
                     value = uiState.userEmail.ifBlank { "Not set" },
+                    trailing = {
+                        Text(
+                            text = "read-only",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = if (isDark) DarkOnSurfaceVariant else CharcoalMuted.copy(alpha = 0.6f)
+                        )
+                    },
                     onClick = { },
                     bgColor = cardBg,
                     isDark = isDark

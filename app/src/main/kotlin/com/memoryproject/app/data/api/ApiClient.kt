@@ -15,13 +15,15 @@ import kotlinx.serialization.json.Json
 
 class ApiClient {
 
+    private val json = Json {
+        ignoreUnknownKeys = true
+        isLenient = true
+        prettyPrint = false
+    }
+
     private val client = HttpClient(Android) {
         install(ContentNegotiation) {
-            json(Json {
-                ignoreUnknownKeys = true
-                isLenient = true
-                prettyPrint = false
-            })
+            json(json)
         }
         install(Logging) { level = LogLevel.BODY }
         expectSuccess = false
@@ -48,7 +50,7 @@ class ApiClient {
             status == HttpStatusCode.Unauthorized -> throw UnauthorizedException()
             !status.isSuccess() -> {
                 val err = try {
-                    Json.decodeFromString<ErrorResponse>(body).error
+                    json.decodeFromString<ErrorResponse>(body).error
                 } catch (_: Exception) {
                     body.take(100)
                 }
@@ -68,7 +70,7 @@ class ApiClient {
         sessionCookie = resp.headers[HttpHeaders.SetCookie]?.split(";")?.firstOrNull { it.contains("session") || it.contains("token") }
         return handleResponse(resp) { text ->
             try {
-                Json.decodeFromString<T>(text)
+                json.decodeFromString<T>(text)
             } catch (e: Exception) {
                 throw ApiException("Parse error: ${e.message}")
             }
@@ -85,7 +87,7 @@ class ApiClient {
         sessionCookie = sessionCookie ?: resp.headers[HttpHeaders.SetCookie]?.split(";")?.firstOrNull()
         return handleResponse(resp) { text ->
             try {
-                Json.decodeFromString<T>(text)
+                json.decodeFromString<T>(text)
             } catch (e: Exception) {
                 throw ApiException("Parse error: ${e.message}")
             }
@@ -100,7 +102,7 @@ class ApiClient {
             if (body != null) setBody(body)
         }
         return handleResponse(resp) { text ->
-            Json.decodeFromString<T>(text)
+            json.decodeFromString<T>(text)
         }
     }
 
