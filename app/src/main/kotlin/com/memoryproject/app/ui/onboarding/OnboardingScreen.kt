@@ -146,7 +146,6 @@ fun OnboardingScreen(
                 val p = PAGES[page]
                 OnboardingPageContent(
                     page = p,
-                    isDark = isDark,
                     primaryText = primaryText,
                     mutedText = mutedText,
                     cardBg = cardBg
@@ -239,13 +238,12 @@ fun OnboardingScreen(
 @Composable
 private fun OnboardingPageContent(
     page: OnboardingPage,
-    isDark: Boolean,
     primaryText: Color,
     mutedText: Color,
     cardBg: Color
 ) {
-    // Static gradient ring — warm brand accent behind icon (rotation removed for performance)
-    val ringColor = page.accentColor
+    // Accent color derived from page — no param shadow
+    val accentColor = page.accentColor
 
     Column(
         modifier = Modifier
@@ -254,21 +252,21 @@ private fun OnboardingPageContent(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        // Rotating gradient ring — warm brand accent behind icon
+        // Warm gradient ring — static but alive with radial depth
         Box(
             modifier = Modifier.size(160.dp),
             contentAlignment = Alignment.Center
         ) {
-            // Outer ring — static warm gradient accent
+            // Outer ring — warm radial gradient accent
             Box(
                 modifier = Modifier
                     .size(156.dp)
                     .background(
                         brush = Brush.radialGradient(
                             colors = listOf(
-                                page.accentColor.copy(alpha = 0.35f),
-                                page.accentColor.copy(alpha = 0.08f),
-                                page.accentColor.copy(alpha = 0.35f)
+                                accentColor.copy(alpha = 0.35f),
+                                accentColor.copy(alpha = 0.08f),
+                                accentColor.copy(alpha = 0.35f)
                             )
                         ),
                         shape = RoundedCornerShape(40.dp)
@@ -287,7 +285,7 @@ private fun OnboardingPageContent(
                         .background(
                             brush = Brush.radialGradient(
                                 colors = listOf(
-                                    page.accentColor.copy(alpha = 0.2f),
+                                    accentColor.copy(alpha = 0.2f),
                                     cardBg
                                 )
                             )
@@ -297,7 +295,7 @@ private fun OnboardingPageContent(
                     Icon(
                         imageVector = page.icon,
                         contentDescription = null,
-                        tint = page.accentColor,
+                        tint = accentColor,
                         modifier = Modifier.size(72.dp)
                     )
                 }

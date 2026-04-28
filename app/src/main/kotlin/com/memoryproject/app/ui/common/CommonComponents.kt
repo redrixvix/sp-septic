@@ -467,6 +467,7 @@ fun SettingsRow(
     val primaryText = if (isDark) DarkOnSurface else Charcoal
     val mutedText = if (isDark) DarkOnSurfaceVariant else CharcoalMuted
     val dividerColor = if (isDark) DarkDivider else Divider
+    val accentColor = if (isDark) DarkBronze else Bronze
 
     Column {
         Row(
@@ -474,9 +475,26 @@ fun SettingsRow(
                 .fillMaxWidth()
                 .background(bgColor)
                 .clickable(onClick = onClick)
-                .padding(horizontal = 16.dp, vertical = 14.dp),
+                .padding(horizontal = 16.dp, vertical = 20.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
+            // Left accent strip — warm bronze brand marker
+            Box(
+                modifier = Modifier
+                    .width(3.dp)
+                    .height(28.dp)
+                    .background(
+                        brush = Brush.verticalGradient(
+                            colors = listOf(
+                                accentColor.copy(alpha = 0.55f),
+                                accentColor.copy(alpha = 0.2f)
+                            )
+                        ),
+                        shape = RoundedCornerShape(topEnd = 2.dp, bottomEnd = 2.dp)
+                    )
+            )
+            Spacer(modifier = Modifier.width(14.dp))
+
             Box(
                 modifier = Modifier
                     .size(40.dp)
@@ -489,7 +507,7 @@ fun SettingsRow(
                 Icon(
                     icon,
                     contentDescription = label,
-                    tint = if (isDark) DarkBronze else Bronze,
+                    tint = accentColor,
                     modifier = Modifier.size(20.dp)
                 )
             }

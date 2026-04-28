@@ -283,9 +283,6 @@ fun MemoryNavHost(
                     onNavigateToBook = { bookId ->
                         navController.navigate("book/$bookId")
                     },
-                    onNavigateToProfile = {
-                        navController.navigate("profile")
-                    },
                     onNavigateToAddMemory = { bookId, prompt ->
                         if (prompt != null) {
                             navController.navigate("book/$bookId?prompt=${java.net.URLEncoder.encode(prompt, "UTF-8")}")
@@ -313,9 +310,6 @@ fun MemoryNavHost(
                     },
                     onSettings = {
                         navController.navigate("settings")
-                    },
-                    onProfile = {
-                        navController.navigate("profile")
                     },
                     darkTheme = darkThemeEnabled
                 )

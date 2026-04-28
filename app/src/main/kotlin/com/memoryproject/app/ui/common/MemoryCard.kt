@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.memoryproject.app.data.model.Memory
+import androidx.compose.ui.platform.LocalContext
 import com.memoryproject.app.ui.theme.*
 
 @Composable
@@ -66,7 +67,6 @@ fun MemoryCard(
     val accentColor = accentColors[accentIndex % accentColors.size]
 
     val cardBg = if (isDark) DarkSurface else WarmWhite
-    val promptLabelBg = if (isDark) DarkSurfaceVariant else Papaya.copy(alpha = 0.8f)
     val promptLabelText = if (isDark) DarkOnSurface else BronzeDark
     val bodyText = if (isDark) DarkOnSurface else Charcoal
     val mutedText = if (isDark) DarkOnSurfaceVariant else CharcoalMuted

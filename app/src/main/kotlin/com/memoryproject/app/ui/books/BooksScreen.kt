@@ -39,7 +39,6 @@ fun BooksScreen(
     onBookClick: (Int) -> Unit,
     onLogout: () -> Unit,
     onSettings: () -> Unit,
-    onProfile: () -> Unit,
     darkTheme: Boolean,
     viewModel: BooksViewModel = koinViewModel()
 ) {
@@ -77,7 +76,7 @@ fun BooksScreen(
                         horizontalArrangement = Arrangement.spacedBy(10.dp),
                         modifier = Modifier.padding(horizontal = 4.dp)
                     ) {
-                        // Brand icon badge
+                        // Brand icon badge — matches HomeScreen/BookDetailScreen header
                         Box(
                             modifier = Modifier
                                 .size(34.dp)
@@ -131,7 +130,8 @@ fun BooksScreen(
                         )
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = scaffoldBg)
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = scaffoldBg),
+                modifier = Modifier.padding(horizontal = 8.dp)
             )
 
             Box(

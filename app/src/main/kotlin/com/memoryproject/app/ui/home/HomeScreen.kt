@@ -52,7 +52,6 @@ private val HOME_PROMPTS = listOf(
 fun HomeScreen(
     onNavigateToBooks: () -> Unit,
     onNavigateToBook: (Int) -> Unit,
-    onNavigateToProfile: () -> Unit,
     onNavigateToAddMemory: (Int, String?) -> Unit = { _, _ -> },
     darkTheme: Boolean,
     viewModel: HomeViewModel = koinViewModel()

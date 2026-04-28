@@ -131,15 +131,6 @@ fun AuthScreen(
         }
     }
 
-    // Password strength hint (informational, not blocking)
-    val passwordHint = remember(password, uiState.isSignUp) {
-        if (!uiState.isSignUp || password.isEmpty()) null
-        else when {
-            password.length < 8 -> "At least 8 characters recommended"
-            else -> null
-        }
-    }
-
     // No pending callback — native Credential Manager handles the entire sign-in flow
 
     LaunchedEffect(uiState.isLoggedIn) {
