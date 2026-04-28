@@ -165,13 +165,14 @@ fun MemoryNavHost(
                     contentColor = if (isDark) DarkOnSurface else Charcoal,
                     tonalElevation = 3.dp,
                     modifier = Modifier
-                        .padding(horizontal = 16.dp)
+                        .padding(horizontal = 8.dp)
                         .navigationBarsPadding()
                 ) {
                     bottomNavItems.forEach { item ->
                         val selected = currentDestination?.hierarchy?.any { it.route == item.route } == true
                         val pressInteraction = remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
                         val isPressed by pressInteraction.collectIsPressedAsState()
+                        val haptic = androidx.compose.ui.platform.LocalHapticFeedback.current
                         val iconScale by animateFloatAsState(
                             targetValue = when {
                                 isPressed -> 0.82f
@@ -181,6 +182,9 @@ fun MemoryNavHost(
                             animationSpec = spring(dampingRatio = 0.6f, stiffness = 400f),
                             label = "navIconScale"
                         )
+                        LaunchedEffect(isPressed) {
+                            if (isPressed) haptic.performHapticFeedback(androidx.compose.ui.hapticfeedback.HapticFeedbackType.LongPress)
+                        }
                         NavigationBarItem(
                             selected = selected,
                             onClick = {
@@ -197,13 +201,15 @@ fun MemoryNavHost(
                                 Icon(
                                     imageVector = if (selected) item.selectedIcon else item.unselectedIcon,
                                     contentDescription = item.title,
-                                    modifier = Modifier.scale(iconScale)
+                                    modifier = Modifier
+                                        .scale(iconScale)
+                                        .size(26.dp)
                                 )
                             },
                             label = {
                                 Text(
                                     text = item.title,
-                                    style = MaterialTheme.typography.labelSmall,
+                                    style = MaterialTheme.typography.labelMedium,
                                     fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Normal
                                 )
                             },

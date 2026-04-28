@@ -68,7 +68,7 @@ private fun GoogleButton(
         onClick = onClick,
         modifier = modifier
             .fillMaxWidth()
-            .height(52.dp)
+            .height(48.dp)
             .scale(scale),
         enabled = enabled,
         shape = RoundedCornerShape(12.dp),
@@ -79,8 +79,8 @@ private fun GoogleButton(
             disabledContentColor = Color(0xFF3c4043),
         ),
         elevation = ButtonDefaults.buttonElevation(
-            defaultElevation = 4.dp,
-            pressedElevation = 8.dp,
+            defaultElevation = 2.dp,
+            pressedElevation = 4.dp,
             disabledElevation = 0.dp
         ),
         interactionSource = interactionSource
@@ -94,7 +94,7 @@ private fun GoogleButton(
         Spacer(modifier = Modifier.width(10.dp))
         Text(
             text = "Continue with Google",
-            style = MaterialTheme.typography.labelLarge,
+            style = MaterialTheme.typography.labelMedium,
             fontWeight = FontWeight.Medium
         )
     }
@@ -167,22 +167,22 @@ fun AuthScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = 32.dp)
+                .padding(horizontal = 28.dp)
                 .navigationBarsPadding()
                 .imePadding(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = Modifier.height(80.dp))
+            Spacer(modifier = Modifier.height(48.dp))
 
             // Brand mark
             Box(
                 modifier = Modifier
-                    .size(72.dp)
+                    .size(56.dp)
                     .background(
                         brush = Brush.linearGradient(
                             colors = listOf(Bronze, BronzeLight)
                         ),
-                        shape = RoundedCornerShape(18.dp)
+                        shape = RoundedCornerShape(14.dp)
                     ),
                 contentAlignment = Alignment.Center
             ) {
@@ -190,29 +190,29 @@ fun AuthScreen(
                     imageVector = Icons.AutoMirrored.Filled.MenuBook,
                     contentDescription = null,
                     tint = WarmWhite,
-                    modifier = Modifier.size(32.dp)
+                    modifier = Modifier.size(26.dp)
                 )
             }
 
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(12.dp))
 
             Text(
                 text = "Memory Project",
-                style = MaterialTheme.typography.displayMedium,
+                style = MaterialTheme.typography.headlineMedium,
                 color = primaryText,
                 fontWeight = FontWeight.Bold
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(4.dp))
 
             Text(
                 text = "Preserve the moments that matter most.",
-                style = MaterialTheme.typography.bodyLarge,
+                style = MaterialTheme.typography.bodyMedium,
                 color = mutedText,
                 textAlign = TextAlign.Center
             )
 
-            Spacer(modifier = Modifier.height(48.dp))
+            Spacer(modifier = Modifier.height(24.dp))
 
             // Mode toggle
             val isSignUp = uiState.isSignUp
@@ -298,19 +298,19 @@ fun AuthScreen(
             AnimatedContent(
                 targetState = uiState.isSignUp,
                 transitionSpec = {
-                    (slideInHorizontally(animationSpec = tween(300)) { it / 2 } + fadeIn(animationSpec = tween(300)))
-                        .togetherWith(slideOutHorizontally(animationSpec = tween(300)) { -it / 2 } + fadeOut(animationSpec = tween(300)))
+                    (slideInHorizontally(animationSpec = tween(250)) { it / 3 } + fadeIn(animationSpec = tween(250)))
+                        .togetherWith(slideOutHorizontally(animationSpec = tween(250)) { -it / 3 } + fadeOut(animationSpec = tween(250)))
                 },
                 label = "authHeaderTransition"
             ) { isSignUpNow ->
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
                         text = if (isSignUpNow) "Create your account" else "Welcome back",
-                        style = MaterialTheme.typography.headlineMedium,
+                        style = MaterialTheme.typography.titleLarge,
                         color = primaryText,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.SemiBold
                     )
-                    Spacer(modifier = Modifier.height(6.dp))
+                    Spacer(modifier = Modifier.height(4.dp))
                     Text(
                         text = if (isSignUpNow)
                             "Start preserving your family stories"
@@ -357,7 +357,7 @@ fun AuthScreen(
 
             // Divider with "or"
             if (!uiState.isGoogleLoading) {
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(20.dp))
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
@@ -365,29 +365,29 @@ fun AuthScreen(
                     Box(
                         modifier = Modifier
                             .weight(1f)
-                            .height(1.5.dp)
-                            .background(if (isDark) DarkBorder else Bronze.copy(alpha = 0.35f))
+                            .height(1.dp)
+                            .background(if (isDark) DarkBorder else Bronze.copy(alpha = 0.3f))
                     )
-                    Spacer(modifier = Modifier.width(12.dp))
+                    Spacer(modifier = Modifier.width(14.dp))
                     Text(
                         text = "or",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = mutedText
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = mutedText.copy(alpha = 0.7f)
                     )
-                    Spacer(modifier = Modifier.width(12.dp))
+                    Spacer(modifier = Modifier.width(14.dp))
                     Box(
                         modifier = Modifier
                             .weight(1f)
-                            .height(1.5.dp)
-                            .background(if (isDark) DarkBorder else Bronze.copy(alpha = 0.35f))
+                            .height(1.dp)
+                            .background(if (isDark) DarkBorder else Bronze.copy(alpha = 0.3f))
                     )
                 }
+                Spacer(modifier = Modifier.height(20.dp))
             } else {
                 Spacer(modifier = Modifier.height(16.dp))
             }
 
-            Spacer(modifier = Modifier.height(20.dp))
-
+            // Email field — prominently positioned, not hidden below Google button
             val emailBorderColor by animateColorAsState(
                 targetValue = when {
                     emailError != null && email.isNotEmpty() -> ErrorRed
@@ -407,8 +407,6 @@ fun AuthScreen(
                 animationSpec = tween(300),
                 label = "passwordBorder"
             )
-
-            // Email field
             OutlinedTextField(
                 value = email,
                 onValueChange = {
