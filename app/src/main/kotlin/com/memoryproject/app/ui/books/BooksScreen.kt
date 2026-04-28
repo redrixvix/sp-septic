@@ -67,6 +67,20 @@ fun BooksScreen(
             .fillMaxSize()
             .background(scaffoldBg)
     ) {
+        // Ambient warm glow — premium depth, matches HomeScreen
+        if (!darkTheme) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(320.dp)
+                    .align(Alignment.TopCenter)
+                    .background(
+                        brush = Brush.verticalGradient(
+                            colors = listOf(Papaya.copy(alpha = 0.28f), Color.Transparent)
+                        )
+                    )
+            )
+        }
         Column(modifier = Modifier.fillMaxSize()) {
             // Top app bar
             TopAppBar(

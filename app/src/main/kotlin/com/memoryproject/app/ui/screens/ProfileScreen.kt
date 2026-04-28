@@ -1,5 +1,6 @@
 package com.memoryproject.app.ui.screens
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 
 import androidx.compose.animation.*
 import androidx.compose.foundation.background
@@ -294,14 +295,29 @@ fun ProfileScreen(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         containerColor = scaffoldBg
     ) { padding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .verticalScroll(rememberScrollState())
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(20.dp)
-        ) {
+        Box(modifier = Modifier.fillMaxSize().background(scaffoldBg)) {
+            // Ambient warm glow — premium depth
+            if (!isDark) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(280.dp)
+                        .align(Alignment.TopCenter)
+                        .background(
+                            brush = Brush.verticalGradient(
+                                colors = listOf(Papaya.copy(alpha = 0.25f), Color.Transparent)
+                            )
+                        )
+                )
+            }
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding)
+                    .verticalScroll(rememberScrollState())
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(20.dp)
+            ) {
             // Profile card — warm, inviting, premium
             val profileCardBg = if (isDark) DarkSurface else WarmWhite
             Card(
@@ -518,6 +534,7 @@ fun ProfileScreen(
             }
 
             Spacer(modifier = Modifier.height(32.dp))
+            }
         }
     }
 }

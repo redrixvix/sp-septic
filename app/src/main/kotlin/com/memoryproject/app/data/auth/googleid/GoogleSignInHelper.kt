@@ -1,6 +1,7 @@
 package com.memoryproject.app.data.auth.googleid
 
 import android.content.Context
+import android.util.Base64
 import androidx.credentials.CredentialManager
 import androidx.credentials.CustomCredential
 import androidx.credentials.GetCredentialRequest
@@ -13,10 +14,10 @@ import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingException
+import java.security.SecureRandom
 
 /**
  * Native Google Sign-In using AndroidX Credential Manager.
- * 
  * Shows the native Google-branded bottom sheet via Sign In With Google (SIWG).
  * No browser, no Custom Tab — just the system credential picker.
  */
@@ -32,7 +33,11 @@ class GoogleSignInHelper(
         val credentialManager = CredentialManager.create(context)
 
         // SIWG shows the branded Google bottom sheet — single dialog, no extra picker
-        val siwgOption = GetSignInWithGoogleOption.Builder(serverClientId).build()
+        // Nonce prevents replay attacks
+        val nonce = generateSecureRandomNonce()
+        val siwgOption = GetSignInWithGoogleOption.Builder(serverClientId)
+            .setNonce(nonce)
+            .build()
         val request = Builder().addCredentialOption(siwgOption).build()
 
         return runCatching {
@@ -63,13 +68,25 @@ class GoogleSignInHelper(
         return when (e) {
             is GetCredentialCancellationException -> GoogleSignInException.UserCancelled
             is NoCredentialException -> GoogleSignInException.NoGoogleAccountsFound
-            is GetCredentialException -> GoogleSignInException.GetCredentialError(
-                errorType = e.type,
-                detail = e.message ?: "Unknown"
-            )
+            is GetCredentialException -> {
+                // GetCredentialCustomException carries a type + errorMessage from the provider
+                val customType = e.type?.toString()?.takeIf { it.isNotBlank() }
+                val detail = e.errorMessage?.toString() ?: e.message ?: "Unknown"
+                if (customType != null) {
+                    GoogleSignInException.GetCredentialError(customType, detail)
+                } else {
+                    GoogleSignInException.Unknown(detail)
+                }
+            }
             is GoogleSignInException -> e
             else -> GoogleSignInException.Unknown(e.message ?: "Unknown error: ${e::class.java.name}")
         }
+    }
+
+    private fun generateSecureRandomNonce(byteLength: Int = 32): String {
+        val randomBytes = ByteArray(byteLength)
+        SecureRandom().nextBytes(randomBytes)
+        return Base64.encodeToString(randomBytes, Base64.NO_WRAP)
     }
 }
 
