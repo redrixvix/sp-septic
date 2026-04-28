@@ -93,7 +93,9 @@ fun HomeScreen(
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            modifier = Modifier.padding(horizontal = 4.dp)
+                            modifier = Modifier
+                                .padding(horizontal = 4.dp)
+                                .statusBarsPadding()
                         ) {
                             // Compact brand icon badge
                             Box(

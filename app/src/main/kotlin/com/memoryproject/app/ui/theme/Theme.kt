@@ -153,7 +153,7 @@ fun MemoryProjectTheme(
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
-            window.statusBarColor = if (darkTheme) DarkBackground.toArgb() else Cornsilk.toArgb()
+            window.statusBarColor = Color.Transparent.toArgb()
             window.navigationBarColor = if (darkTheme) DarkBackground.toArgb() else Cornsilk.toArgb()
             val controller = WindowCompat.getInsetsController(window, view)
             controller.isAppearanceLightStatusBars = !darkTheme

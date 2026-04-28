@@ -15,6 +15,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Box
@@ -181,10 +182,15 @@ fun MemoryNavHost(
                 NavigationBar(
                     containerColor = navBg,
                     contentColor = if (isDark) DarkOnSurface else Charcoal,
-                    tonalElevation = 3.dp,
+                    tonalElevation = 0.dp,
                     modifier = Modifier
                         .padding(horizontal = 8.dp)
                         .navigationBarsPadding()
+                        .border(
+                            width = 1.dp,
+                            color = if (isDark) DarkBorder else Border,
+                            shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp)
+                        )
                 ) {
                     bottomNavItems.forEach { item ->
                         val selected = currentDestination?.hierarchy?.any { it.route == item.route } == true
