@@ -577,7 +577,7 @@ private fun StatCard(
                 Text(
                     text = value,
                     style = MaterialTheme.typography.headlineMedium,
-                    color = if (darkTheme) DarkOnSurface else Charcoal,
+                    color = primaryText,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
@@ -904,6 +904,20 @@ private fun RecentMemoryCard(
         colors = CardDefaults.cardColors(containerColor = cardBg),
         elevation = CardDefaults.cardElevation(defaultElevation = elevation)
     ) {
+        // Warm premium gradient tint — adds subtle depth and emotional warmth
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(
+                    brush = Brush.verticalGradient(
+                        colors = if (darkTheme) {
+                            listOf(accentColor.copy(alpha = 0.05f), Color.Transparent)
+                        } else {
+                            listOf(accentColor.copy(alpha = 0.03f), Color.Transparent)
+                        }
+                    )
+                )
+        )
         Row(modifier = Modifier.fillMaxWidth()) {
             Box(
                 modifier = Modifier
@@ -1310,17 +1324,6 @@ private fun formatDate(isoDate: String): String {
         val day = parts[2].split("T")[0].toInt()
         if (month < 1 || month > 12) return isoDate
         val months = listOf("", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
-        "${months[month]} ${ordinalOf(day)}, $year"
+        "${months[month]} $day, $year"
     } catch (e: Exception) { isoDate }
-}
-
-private fun ordinalOf(n: Int): String {
-    val d = n % 10
-    val suffix = when {
-        d == 1 && n != 11 -> "st"
-        d == 2 && n != 12 -> "nd"
-        d == 3 && n != 13 -> "rd"
-        else -> "th"
-    }
-    return "$n$suffix"
 }

@@ -5,6 +5,7 @@ import android.net.Uri
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
@@ -37,6 +38,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
@@ -731,33 +733,64 @@ private fun PromptSuggestionsSection(
     val cardBg = if (darkTheme) DarkSurfaceVariant else Papaya.copy(alpha = 0.5f)
     val primaryText = if (darkTheme) DarkOnSurface else Charcoal
     val mutedText = if (darkTheme) DarkOnSurfaceVariant else CharcoalMuted
+    val accentColor = if (darkTheme) DarkBronze else Bronze
 
-    Column(modifier = Modifier.fillMaxWidth()) {
-        AnimatedVisibility(
-            visible = visible,
-            enter = fadeIn(animationSpec = tween(400, delayMillis = 80)) + slideInVertically(animationSpec = tween(400, delayMillis = 80), initialOffsetY = { -it / 8 })
-        ) {
-            Text(
-                "Need inspiration? Tap a prompt to start writing",
-                style = MaterialTheme.typography.bodySmall,
-                color = mutedText,
-                modifier = Modifier.padding(bottom = 12.dp)
-            )
-        }
-        // Horizontally scrollable prompt chips — keeps the page clean and readable
-        LazyRow(
-            contentPadding = PaddingValues(vertical = 4.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            state = rememberLazyListState()
-        ) {
-            items(suggestions) { prompt ->
-                SuggestionChip(
-                    prompt = prompt,
-                    cardBg = cardBg,
-                    primaryText = primaryText,
-                    darkTheme = darkTheme,
-                    onClick = { onSuggestionSelected(prompt) }
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = if (darkTheme) DarkSurfaceVariant.copy(alpha = 0.7f) else Papaya.copy(alpha = 0.45f)
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+    ) {
+        Column(modifier = Modifier.fillMaxWidth()) {
+            // Inspiration header row
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 16.dp, end = 16.dp, top = 14.dp, bottom = 4.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.AutoAwesome,
+                    contentDescription = null,
+                    tint = accentColor,
+                    modifier = Modifier.size(14.dp)
                 )
+                Text(
+                    text = "Inspiration",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = accentColor,
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
+            AnimatedVisibility(
+                visible = visible,
+                enter = fadeIn(animationSpec = tween(400, delayMillis = 80)) + slideInVertically(animationSpec = tween(400, delayMillis = 80), initialOffsetY = { -it / 8 })
+            ) {
+                Text(
+                    "Need inspiration? Tap a prompt to start writing",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = mutedText,
+                    modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 10.dp)
+                )
+            }
+            // Horizontally scrollable prompt chips — keeps the page clean and readable
+            LazyRow(
+                contentPadding = PaddingValues(start = 12.dp, end = 12.dp, bottom = 14.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                state = rememberLazyListState()
+            ) {
+                items(suggestions) { prompt ->
+                    SuggestionChip(
+                        prompt = prompt,
+                        cardBg = cardBg,
+                        primaryText = primaryText,
+                        darkTheme = darkTheme,
+                        onClick = { onSuggestionSelected(prompt) }
+                    )
+                }
             }
         }
     }
@@ -778,12 +811,19 @@ private fun SuggestionChip(
         animationSpec = spring(dampingRatio = 0.7f, stiffness = Spring.StiffnessLow),
         label = "suggestionScale"
     )
+    val borderColor = if (darkTheme) DarkBorder else Border
 
     Box(
         modifier = Modifier
             .scale(scale)
             .clip(RoundedCornerShape(20.dp))
             .background(cardBg)
+            .then(
+                Modifier.border(
+                    BorderStroke(width = 0.5.dp, color = borderColor.copy(alpha = 0.4f)),
+                    RoundedCornerShape(20.dp)
+                )
+            )
             .clickable(
                 interactionSource = interactionSource,
                 indication = null,
@@ -871,6 +911,7 @@ private fun PhotoViewer(
                     indication = null,
                     onClick = onDismiss
                 )
+                .then(swipeDownModifier)
                 .then(doubleTapModifier),
             contentAlignment = Alignment.Center
         ) {
@@ -900,6 +941,9 @@ private fun PhotoViewer(
                 )
             }
         }
+
+        // Overlay UI — must live inside a Box scope for .align() to work
+        Box(modifier = Modifier.fillMaxSize()) {
 
           // Zoom level badge — shown when zoomed in
           AnimatedVisibility(
@@ -960,7 +1004,7 @@ private fun PhotoViewer(
                       .align(Alignment.BottomCenter)
                       .padding(bottom = 32.dp)
               )
-          }
+        }
       }
     }
 }
@@ -977,7 +1021,7 @@ private fun MemoryDialog(
     onConfirm: () -> Unit,
     isSaving: Boolean,
     confirmLabel: String,
-    darkTheme: Boolean = false,
+    darkTheme: Boolean = false
 ) {
     // Shuffle suggestions once when dialog opens, stable while dialog is visible
     var suggestions by remember { mutableStateOf(emptyList<String>()) }
@@ -995,7 +1039,6 @@ private fun MemoryDialog(
         shape = RoundedCornerShape(24.dp),
         containerColor = cardBg,
         title = {
-            // Warm gradient header strip with icon
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -1065,11 +1108,15 @@ private fun MemoryDialog(
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = Bronze,
                         unfocusedBorderColor = borderColor,
-                        focusedLabelColor = Bronze
+                        focusedLabelColor = Bronze,
+                        focusedContainerColor = if (darkTheme) DarkSurfaceVariant.copy(alpha = 0.2f) else Papaya.copy(alpha = 0.15f),
+                        unfocusedContainerColor = if (darkTheme) DarkSurfaceVariant.copy(alpha = 0.08f) else Papaya.copy(alpha = 0.08f)
                     ),
                     supportingText = {
                         if (promptInput.isBlank()) {
                             Text("Tip: pick a prompt below to get started", color = mutedTextColor, style = MaterialTheme.typography.bodySmall)
+                        } else if (promptInput.length > 80) {
+                            Text("${promptInput.length}/80 characters", color = mutedTextColor, style = MaterialTheme.typography.bodySmall)
                         }
                     }
                 )

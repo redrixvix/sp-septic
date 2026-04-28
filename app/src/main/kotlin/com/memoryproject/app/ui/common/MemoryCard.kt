@@ -95,6 +95,20 @@ fun MemoryCard(
         colors = CardDefaults.cardColors(containerColor = cardBg),
         elevation = CardDefaults.cardElevation(defaultElevation = elevation)
     ) {
+        // Warm premium tint — subtle gradient background that adds depth without overpowering
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(
+                    brush = Brush.verticalGradient(
+                        colors = if (isDark) {
+                            listOf(accentColor.copy(alpha = 0.04f), Color.Transparent)
+                        } else {
+                            listOf(accentColor.copy(alpha = 0.025f), Color.Transparent)
+                        }
+                    )
+                )
+        )
         Row(modifier = Modifier.fillMaxWidth()) {
             // Left color accent strip with warm gradient overlay
             Box(
@@ -314,19 +328,8 @@ internal fun formatMemoryDate(isoDate: String): String {
         val day = parts[2].toInt()
         val year = parts[0].toInt()
         if (month < 1 || month > 12) return isoDate
-        "${months[month]} ${ordinalOfMem(day)}, $year"
+        "${months[month]} $day, $year"
     } catch (e: Exception) {
         isoDate
     }
-}
-
-internal fun ordinalOfMem(n: Int): String {
-    val d = n % 10
-    val suffix = when {
-        d == 1 && n != 11 -> "st"
-        d == 2 && n != 12 -> "nd"
-        d == 3 && n != 13 -> "rd"
-        else -> "th"
-    }
-    return "$n$suffix"
 }
