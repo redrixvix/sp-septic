@@ -13,6 +13,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Logout
+import androidx.compose.material.icons.automirrored.filled.MenuBook
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Book
 import androidx.compose.material.icons.filled.Settings
@@ -71,21 +72,44 @@ fun BooksScreen(
             // Top app bar
             TopAppBar(
                 title = {
-                    Column(
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(10.dp),
                         modifier = Modifier.padding(horizontal = 4.dp)
                     ) {
-                        Text(
-                            "My Books",
-                            style = MaterialTheme.typography.headlineLarge,
-                            fontWeight = FontWeight.Bold,
-                            color = primaryText
-                        )
-                        if (uiState.books.isNotEmpty()) {
-                            Text(
-                                uiState.books.size.toString() + " " + (if (uiState.books.size == 1) "book" else "books"),
-                                style = MaterialTheme.typography.bodySmall,
-                                color = mutedText
+                        // Brand icon badge
+                        Box(
+                            modifier = Modifier
+                                .size(34.dp)
+                                .background(
+                                    brush = Brush.linearGradient(
+                                        colors = if (darkTheme) listOf(DarkBronze, DarkBronzeLight) else listOf(Bronze, BronzeLight)
+                                    ),
+                                    shape = RoundedCornerShape(9.dp)
+                                ),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.MenuBook,
+                                contentDescription = null,
+                                tint = WarmWhite,
+                                modifier = Modifier.size(18.dp)
                             )
+                        }
+                        Column {
+                            Text(
+                                "My Books",
+                                style = MaterialTheme.typography.headlineLarge,
+                                fontWeight = FontWeight.Bold,
+                                color = primaryText
+                            )
+                            if (uiState.books.isNotEmpty()) {
+                                Text(
+                                    uiState.books.size.toString() + " " + (if (uiState.books.size == 1) "book" else "books"),
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = mutedText
+                                )
+                            }
                         }
                     }
                 },
@@ -277,7 +301,8 @@ fun BooksScreen(
                 onClick = { showCreateDialog = true },
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
-                    .padding(end = 16.dp, bottom = 96.dp),
+                    .padding(end = 16.dp)
+                    .navigationBarsPadding(),
                 containerColor = Bronze,
                 contentColor = WarmWhite,
                 elevation = FloatingActionButtonDefaults.elevation(defaultElevation = 6.dp, pressedElevation = 12.dp)
@@ -296,7 +321,7 @@ fun BooksScreen(
             hostState = snackbarHostState,
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .padding(bottom = 100.dp)
+                .navigationBarsPadding()
         )
     }
 

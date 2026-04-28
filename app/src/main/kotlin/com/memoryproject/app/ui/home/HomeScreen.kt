@@ -15,6 +15,7 @@ import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.Book
 import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.automirrored.filled.MenuBook
 import androidx.compose.material.icons.filled.Lightbulb
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -62,22 +63,71 @@ fun HomeScreen(
     val mutedText = if (darkTheme) DarkOnSurfaceVariant else CharcoalMuted
     val cardBg = if (darkTheme) DarkSurface else WarmWhite
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(scaffoldBg)
-    ) {
-        // Warm ambient bottom gradient for dark mode
-        if (darkTheme) {
-            Box(modifier = Modifier.fillMaxSize().background(
-                Brush.verticalGradient(listOf(DarkBackground.copy(alpha = 0.0f), DarkBackground.copy(alpha = 0.85f), DarkBackground))
-            ))
-        }
-        LazyColumn(
+    // Warm ambient top glow in light mode — premium page depth
+        Box(
             modifier = Modifier
-                .fillMaxSize(),
-            contentPadding = PaddingValues(bottom = 100.dp)
-        ) {
+                .fillMaxWidth()
+                .height(240.dp)
+                .background(
+                    brush = Brush.verticalGradient(
+                        colors = if (darkTheme) {
+                            listOf(DarkBackground.copy(alpha = 0.0f), Color.Unspecified)
+                        } else {
+                            listOf(Papaya.copy(alpha = 0.22f), Color.Transparent)
+                        }
+                    )
+                )
+        )
+
+        Scaffold(
+            containerColor = Color.Transparent,
+            topBar = {
+                TopAppBar(
+                    title = {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            // Compact brand icon badge
+                            Box(
+                                modifier = Modifier
+                                    .size(30.dp)
+                                    .background(
+                                        brush = Brush.linearGradient(
+                                            colors = if (darkTheme) listOf(DarkBronze, DarkBronzeLight) else listOf(Bronze, BronzeLight)
+                                        ),
+                                        shape = RoundedCornerShape(7.dp)
+                                    ),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    imageVector = Icons.AutoMirrored.Filled.MenuBook,
+                                    contentDescription = null,
+                                    tint = WarmWhite,
+                                    modifier = Modifier.size(16.dp)
+                                )
+                            }
+                            Text(
+                                text = "Memory Project",
+                                style = MaterialTheme.typography.titleMedium,
+                                color = primaryText,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        }
+                    },
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = Color.Transparent
+                    ),
+                    modifier = Modifier.padding(horizontal = 4.dp)
+                )
+            }
+        ) { padding ->
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding),
+                contentPadding = PaddingValues(bottom = 100.dp)
+            ) {
             // Welcome header — always first
             item(key = "welcome_header") {
                 WelcomeHeader(

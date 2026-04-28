@@ -232,7 +232,7 @@ fun MemoryCard(
                 if (memory.photo_urls.isNotEmpty()) {
                     Spacer(modifier = Modifier.height(14.dp))
                     Row(
-                        horizontalArrangement = if (memory.photo_urls.size <= 1) Arrangement.Start else Arrangement.spacedBy(10.dp),
+                        horizontalArrangement = if (memory.photo_urls.size <= 1) Arrangement.Start else Arrangement.spacedBy(12.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         memory.photo_urls.take(3).forEachIndexed { index, url ->
@@ -241,7 +241,7 @@ fun MemoryCard(
                                     model = url,
                                     contentDescription = "Memory photo ${index + 1}",
                                     modifier = Modifier
-                                        .size(66.dp)
+                                        .size(80.dp)
                                         .clip(RoundedCornerShape(12.dp))
                                         .clickable { onPhotoClick(url) }
                                         .then(
@@ -255,7 +255,7 @@ fun MemoryCard(
                         if (extraCount > 0) {
                             Box(
                                 modifier = Modifier
-                                    .size(66.dp)
+                                    .size(80.dp)
                                     .background(
                                         color = if (isDark) DarkBronze.copy(alpha = 0.3f) else Bronze.copy(alpha = 0.18f),
                                         shape = RoundedCornerShape(12.dp)

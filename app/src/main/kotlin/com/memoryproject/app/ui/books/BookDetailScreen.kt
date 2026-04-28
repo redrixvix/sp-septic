@@ -16,6 +16,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.MenuBook
 import androidx.compose.material.icons.filled.Group
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.PersonRemove
@@ -141,38 +142,62 @@ fun BookDetailScreen(
             TopAppBar(
                 scrollBehavior = scrollBehavior,
                 title = {
-                    Column {
-                        Text(
-                            uiState.book?.title ?: "Book",
-                            style = MaterialTheme.typography.headlineMedium,
-                            fontWeight = FontWeight.Bold,
-                            color = topBarTitleColor,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                        Row(
-                            horizontalArrangement = Arrangement.spacedBy(6.dp),
-                            verticalAlignment = Alignment.CenterVertically
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(10.dp)
+                    ) {
+                        // Brand icon badge
+                        Box(
+                            modifier = Modifier
+                                .size(32.dp)
+                                .background(
+                                    brush = Brush.linearGradient(
+                                        colors = if (darkTheme) listOf(DarkBronze, DarkBronzeLight) else listOf(Bronze, BronzeLight)
+                                    ),
+                                    shape = RoundedCornerShape(8.dp)
+                                ),
+                            contentAlignment = Alignment.Center
                         ) {
-                            val memCount = uiState.memories.size.coerceAtLeast(uiState.book?.memories_count ?: 0)
-                            if (memCount > 0) {
-                                Text(
-                                    "$memCount ${if (memCount == 1) "story" else "stories"}",
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = if (darkTheme) DarkOnSurfaceVariant else CharcoalMuted
-                                )
-                            }
-                            uiState.book?.description?.takeIf { it.isNotBlank() }?.let { desc ->
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.MenuBook,
+                                contentDescription = null,
+                                tint = WarmWhite,
+                                modifier = Modifier.size(17.dp)
+                            )
+                        }
+                        Column {
+                            Text(
+                                uiState.book?.title ?: "Book",
+                                style = MaterialTheme.typography.headlineMedium,
+                                fontWeight = FontWeight.Bold,
+                                color = topBarTitleColor,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                val memCount = uiState.memories.size.coerceAtLeast(uiState.book?.memories_count ?: 0)
                                 if (memCount > 0) {
-                                    Text("·", style = MaterialTheme.typography.bodySmall, color = if (darkTheme) DarkOnSurfaceVariant else CharcoalMuted)
+                                    Text(
+                                        "$memCount ${if (memCount == 1) "story" else "stories"}",
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = if (darkTheme) DarkOnSurfaceVariant else CharcoalMuted
+                                    )
                                 }
-                                Text(
-                                    desc,
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = if (darkTheme) DarkOnSurfaceVariant else CharcoalMuted,
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis
-                                )
+                                uiState.book?.description?.takeIf { it.isNotBlank() }?.let { desc ->
+                                    if (memCount > 0) {
+                                        Text("·", style = MaterialTheme.typography.bodySmall, color = if (darkTheme) DarkOnSurfaceVariant else CharcoalMuted)
+                                    }
+                                    Text(
+                                        desc,
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = if (darkTheme) DarkOnSurfaceVariant else CharcoalMuted,
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis
+                                    )
+                                }
                             }
                         }
                     }
