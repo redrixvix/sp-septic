@@ -200,7 +200,7 @@ fun AuthScreen(
             Spacer(modifier = Modifier.height(4.dp))
 
             Text(
-                text = "Preserve the moments that matter most.",
+                text = "Capture the stories your family will always remember.",
                 style = MaterialTheme.typography.bodyMedium,
                 color = mutedText,
                 textAlign = TextAlign.Center
