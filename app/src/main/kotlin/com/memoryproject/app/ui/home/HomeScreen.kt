@@ -527,6 +527,7 @@ private fun QuickStats(
 }
 
 @Composable
+@Suppress("UNUSED_PARAMETER")
 private fun StatCard(
     icon: String,
     value: String,
@@ -591,6 +592,7 @@ private fun StatCard(
 }
 
 @Composable
+@Suppress("UNUSED_PARAMETER")
 private fun QuickActions(
     onAddMemory: () -> Unit,
     onBrowseBooks: () -> Unit,
@@ -625,6 +627,7 @@ private fun QuickActions(
     }
 }
 
+@Suppress("UNUSED_PARAMETER")
 @Composable
 private fun QuickActionButton(
     label: String,

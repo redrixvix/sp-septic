@@ -111,7 +111,7 @@ fun SettingsScreen(
                             )
                     ) {
                         Icon(
-                            Icons.Filled.ArrowBack,
+                            Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back",
                             tint = primaryText
                         )

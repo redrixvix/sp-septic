@@ -168,70 +168,31 @@ fun MemoryCard(
                             overflow = TextOverflow.Ellipsis
                         )
                     }
-                // Action menu: share + delete, triggered via a cleaner overflow trigger
-                // Only show overflow (3-dot) as explicit affordance — tap-to-edit still works on card
+                // Action menu: share + delete
                 var showMenu by remember { mutableStateOf(false) }
                 Box {
                     IconButton(
                         onClick = { showMenu = true },
-                        modifier = Modifier
-                            .size(44.dp)
-                            .padding(4.dp) // 40dp touch target with 4dp padding for visual balance
+                        modifier = Modifier.size(44.dp).padding(4.dp)
                     ) {
-                        Icon(
-                            imageVector = Icons.Default.MoreVert,
-                            contentDescription = "More options",
-                            tint = mutedText,
-                            modifier = Modifier.size(22.dp)
-                        )
+                        Icon(Icons.Default.MoreVert, "More options", tint = mutedText, modifier = Modifier.size(22.dp))
                     }
                     DropdownMenu(
                         expanded = showMenu,
                         onDismissRequest = { showMenu = false },
-                        modifier = Modifier.background(
-                            color = if (isDark) DarkSurface else WarmWhite,
-                            shape = RoundedCornerShape(12.dp)
-                        )
+                        modifier = Modifier.background(color = if (isDark) DarkSurface else WarmWhite, shape = RoundedCornerShape(12.dp))
                     ) {
                         DropdownMenuItem(
-                            text = {
-                                Row(verticalAlignment = Alignment.CenterVertically) {
-                                    Icon(
-                                        Icons.Default.Share,
-                                        contentDescription = null,
-                                        tint = if (isDark) DarkOnSurface else Charcoal,
-                                        modifier = Modifier.size(18.dp)
-                                    )
-                                    Spacer(modifier = Modifier.width(12.dp))
-                                    Text("Share", color = if (isDark) DarkOnSurface else Charcoal)
-                                }
-                            },
-                            onClick = {
-                                showMenu = false
-                                onShareClick()
-                            }
+                            text = { Row(verticalAlignment = Alignment.CenterVertically) { Icon(Icons.Default.Share, null, tint = if (isDark) DarkOnSurface else Charcoal, modifier = Modifier.size(18.dp)); Spacer(Modifier.width(12.dp)); Text("Share", color = if (isDark) DarkOnSurface else Charcoal) } },
+                            onClick = { showMenu = false; onShareClick() }
                         )
                         DropdownMenuItem(
-                            text = {
-                                Row(verticalAlignment = Alignment.CenterVertically) {
-                                    Icon(
-                                        Icons.Default.Delete,
-                                        contentDescription = null,
-                                        tint = ErrorRed,
-                                        modifier = Modifier.size(18.dp)
-                                    )
-                                    Spacer(modifier = Modifier.width(12.dp))
-                                    Text("Delete", color = ErrorRed)
-                                }
-                            },
-                            onClick = {
-                                showMenu = false
-                                onDelete()
-                            }
+                            text = { Row(verticalAlignment = Alignment.CenterVertically) { Icon(Icons.Default.Delete, null, tint = ErrorRed, modifier = Modifier.size(18.dp)); Spacer(Modifier.width(12.dp)); Text("Delete", color = ErrorRed) } },
+                            onClick = { showMenu = false; onDelete() }
                         )
                     }
                 }
-                }
+            }
 
                 Spacer(modifier = Modifier.height(12.dp))
 

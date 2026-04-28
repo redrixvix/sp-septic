@@ -26,6 +26,8 @@ import androidx.compose.material.icons.filled.PersonRemove
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.ZoomIn
+import androidx.compose.material.icons.filled.ZoomOut
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Lightbulb
@@ -860,10 +862,10 @@ private fun PhotoViewer(
     onDismiss: () -> Unit,
     darkTheme: Boolean
 ) {
-    var scale by remember { mutableStateOf(1f) }
+    var scale by remember { mutableFloatStateOf(1f) }
     var offset by remember { mutableStateOf(Offset.Zero) }
 
-    // Double tap to toggle zoom — simplified without transformable (not available in this Compose version)
+    // Double tap to toggle zoom between 1x and 2x
     val doubleTapModifier = Modifier.pointerInput(photoUrl) {
         detectTapGestures(
             onDoubleTap = {
@@ -873,11 +875,11 @@ private fun PhotoViewer(
         )
     }
 
-    // Swipe down to dismiss
+    // Swipe down to dismiss (only when not zoomed)
     val swipeDownModifier = Modifier.pointerInput(Unit) {
         detectDragGestures(
             onDrag = { _, dragAmount ->
-                if (dragAmount.y > 150) onDismiss()
+                if (scale <= 1f && dragAmount.y > 80) onDismiss()
             }
         )
     }
@@ -895,6 +897,8 @@ private fun PhotoViewer(
         animationSpec = spring(dampingRatio = 0.8f, stiffness = Spring.StiffnessMedium),
         label = "contentScale"
     )
+
+    val showZoomBadge = scale > 1f
 
     Dialog(
         onDismissRequest = onDismiss,
@@ -944,12 +948,12 @@ private fun PhotoViewer(
             }
         }
 
-        // Overlay UI — must live inside a Box scope for .align() to work
+        // Overlay UI
         Box(modifier = Modifier.fillMaxSize()) {
 
-          // Zoom level badge — shown when zoomed in
+          // Zoom level badge
           AnimatedVisibility(
-              visible = scale > 1f,
+              visible = showZoomBadge,
               enter = scaleIn(animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessMedium)) + fadeIn(),
               modifier = Modifier
                   .align(Alignment.TopCenter)
@@ -964,11 +968,57 @@ private fun PhotoViewer(
                       .padding(horizontal = 12.dp, vertical = 6.dp)
               ) {
                   Text(
-                      "${scale.toInt()}x",
+                      "${(scale * 100).toInt()}%",
                       style = MaterialTheme.typography.labelMedium,
                       color = Color.White,
                       fontWeight = FontWeight.SemiBold
                   )
+              }
+          }
+
+          // Zoom controls
+          AnimatedVisibility(
+              visible = true,
+              enter = fadeIn(animationSpec = tween(300)),
+              modifier = Modifier
+                  .align(Alignment.BottomCenter)
+                  .padding(bottom = if (showZoomBadge) 96.dp else 48.dp)
+          ) {
+              Row(
+                  horizontalArrangement = Arrangement.spacedBy(16.dp),
+                  verticalAlignment = Alignment.CenterVertically
+              ) {
+                  IconButton(
+                      onClick = {
+                          scale = (scale - 0.25f).coerceAtLeast(1f)
+                          if (scale <= 1f) offset = Offset.Zero
+                      },
+                      modifier = Modifier
+                          .size(44.dp)
+                          .background(color = Color.Black.copy(alpha = 0.5f), shape = CircleShape)
+                  ) {
+                      Icon(Icons.Default.ZoomOut, "Zoom out", tint = Color.White, modifier = Modifier.size(22.dp))
+                  }
+
+                  if (scale > 1f) {
+                      TextButton(
+                          onClick = { scale = 1f; offset = Offset.Zero },
+                          modifier = Modifier
+                              .background(color = Color.Black.copy(alpha = 0.5f), shape = RoundedCornerShape(16.dp))
+                              .padding(horizontal = 12.dp, vertical = 4.dp)
+                      ) {
+                          Text("Reset", style = MaterialTheme.typography.labelMedium, color = Color.White, fontWeight = FontWeight.Medium)
+                      }
+                  }
+
+                  IconButton(
+                      onClick = { scale = (scale + 0.25f).coerceAtMost(4f) },
+                      modifier = Modifier
+                          .size(44.dp)
+                          .background(color = Color.Black.copy(alpha = 0.5f), shape = CircleShape)
+                  ) {
+                      Icon(Icons.Default.ZoomIn, "Zoom in", tint = Color.White, modifier = Modifier.size(22.dp))
+                  }
               }
           }
 
@@ -979,35 +1029,22 @@ private fun PhotoViewer(
                   .align(Alignment.TopEnd)
                   .padding(24.dp)
                   .size(44.dp)
-                  .background(
-                      color = Color.Black.copy(alpha = 0.5f),
-                      shape = CircleShape
-                  )
+                  .background(color = Color.Black.copy(alpha = 0.5f), shape = CircleShape)
           ) {
-              Icon(
-                  Icons.Default.Close,
-                  contentDescription = "Close",
-                  tint = Color.White
-              )
+              Icon(Icons.Default.Close, "Close", tint = Color.White)
           }
 
-          // Swipe down hint — shown briefly
+          // Hint text
           var showHint by remember { mutableStateOf(true) }
-          LaunchedEffect(Unit) {
-              delay(2500)
-              showHint = false
+          LaunchedEffect(Unit) { delay(3000); showHint = false }
+          AnimatedVisibility(
+              visible = showHint && !showZoomBadge,
+              enter = fadeIn(), exit = fadeOut(),
+              modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 24.dp)
+          ) {
+              Text("Pinch to zoom · Swipe down to close", style = MaterialTheme.typography.bodySmall, color = Color.White.copy(alpha = 0.45f))
           }
-          if (showHint) {
-              Text(
-                  "Swipe down or double-tap to zoom",
-                  style = MaterialTheme.typography.bodySmall,
-                  color = Color.White.copy(alpha = 0.45f),
-                  modifier = Modifier
-                      .align(Alignment.BottomCenter)
-                      .padding(bottom = 32.dp)
-              )
         }
-      }
     }
 }
 

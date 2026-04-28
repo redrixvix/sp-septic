@@ -253,7 +253,7 @@ fun AuthScreen(
                 )
                 Row(
                     modifier = Modifier.fillMaxSize(),
-                    horizontalArrangement = Arrangement.SpaceEvenly
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     listOf(
                         "Sign In" to !isSignUp,
@@ -262,24 +262,26 @@ fun AuthScreen(
                         Box(
                             modifier = Modifier
                                 .weight(1f)
-                                .fillMaxHeight()
-                                .clickable(
-                                    interactionSource = remember { MutableInteractionSource() },
-                                    indication = null,
-                                    onClick = {
-                                        focusManager.clearFocus()
-                                        viewModel.toggleMode()
-                                        email = ""
-                                        password = ""
-                                    }
-                                ),
+                                .fillMaxHeight(),
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
                                 text = label,
                                 style = MaterialTheme.typography.labelLarge,
                                 color = if (isActive) WarmWhite else mutedText,
-                                fontWeight = if (isActive) FontWeight.SemiBold else FontWeight.Normal
+                                fontWeight = if (isActive) FontWeight.SemiBold else FontWeight.Normal,
+                                modifier = Modifier
+                                    .clickable(
+                                        interactionSource = remember { MutableInteractionSource() },
+                                        indication = null,
+                                        onClick = {
+                                            focusManager.clearFocus()
+                                            viewModel.toggleMode()
+                                            email = ""
+                                            password = ""
+                                        }
+                                    )
+                                    .padding(horizontal = 8.dp)
                             )
                         }
                     }

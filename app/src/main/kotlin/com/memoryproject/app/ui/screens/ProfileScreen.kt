@@ -282,7 +282,7 @@ fun ProfileScreen(
                             )
                     ) {
                         Icon(
-                            Icons.Filled.ArrowBack,
+                            Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back",
                             tint = backIconTint
                         )

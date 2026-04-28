@@ -67,7 +67,7 @@ fun InviteScreen(
     }
 
     val isDark = darkTheme
-    val scaffoldBg = if (isDark) DarkBackground else Cornsilk
+    @Suppress("UNUSED_VARIABLE") val scaffoldBg = if (isDark) DarkBackground else Cornsilk
     val cardBg = if (isDark) DarkSurface else WarmWhite
     val primaryText = if (isDark) DarkOnSurface else Charcoal
     val mutedText = if (isDark) DarkOnSurfaceVariant else CharcoalMuted
