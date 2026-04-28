@@ -18,3 +18,7 @@ Thumbs.db
 # Local config
 local.properties
 keystore.properties
+.gradle/
+app/build/
+*.apk
+screenshots/

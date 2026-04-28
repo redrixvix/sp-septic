@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.memoryproject.app-mergeDebugResources-66:/values-v30/values-v30.xml",
+            "outputFile": "com.memoryproject.app-mergeDebugResources-61:/values-v30/values-v30.xml",
             "map": [
                 {
                     "source": "/home/rixvix/.gradle/caches/transforms-4/c45f4f842c9b37964b4613f65a0f7828/transformed/jetified-material3-release/res/values-v30/values-v30.xml",

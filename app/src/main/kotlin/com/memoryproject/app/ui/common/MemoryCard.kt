@@ -174,7 +174,9 @@ fun MemoryCard(
                 Box {
                     IconButton(
                         onClick = { showMenu = true },
-                        modifier = Modifier.size(40.dp)
+                        modifier = Modifier
+                            .size(44.dp)
+                            .padding(4.dp) // 40dp touch target with 4dp padding for visual balance
                     ) {
                         Icon(
                             imageVector = Icons.Default.MoreVert,
@@ -195,24 +197,6 @@ fun MemoryCard(
                             text = {
                                 Row(verticalAlignment = Alignment.CenterVertically) {
                                     Icon(
-                                        Icons.Default.Edit,
-                                        contentDescription = null,
-                                        tint = if (isDark) DarkOnSurface else Charcoal,
-                                        modifier = Modifier.size(18.dp)
-                                    )
-                                    Spacer(modifier = Modifier.width(12.dp))
-                                    Text("Edit", color = if (isDark) DarkOnSurface else Charcoal)
-                                }
-                            },
-                            onClick = {
-                                showMenu = false
-                                onEdit()
-                            }
-                        )
-                        DropdownMenuItem(
-                            text = {
-                                Row(verticalAlignment = Alignment.CenterVertically) {
-                                    Icon(
                                         Icons.Default.Share,
                                         contentDescription = null,
                                         tint = if (isDark) DarkOnSurface else Charcoal,
@@ -226,10 +210,6 @@ fun MemoryCard(
                                 showMenu = false
                                 onShareClick()
                             }
-                        )
-                        HorizontalDivider(
-                            modifier = Modifier.padding(vertical = 4.dp),
-                            color = if (isDark) DarkDivider else Divider
                         )
                         DropdownMenuItem(
                             text = {

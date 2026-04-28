@@ -599,7 +599,7 @@ fun AuthScreen(
                 enabled = !uiState.isLoading && !uiState.isGoogleLoading && isFormValid,
                 shape = RoundedCornerShape(14.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = if (isDark) DarkBronze.copy(alpha = 0.95f) else BronzeDark,
+                    containerColor = if (isDark) DarkBronze.copy(alpha = 0.95f) else Bronze,
                     contentColor = WarmWhite,
                     disabledContainerColor = if (isDark) DarkBronze.copy(alpha = 0.5f) else Color(0xFFD4A373).copy(alpha = 0.65f),
                     disabledContentColor = if (isDark) DarkOnSurface.copy(alpha = 0.7f) else Charcoal.copy(alpha = 0.65f)

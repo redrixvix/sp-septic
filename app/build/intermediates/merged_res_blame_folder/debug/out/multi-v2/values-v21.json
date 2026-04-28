@@ -1,27 +1,8 @@
 {
     "logs": [
         {
-            "outputFile": "com.memoryproject.app-mergeDebugResources-66:/values-v21/values-v21.xml",
+            "outputFile": "com.memoryproject.app-mergeDebugResources-61:/values-v21/values-v21.xml",
             "map": [
-                {
-                    "source": "/home/rixvix/.gradle/caches/transforms-4/5d1b9d69b165b0d2978607354d1033b2/transformed/jetified-credentials-play-services-auth-1.3.0/res/values-v21/values-v21.xml",
-                    "from": {
-                        "startLines": "2",
-                        "startColumns": "4",
-                        "startOffsets": "55",
-                        "endLines": "9",
-                        "endColumns": "12",
-                        "endOffsets": "543"
-                    },
-                    "to": {
-                        "startLines": "268",
-                        "startColumns": "4",
-                        "startOffsets": "19151",
-                        "endLines": "275",
-                        "endColumns": "12",
-                        "endOffsets": "19639"
-                    }
-                },
                 {
                     "source": "/home/rixvix/.gradle/caches/transforms-4/1095cf407e6e47bee62dee5f5b7839aa/transformed/core-1.13.1/res/values-v21/values-v21.xml",
                     "from": {
@@ -33,12 +14,12 @@
                         "endOffsets": "168,232,299,363,479,605,731,859,1031,1383"
                     },
                     "to": {
-                        "startLines": "2,3,4,5,264,265,266,267,276,279",
+                        "startLines": "2,3,4,5,264,265,266,267,268,271",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4",
-                        "startOffsets": "55,173,237,304,18655,18771,18897,19023,19644,19816",
-                        "endLines": "2,3,4,5,264,265,266,267,278,283",
+                        "startOffsets": "55,173,237,304,18655,18771,18897,19023,19151,19323",
+                        "endLines": "2,3,4,5,264,265,266,267,270,275",
                         "endColumns": "117,63,66,63,115,125,125,127,12,12",
-                        "endOffsets": "168,232,299,363,18766,18892,19018,19146,19811,20163"
+                        "endOffsets": "168,232,299,363,18766,18892,19018,19146,19318,19670"
                     }
                 },
                 {

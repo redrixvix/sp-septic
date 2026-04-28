@@ -50,6 +50,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -1029,6 +1031,12 @@ private fun MemoryDialog(
         suggestions = PROMPT_SUGGESTIONS.shuffled().take(6)
     }
 
+    // Auto-focus prompt field when dialog opens
+    val promptFocusRequester = remember { FocusRequester() }
+    LaunchedEffect(Unit) {
+        promptFocusRequester.requestFocus()
+    }
+
     val cardBg = if (darkTheme) DarkSurface else WarmWhite
     val borderColor = if (darkTheme) DarkBorder else Border
     val textColor = if (darkTheme) DarkOnSurface else Charcoal
@@ -1102,21 +1110,40 @@ private fun MemoryDialog(
                     onValueChange = onPromptChange,
                     label = { Text("What's this memory about?") },
                     placeholder = { Text("e.g. Tell me about your first job") },
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth().focusRequester(promptFocusRequester),
                     shape = RoundedCornerShape(12.dp),
                     singleLine = true,
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = Bronze,
                         unfocusedBorderColor = borderColor,
-                        focusedLabelColor = Bronze,
                         focusedContainerColor = if (darkTheme) DarkSurfaceVariant.copy(alpha = 0.2f) else Papaya.copy(alpha = 0.15f),
                         unfocusedContainerColor = if (darkTheme) DarkSurfaceVariant.copy(alpha = 0.08f) else Papaya.copy(alpha = 0.08f)
                     ),
                     supportingText = {
-                        if (promptInput.isBlank()) {
-                            Text("Tip: pick a prompt below to get started", color = mutedTextColor, style = MaterialTheme.typography.bodySmall)
-                        } else if (promptInput.length > 80) {
-                            Text("${promptInput.length}/80 characters", color = mutedTextColor, style = MaterialTheme.typography.bodySmall)
+                        Box(modifier = Modifier.fillMaxWidth()) {
+                            when {
+                                promptInput.isBlank() -> {
+                                    Text(
+                                        "Tip: pick a prompt below to get started",
+                                        color = mutedTextColor,
+                                        style = MaterialTheme.typography.bodySmall
+                                    )
+                                }
+                                promptInput.length > 80 -> {
+                                    Text(
+                                        "${promptInput.length}/80 · keep it short and focused",
+                                        color = if (darkTheme) DarkError else ErrorRed,
+                                        style = MaterialTheme.typography.bodySmall
+                                    )
+                                }
+                                else -> {
+                                    Text(
+                                        "${promptInput.length}/80 characters",
+                                        color = mutedTextColor,
+                                        style = MaterialTheme.typography.bodySmall
+                                    )
+                                }
+                            }
                         }
                     }
                 )

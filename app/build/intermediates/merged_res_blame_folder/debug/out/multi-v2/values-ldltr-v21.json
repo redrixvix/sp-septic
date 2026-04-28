@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.memoryproject.app-mergeDebugResources-66:/values-ldltr-v21/values-ldltr-v21.xml",
+            "outputFile": "com.memoryproject.app-mergeDebugResources-61:/values-ldltr-v21/values-ldltr-v21.xml",
             "map": [
                 {
                     "source": "/home/rixvix/.gradle/caches/transforms-4/1eda4860fc9a1adf31647352cc14f286/transformed/appcompat-1.6.1/res/values-ldltr-v21/values-ldltr-v21.xml",
