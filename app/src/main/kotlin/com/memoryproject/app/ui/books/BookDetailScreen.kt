@@ -1160,7 +1160,7 @@ private fun MemoryDialog(
                             when {
                                 promptInput.isBlank() -> {
                                     Text(
-                                        "Tip: pick a prompt below to get started",
+                                        "Start with a question or topic",
                                         color = mutedTextColor,
                                         style = MaterialTheme.typography.bodySmall
                                     )
@@ -1278,7 +1278,7 @@ private fun MemoryDialog(
                     supportingText = {
                         if (answerInput.isBlank()) {
                             Text(
-                                "Share what matters",
+                                "Write from the heart",
                                 color = mutedTextColor,
                                 style = MaterialTheme.typography.bodySmall
                             )
