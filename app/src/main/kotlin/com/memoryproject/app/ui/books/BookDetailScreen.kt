@@ -976,13 +976,14 @@ private fun PhotoViewer(
               }
           }
 
-          // Zoom controls
+          // Zoom controls — only visible when zoomed in
           AnimatedVisibility(
-              visible = true,
-              enter = fadeIn(animationSpec = tween(300)),
+              visible = showZoomBadge,
+              enter = fadeIn(animationSpec = tween(300)) + slideInVertically(animationSpec = tween(300), initialOffsetY = { it }),
+              exit = fadeOut() + slideOutVertically(targetOffsetY = { it }),
               modifier = Modifier
                   .align(Alignment.BottomCenter)
-                  .padding(bottom = if (showZoomBadge) 96.dp else 48.dp)
+                  .padding(bottom = 48.dp)
           ) {
               Row(
                   horizontalArrangement = Arrangement.spacedBy(16.dp),
@@ -1000,15 +1001,13 @@ private fun PhotoViewer(
                       Icon(Icons.Default.ZoomOut, "Zoom out", tint = Color.White, modifier = Modifier.size(22.dp))
                   }
 
-                  if (scale > 1f) {
-                      TextButton(
-                          onClick = { scale = 1f; offset = Offset.Zero },
-                          modifier = Modifier
-                              .background(color = Color.Black.copy(alpha = 0.5f), shape = RoundedCornerShape(16.dp))
-                              .padding(horizontal = 12.dp, vertical = 4.dp)
-                      ) {
-                          Text("Reset", style = MaterialTheme.typography.labelMedium, color = Color.White, fontWeight = FontWeight.Medium)
-                      }
+                  TextButton(
+                      onClick = { scale = 1f; offset = Offset.Zero },
+                      modifier = Modifier
+                          .background(color = Color.Black.copy(alpha = 0.5f), shape = RoundedCornerShape(16.dp))
+                          .padding(horizontal = 12.dp, vertical = 4.dp)
+                  ) {
+                      Text("Reset", style = MaterialTheme.typography.labelMedium, color = Color.White, fontWeight = FontWeight.Medium)
                   }
 
                   IconButton(

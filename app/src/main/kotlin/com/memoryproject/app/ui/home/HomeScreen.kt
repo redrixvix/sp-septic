@@ -456,6 +456,14 @@ private fun WelcomeHeader(
                             fontWeight = FontWeight.Bold
                         )
                     }
+
+                    Spacer(modifier = Modifier.width(12.dp))
+
+                    // Time-based greeting emoji
+                    Text(
+                        text = rememberTimeEmoji(),
+                        style = MaterialTheme.typography.headlineMedium
+                    )
                 }
             }
         }
@@ -483,6 +491,22 @@ private fun rememberWarmGreeting(userName: String): String {
             hour < 12 -> "Good morning$suffix"
             hour < 17 -> "Good afternoon$suffix"
             else -> "Good evening$suffix"
+        }
+    }
+}
+
+@Composable
+private fun rememberTimeEmoji(): String {
+    return remember {
+        val hour = java.util.Calendar.getInstance().get(java.util.Calendar.HOUR_OF_DAY)
+        when {
+            hour < 6 -> "🌙"
+            hour < 9 -> "☀️"
+            hour < 12 -> "🌤️"
+            hour < 14 -> "☀️"
+            hour < 17 -> "🌤️"
+            hour < 20 -> "🌅"
+            else -> "🌙"
         }
     }
 }
@@ -568,7 +592,7 @@ private fun StatCard(
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
-                    imageVector = if (icon == "book") Icons.Default.Book else Icons.Default.AutoAwesome,
+                    imageVector = if (icon == "book") Icons.Default.Book else if (icon == "memory") Icons.Default.CameraAlt else Icons.Default.AutoAwesome,
                     contentDescription = null,
                     tint = if (darkTheme) DarkBronze else Bronze,
                     modifier = Modifier.size(22.dp)

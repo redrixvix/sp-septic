@@ -201,7 +201,7 @@ fun OnboardingScreen(
                                     .scale(dotScale)
                                     .clip(CircleShape)
                                     .background(
-                                        if (isSelected) PAGES[index].accentColor else mutedText.copy(alpha = 0.3f),
+                                        if (isSelected) PAGES[index].accentColor else mutedText.copy(alpha = 0.5f),
                                         shape = CircleShape
                                     )
                             )
