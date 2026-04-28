@@ -67,7 +67,7 @@ fun MemoryCard(
     val accentColor = accentColors[accentIndex % accentColors.size]
 
     val cardBg = if (isDark) DarkSurface else WarmWhite
-    val promptLabelText = if (isDark) DarkOnSurface else BronzeDark
+    val promptLabelText = if (isDark) DarkOnSurface else Charcoal
     val bodyText = if (isDark) DarkOnSurface else Charcoal
     val mutedText = if (isDark) DarkOnSurfaceVariant else CharcoalMuted
 
@@ -129,13 +129,7 @@ fun MemoryCard(
                         modifier = Modifier
                             .weight(1f, fill = false)
                             .background(
-                                brush = Brush.linearGradient(
-                                    colors = if (isDark) {
-                                        listOf(DarkBronze.copy(alpha = 0.25f), DarkSurfaceVariant)
-                                    } else {
-                                        listOf(Bronze.copy(alpha = 0.12f), Papaya.copy(alpha = 0.75f))
-                                    }
-                                ),
+                                color = if (isDark) DarkSurfaceVariant else Beige.copy(alpha = 0.75f),
                                 shape = RoundedCornerShape(10.dp)
                             )
                             .padding(horizontal = 12.dp, vertical = 7.dp)
@@ -228,45 +222,22 @@ fun MemoryCard(
                     modifier = Modifier.padding(vertical = 2.dp)
                 )
 
-                // Photo thumbnails — larger with more breathing room
+                // Photo thumbnails — clean 3-up grid with natural spacing
                 if (memory.photo_urls.isNotEmpty()) {
-                    Spacer(modifier = Modifier.height(14.dp))
+                    Spacer(modifier = Modifier.height(12.dp))
                     Row(
-                        horizontalArrangement = if (memory.photo_urls.size <= 1) Arrangement.Start else Arrangement.spacedBy(12.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        memory.photo_urls.take(3).forEachIndexed { index, url ->
-                            Box {
-                                AsyncImage(
-                                    model = url,
-                                    contentDescription = "Memory photo ${index + 1}",
-                                    modifier = Modifier
-                                        .size(80.dp)
-                                        .clip(RoundedCornerShape(12.dp))
-                                        .clickable { onPhotoClick(url) },
-                                    onError = { }
-                                )
-                            }
-                        }
-                        val extraCount = memory.photo_urls.size - 3
-                        if (extraCount > 0) {
-                            Box(
+                        memory.photo_urls.take(4).forEachIndexed { index, url ->
+                            AsyncImage(
+                                model = url,
+                                contentDescription = "Memory photo ${index + 1}",
                                 modifier = Modifier
-                                    .size(80.dp)
-                                    .background(
-                                        color = if (isDark) DarkBronze.copy(alpha = 0.3f) else Bronze.copy(alpha = 0.18f),
-                                        shape = RoundedCornerShape(12.dp)
-                                    )
-                                    .clickable { memory.photo_urls.getOrNull(3)?.let { onPhotoClick(it) } },
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text(
-                                    "+$extraCount",
-                                    style = MaterialTheme.typography.labelMedium,
-                                    color = if (isDark) DarkOnSurface else BronzeDark,
-                                    fontWeight = FontWeight.SemiBold
-                                )
-                            }
+                                    .size(64.dp)
+                                    .clip(RoundedCornerShape(10.dp))
+                                    .clickable { onPhotoClick(url) }
+                            )
                         }
                     }
                 }

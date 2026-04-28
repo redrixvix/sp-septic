@@ -10,7 +10,9 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -618,37 +620,23 @@ private fun PromptSuggestionsSection(
     Column(modifier = Modifier.fillMaxWidth()) {
         AnimatedVisibility(
             visible = visible,
-            enter = fadeIn(animationSpec = tween(400)) + slideInVertically(animationSpec = tween(400), initialOffsetY = { -it / 8 })
-        ) {
-            Text(
-                "Need inspiration?",
-                style = MaterialTheme.typography.titleMedium,
-                color = primaryText,
-                fontWeight = FontWeight.SemiBold,
-                modifier = Modifier.padding(bottom = 4.dp)
-            )
-        }
-        AnimatedVisibility(
-            visible = visible,
             enter = fadeIn(animationSpec = tween(400, delayMillis = 80)) + slideInVertically(animationSpec = tween(400, delayMillis = 80), initialOffsetY = { -it / 8 })
         ) {
             Text(
-                "Try a prompt",
+                "Need inspiration? Tap a prompt to start writing",
                 style = MaterialTheme.typography.bodySmall,
                 color = mutedText,
                 modifier = Modifier.padding(bottom = 12.dp)
             )
         }
-        // Staggered prompt grid
-        suggestions.forEachIndexed { index, prompt ->
-            var promptVisible by remember { mutableStateOf(false) }
-            LaunchedEffect(prompt) { promptVisible = true }
-            AnimatedVisibility(
-                visible = promptVisible,
-                enter = fadeIn(animationSpec = tween(300, delayMillis = index * 40)) +
-                        slideInHorizontally(animationSpec = tween(300, delayMillis = index * 40), initialOffsetX = { it / 4 })
-            ) {
-                PromptSuggestionChip(
+        // Horizontally scrollable prompt chips — keeps the page clean and readable
+        LazyRow(
+            contentPadding = PaddingValues(vertical = 4.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            state = rememberLazyListState()
+        ) {
+            items(suggestions) { prompt ->
+                SuggestionChip(
                     prompt = prompt,
                     cardBg = cardBg,
                     primaryText = primaryText,
@@ -661,7 +649,7 @@ private fun PromptSuggestionsSection(
 }
 
 @Composable
-private fun PromptSuggestionChip(
+private fun SuggestionChip(
     prompt: String,
     cardBg: Color,
     primaryText: Color,
@@ -671,27 +659,26 @@ private fun PromptSuggestionChip(
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
     val scale by animateFloatAsState(
-        targetValue = if (isPressed) 0.97f else 1f,
+        targetValue = if (isPressed) 0.95f else 1f,
         animationSpec = spring(dampingRatio = 0.7f, stiffness = Spring.StiffnessLow),
         label = "suggestionScale"
     )
 
     Box(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 3.dp)
             .scale(scale)
-            .clip(RoundedCornerShape(10.dp))
+            .clip(RoundedCornerShape(20.dp))
             .background(cardBg)
             .clickable(
                 interactionSource = interactionSource,
                 indication = null,
                 onClick = onClick
             )
-            .padding(horizontal = 14.dp, vertical = 10.dp)
+            .padding(horizontal = 16.dp, vertical = 10.dp)
     ) {
         Row(
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(6.dp)
         ) {
             Icon(
                 imageVector = Icons.Default.Lightbulb,
@@ -699,12 +686,10 @@ private fun PromptSuggestionChip(
                 tint = if (darkTheme) DarkBronze else Bronze,
                 modifier = Modifier.size(12.dp)
             )
-            Spacer(modifier = Modifier.width(8.dp))
             Text(
                 text = prompt,
                 style = MaterialTheme.typography.bodySmall,
                 color = primaryText,
-                modifier = Modifier.weight(1f),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )

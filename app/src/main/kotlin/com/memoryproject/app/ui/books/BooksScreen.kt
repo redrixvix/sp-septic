@@ -591,7 +591,7 @@ private fun BookCard(
                         Box(
                             modifier = Modifier
                                 .background(
-                                    color = if (darkTheme) TeaGreenDark.copy(alpha = 0.25f) else TeaGreen.copy(alpha = 0.15f),
+                                    color = if (darkTheme) DarkSurfaceVariant else TeaGreen.copy(alpha = 0.22f),
                                     shape = RoundedCornerShape(6.dp)
                                 )
                                 .padding(horizontal = 8.dp, vertical = 3.dp)
@@ -599,7 +599,7 @@ private fun BookCard(
                             Text(
                                 text = "Shared",
                                 style = MaterialTheme.typography.labelSmall,
-                                color = if (darkTheme) TeaGreen else SuccessGreenDark,
+                                color = if (darkTheme) DarkOnSurface else Charcoal,
                                 fontWeight = FontWeight.Medium
                             )
                         }
