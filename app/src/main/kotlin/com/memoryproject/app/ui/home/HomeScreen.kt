@@ -662,10 +662,19 @@ private fun QuickActionButton(
     primaryText: Color,
     modifier: Modifier = Modifier
 ) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val isPressed by interactionSource.collectIsPressedAsState()
+    val scale by animateFloatAsState(
+        targetValue = if (isPressed) 0.96f else 1f,
+        animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessLow),
+        label = "quickActionScale"
+    )
+
     if (isPrimary) {
         Card(
             onClick = onClick,
-            modifier = modifier,
+            modifier = modifier.scale(scale),
+            interactionSource = interactionSource,
             shape = RoundedCornerShape(16.dp),
             colors = CardDefaults.cardColors(
                 containerColor = Bronze,
@@ -699,7 +708,8 @@ private fun QuickActionButton(
         // Secondary button — outlined style with Bronze border
         OutlinedCard(
             onClick = onClick,
-            modifier = modifier,
+            modifier = modifier.scale(scale),
+            interactionSource = interactionSource,
             shape = RoundedCornerShape(16.dp),
             colors = CardDefaults.outlinedCardColors(
                 containerColor = Color.Transparent,

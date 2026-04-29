@@ -478,7 +478,7 @@ private fun BookCard(
             Box(
                 modifier = Modifier
                     .width(4.dp)
-                    .fillMaxSize()
+                    .fillMaxHeight()
                     .background(
                         brush = Brush.verticalGradient(
                             colors = if (darkTheme) {
