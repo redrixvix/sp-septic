@@ -20,6 +20,11 @@ import kotlinx.serialization.json.Json
 
 class WorkOSAuthService(private val prefs: SharedPreferences) {
 
+    private val json = Json {
+        ignoreUnknownKeys = true
+        isLenient = true
+    }
+
     private val client = HttpClient(Android) {
         install(ContentNegotiation) {
             json(Json {
@@ -46,7 +51,7 @@ class WorkOSAuthService(private val prefs: SharedPreferences) {
             throw Exception(readError(bodyText, "Failed to start Google login"))
         }
 
-        val startResponse = Json.decodeFromString<MobileAuthStartResponse>(bodyText)
+        val startResponse = json.decodeFromString<MobileAuthStartResponse>(bodyText)
         val state = android.net.Uri.parse(startResponse.authorizationUrl).getQueryParameter("state")
             ?: throw Exception("WorkOS authorization URL did not include state")
 
@@ -103,7 +108,7 @@ class WorkOSAuthService(private val prefs: SharedPreferences) {
 
     private fun readError(bodyText: String, fallback: String): String {
         return try {
-            Json.decodeFromString<ErrorResponse>(bodyText).error
+            json.decodeFromString<ErrorResponse>(bodyText).error
         } catch (_: Exception) {
             bodyText.take(160).ifBlank { fallback }
         }

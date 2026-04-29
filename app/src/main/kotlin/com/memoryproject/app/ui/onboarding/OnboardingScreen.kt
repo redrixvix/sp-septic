@@ -3,6 +3,10 @@ package com.memoryproject.app.ui.onboarding
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -57,6 +61,7 @@ import com.memoryproject.app.ui.theme.Charcoal
 import com.memoryproject.app.ui.theme.CharcoalMuted
 import com.memoryproject.app.ui.theme.Cornsilk
 import com.memoryproject.app.ui.theme.DarkBackground
+import com.memoryproject.app.ui.theme.DarkBronze
 import com.memoryproject.app.ui.theme.DarkOnSurface
 import com.memoryproject.app.ui.theme.DarkOnSurfaceVariant
 import com.memoryproject.app.ui.theme.DarkSurface
@@ -211,7 +216,7 @@ fun OnboardingScreen(
 
                 Spacer(modifier = Modifier.height(32.dp))
 
-                // CTA button
+                // CTA button — full-width bronze on all pages for premium feel
                 val isLastPage = pagerState.currentPage == PAGES.size - 1
                 Button(
                     onClick = {
@@ -229,11 +234,12 @@ fun OnboardingScreen(
                         .height(56.dp),
                     shape = RoundedCornerShape(16.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = if (isLastPage) Bronze else cardBg,
-                        contentColor = if (isLastPage) WarmWhite else if (isDark) DarkOnSurface else Bronze
+                        containerColor = if (isDark) DarkBronze else Bronze,
+                        contentColor = WarmWhite
                     ),
                     elevation = ButtonDefaults.buttonElevation(
-                        defaultElevation = if (isLastPage) 6.dp else 2.dp
+                        defaultElevation = 8.dp,
+                        pressedElevation = 12.dp
                     )
                 ) {
                     Text(

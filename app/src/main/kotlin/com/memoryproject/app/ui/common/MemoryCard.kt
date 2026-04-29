@@ -138,12 +138,12 @@ fun MemoryCard(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(18.dp)
+                    .padding(16.dp)
             ) {
-                // Header row: prompt label + share/delete actions
+                // Header row: prompt label + action buttons (share + delete)
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(6.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Box(
@@ -164,41 +164,55 @@ fun MemoryCard(
                             overflow = TextOverflow.Ellipsis
                         )
                     }
-                    // Action menu: share + delete
-                    var showMenu by remember { mutableStateOf(false) }
-                    Box {
-                        IconButton(
-                            onClick = { showMenu = true },
-                            modifier = Modifier.size(44.dp).padding(4.dp)
-                        ) {
-                            Icon(Icons.Default.MoreVert, "More options", tint = mutedText, modifier = Modifier.size(22.dp))
-                        }
-                        DropdownMenu(
-                            expanded = showMenu,
-                            onDismissRequest = { showMenu = false },
-                            modifier = Modifier.background(color = if (isDark) DarkSurface else WarmWhite, shape = RoundedCornerShape(12.dp))
-                        ) {
-                            DropdownMenuItem(
-                                text = {
-                                    Row(verticalAlignment = Alignment.CenterVertically) {
-                                        Icon(Icons.Default.Share, null, tint = if (isDark) DarkOnSurface else Charcoal, modifier = Modifier.size(18.dp))
-                                        Spacer(Modifier.width(12.dp))
-                                        Text("Share", color = if (isDark) DarkOnSurface else Charcoal)
-                                    }
-                                },
-                                onClick = { showMenu = false; onShareClick() }
-                            )
-                            DropdownMenuItem(
-                                text = {
-                                    Row(verticalAlignment = Alignment.CenterVertically) {
-                                        Icon(Icons.Default.Delete, null, tint = ErrorRed, modifier = Modifier.size(18.dp))
-                                        Spacer(Modifier.width(12.dp))
-                                        Text("Delete", color = ErrorRed)
-                                    }
-                                },
-                                onClick = { showMenu = false; onDelete() }
-                            )
-                        }
+                    // Direct share button — no longer hidden in a menu
+                    val shareInteractionSource = remember { MutableInteractionSource() }
+                    val shareIsPressed by shareInteractionSource.collectIsPressedAsState()
+                    val shareScale by animateFloatAsState(
+                        targetValue = if (shareIsPressed) 0.85f else 1f,
+                        animationSpec = spring(dampingRatio = 0.6f, stiffness = 500f),
+                        label = "shareBtnScale"
+                    )
+                    IconButton(
+                        onClick = onShareClick,
+                        modifier = Modifier
+                            .size(40.dp)
+                            .scale(shareScale),
+                        interactionSource = shareInteractionSource,
+                        colors = IconButtonDefaults.iconButtonColors(
+                            contentColor = mutedText
+                        )
+                    ) {
+                        Icon(
+                            Icons.Default.Share,
+                            contentDescription = "Share memory",
+                            tint = mutedText,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+                    // Delete button — always visible
+                    val deleteInteractionSource = remember { MutableInteractionSource() }
+                    val deleteIsPressed by deleteInteractionSource.collectIsPressedAsState()
+                    val deleteScale by animateFloatAsState(
+                        targetValue = if (deleteIsPressed) 0.85f else 1f,
+                        animationSpec = spring(dampingRatio = 0.6f, stiffness = 500f),
+                        label = "deleteBtnScale"
+                    )
+                    IconButton(
+                        onClick = onDelete,
+                        modifier = Modifier
+                            .size(40.dp)
+                            .scale(deleteScale),
+                        interactionSource = deleteInteractionSource,
+                        colors = IconButtonDefaults.iconButtonColors(
+                            contentColor = ErrorRed.copy(alpha = 0.8f)
+                        )
+                    ) {
+                        Icon(
+                            Icons.Default.Delete,
+                            contentDescription = "Delete memory",
+                            tint = ErrorRed.copy(alpha = 0.8f),
+                            modifier = Modifier.size(20.dp)
+                        )
                     }
                 }
 
